@@ -1,0 +1,40 @@
+{
+  "/ws": {
+    "target": "",
+    "ws": true,
+    "changeOrigin": true,
+    "secure": false
+  },
+  "/api/user/profile": {
+    "target": "",
+    "changeOrigin": true,
+    "secure": false
+  },
+
+  "/image": {
+    "target": "",
+    "changeOrigin": true,
+    "secure": false
+  },
+  "/file": {
+    "target": "",
+    "changeOrigin": true,
+    "secure": false
+  },
+  "/api/image": {
+    "target": "",
+    "changeOrigin": true,
+    "secure": false
+  },
+  "/api/file": {
+    "target": "",
+    "changeOrigin": true,
+    "secure": false
+  },
+
+  "/api": {
+    "target": "",
+    "changeOrigin": true,
+    "secure": false
+  }
+}
