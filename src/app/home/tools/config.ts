@@ -62,116 +62,6 @@ export const Tools = [
         }
       },
       {
-        name: 'diamond',
-        icon: 'icon-diamond',
-        data: {
-          text: '菱形',
-          rect: {
-            width: 100,
-            height: 100
-          },
-          name: 'diamond'
-        }
-      },
-      {
-        name: 'pentagon',
-        icon: 'icon-pentagon',
-        data: {
-          text: '五边形',
-          rect: {
-            width: 100,
-            height: 100
-          },
-          name: 'pentagon'
-        }
-      },
-      {
-        name: 'hexagon',
-        icon: 'icon-hexagon',
-        data: {
-          text: '六边形',
-          rect: {
-            width: 100,
-            height: 100
-          },
-          paddingTop: 10,
-          paddingBottom: 10,
-          name: 'hexagon'
-        }
-      },
-      {
-        name: 'pentagram',
-        icon: 'icon-pentagram',
-        data: {
-          text: '五角星',
-          rect: {
-            width: 100,
-            height: 100
-          },
-          name: 'pentagram'
-        }
-      },
-      {
-        name: 'leftArrow',
-        icon: 'icon-arrow-left',
-        data: {
-          text: '左箭头',
-          rect: {
-            width: 200,
-            height: 100
-          },
-          name: 'leftArrow'
-        }
-      },
-      {
-        name: 'rightArrow',
-        icon: 'icon-arrow-right',
-        data: {
-          text: '右箭头',
-          rect: {
-            width: 200,
-            height: 100
-          },
-          name: 'rightArrow'
-        }
-      },
-      {
-        name: 'twowayArrow',
-        icon: 'icon-twoway-arrow',
-        data: {
-          text: '双向箭头',
-          rect: {
-            width: 200,
-            height: 100
-          },
-          name: 'twowayArrow'
-        }
-      },
-      {
-        name: 'line',
-        icon: 'icon-line',
-        data: {
-          text: '直线',
-          rect: {
-            width: 100,
-            height: 100
-          },
-          name: 'line'
-        }
-      },
-      {
-        name: 'cloud',
-        icon: 'icon-cloud',
-        data: {
-          text: '云',
-          rect: {
-            width: 100,
-            height: 100
-          },
-          name: 'cloud'
-        }
-      },
-      {
         name: 'message',
         icon: 'icon-msg',
         data: {
@@ -225,18 +115,7 @@ export const Tools = [
           zRotate: 15,
           name: 'cube',
         }
-      },
-      {
-        name: 'people',
-        icon: 'icon-people',
-        data: {
-          rect: {
-            width: 70,
-            height: 100
-          },
-          name: 'people'
-        }
-      },
+      }
     ]
   },
   {

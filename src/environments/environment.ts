@@ -7,7 +7,7 @@ export const environment = {
   token: 'token',
   localhost: true,
   urls: {
-    account: ''
+    account: 'http:127.0.0.1:8210'
   }
 };
 

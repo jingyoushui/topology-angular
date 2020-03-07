@@ -30,10 +30,11 @@ export class CoreModule {
       throw new Error('CoreModule is already loaded. Import it in the AppModule only');
     }
 
-    Store.set('author', 'alsmile123@qq.com');
+    Store.set('author', '2625882457@qq.com');
 
     // 监听用户认证
     Store.subscribe('auth', (ret: any) => {
+      console.log('core37:' + ret);
       // 认证失败
       if (ret === -1) {
         this._coreService.removeToken();
@@ -60,7 +61,8 @@ export class CoreModule {
 
   initWebsocket() {
     // 连接websocket
-    const wsUrl: string = (location.protocol === 'http:' ? 'ws://' : 'wss://') + location.host + '/ws';
+    const wsUrl: string = (location.protocol === 'http:' ? 'ws://' : 'wss://') + 'localhost:8210' + '/ws';
+    console.log('wsUrl:' + wsUrl);
     this.socket = new WebSocket(wsUrl);
     Store.set('socket', this.socket);
     Store.set('socketCallback', this.socketCallback);
@@ -95,13 +97,14 @@ export class CoreModule {
   }
 
   async onProfile(): Promise<void> {
-    const ret = await this._httpService.Get('/api/user/profile');
+    const ret = await this._httpService.Get('http://localhost:8210/user/profile');
     if (ret.error) {
       return;
     }
 
     ret.usernamePinyin = this._coreService.getPinyin(ret.username);
     Store.set('user', ret);
-    this.initWebsocket();
+    console.log(Store.get('user'));
+    // this.initWebsocket();
   }
 }

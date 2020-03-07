@@ -39,18 +39,9 @@ export class AppComponent implements OnInit, OnDestroy {
   }, {
     name: '直线',
     value: 'line'
-  }, {
-    name: '脑图曲线',
-    value: 'mind'
   }];
   arrowTypes = [
     '',
-    'triangleSolid',
-    'triangle',
-    'diamondSolid',
-    'diamond',
-    'circleSolid',
-    'circle',
     'line',
     'imageSolid',
   ];
@@ -71,7 +62,7 @@ export class AppComponent implements OnInit, OnDestroy {
       this.user = user;
       this.getRecently();
     });
-
+    console.log('user_app65:' + this.user);
     Store.subscribe('file', (file: any) => {
       this.locked = 0;
       if (file && file.data) {
@@ -157,6 +148,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   onMenu(menu: string, data?: any) {
     const isOpen = menu.indexOf('open') === 0;
+    console.log('data_app151' + data);
     if (!this.editMode && menu !== 'new' && !isOpen) {
       return;
     }
@@ -170,6 +162,7 @@ export class AppComponent implements OnInit, OnDestroy {
       this.router.navigate(['/workspace'], {
         queryParams
       });
+      console.log('queryParams_app164' + queryParams.id + '|' + queryParams.version );
     }
 
     setTimeout(

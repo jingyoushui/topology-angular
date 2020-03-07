@@ -7,7 +7,8 @@ export class HomeService {
   constructor(protected http: HttpService) { }
 
   async Get(data: any) {
-    const ret = await this.http.QueryString({ version: data.version }).Get('/api/topology/' + data.id);
+    const ret = await this.http.QueryString({ version: data.version }).Get('http://127.0.0.1:8210/topology?id=' + data.id);
+    console.log(data.id);
     if (ret.error) {
       return null;
     }
@@ -21,7 +22,7 @@ export class HomeService {
     form.append('randomName', '1');
     form.append('public', shared + '');
     form.append('file', blob);
-    const ret = await this.http.PostForm('/api/image', form);
+    const ret = await this.http.PostForm('http://127.0.0.1:8210/image', form);
     if (ret.error) {
       return null;
     }
@@ -61,9 +62,9 @@ export class HomeService {
       data.desc = data.name;
     }
     if (data.id) {
-      ret = await this.http.Put('/api/user/topology', data);
+      ret = await this.http.Put('http://127.0.0.1:8210/user/topology', data);
     } else {
-      ret = await this.http.Post('/api/user/topology', data);
+      ret = await this.http.Post('http://127.0.0.1:8210/user/topology', data);
     }
 
     if (ret.error) {
