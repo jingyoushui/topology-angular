@@ -7,7 +7,7 @@ export class HomeService {
   constructor(protected http: HttpService) { }
 
   async Get(data: any) {
-    const ret = await this.http.QueryString({ version: data.version }).Get('http://127.0.0.1:8210/topology?id=' + data.id);
+    const ret = await this.http.QueryString({ version: data.version }).Get('http://127.0.0.1:8210/topology/get/' + data.id);
     console.log(data.id);
     if (ret.error) {
       return null;
@@ -62,9 +62,9 @@ export class HomeService {
       data.desc = data.name;
     }
     if (data.id) {
-      ret = await this.http.Put('http://127.0.0.1:8210/user/topology', data);
+      ret = await this.http.Put('http://127.0.0.1:8210/topology/save', data);
     } else {
-      ret = await this.http.Post('http://127.0.0.1:8210/user/topology', data);
+      ret = await this.http.Post('http://127.0.0.1:8210/topology/save', data);
     }
 
     if (ret.error) {

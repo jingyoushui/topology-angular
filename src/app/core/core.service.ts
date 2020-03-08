@@ -522,13 +522,13 @@ export class CoreService {
   saveToken(data: { token: string }) {
     const options: any = {
       domain: document.domain
-        .split('.')
-        .slice(-2)
-        .join('.')
+        // .split('.')
+        // .slice(-2)
+        // .join('.')
     };
     const remember: any = localStorage.getItem('rememberMe');
     if (remember) {
-      // 1 year.
+      // 过期时间1 year.
       options.expires = 365;
     }
 

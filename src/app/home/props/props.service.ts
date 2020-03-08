@@ -28,7 +28,6 @@ export class PropsService {
     if (PropsService.images) {
       return PropsService.images;
     }
-
     if (!Store.get('user')) {
       return [];
     }

@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  token: 'token_dev',
+  token: 'token',
   urls: {
     account: ''
   }

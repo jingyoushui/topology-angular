@@ -106,5 +106,13 @@ export class CoreModule {
     Store.set('user', ret);
     console.log(Store.get('user'));
     // this.initWebsocket();
+
+
+    // 此处用来模拟登录，设置token,正常情况应该在登录模块
+    const data = {
+      // tslint:disable-next-line:max-line-length
+      token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI3ZjBjMjk5MzAxZGI0ZjcwYTUwN2ZmOTBkNmVkODFiYSJ9.Qf_MSePhL6DMq-P1ZiWkNWr-IYMfdpJohGIv2k9VB6Y'
+    };
+    this._coreService.saveToken(data);
   }
 }

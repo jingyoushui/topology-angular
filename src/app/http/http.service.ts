@@ -15,7 +15,7 @@ export class HttpService {
 
   QueryString(obj: any): HttpService {
     this.queryParams =
-      '' +
+      '?' +
       Object.keys(obj)
         .map(function(key) {
           if (obj[key] === undefined || obj[key] === null || obj[key] === '') {
@@ -33,7 +33,7 @@ export class HttpService {
           }
         })
         .join('&');
-    console.log('this.queryParams' + this.queryParams)
+    console.log('this.queryParams:' + this.queryParams);
     return this;
   }
 
