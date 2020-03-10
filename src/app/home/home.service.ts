@@ -22,7 +22,7 @@ export class HomeService {
     form.append('randomName', '1');
     form.append('public', shared + '');
     form.append('file', blob);
-    const ret = await this.http.PostForm('http://127.0.0.1:8210/image', form);
+    const ret = await this.http.PostForm('http://127.0.0.1:8210/upload_t_image', form);
     if (ret.error) {
       return null;
     }
@@ -31,7 +31,7 @@ export class HomeService {
   }
 
   async DelImage(image: string) {
-    const ret = await this.http.Delete('/api' + image);
+    const ret = await this.http.Delete('http://127.0.0.1:8210/delete_t_image/' + image);
     if (ret.error) {
       return false;
     }
@@ -62,7 +62,7 @@ export class HomeService {
       data.desc = data.name;
     }
     if (data.id) {
-      ret = await this.http.Put('http://127.0.0.1:8210/topology/save', data);
+      ret = await this.http.Post('http://127.0.0.1:8210/topology/save', data);
     } else {
       ret = await this.http.Post('http://127.0.0.1:8210/topology/save', data);
     }
@@ -76,7 +76,7 @@ export class HomeService {
 
   async Patch(data: any) {
     if (data.image) {
-      const retImage = await this.http.Patch('/api' + data.image, {
+      const retImage = await this.http.Patch('http://localhost:8210/blob/' + data.image, {
         public: data.shared
       });
       if (retImage.error) {
@@ -85,7 +85,7 @@ export class HomeService {
     }
 
     delete data.image;
-    const ret = await this.http.Patch('/api/user/topology', data);
+    const ret = await this.http.Patch('http://localhost:8210/topology/update', data);
     if (ret.error) {
       return false;
     }

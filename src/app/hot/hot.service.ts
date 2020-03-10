@@ -8,7 +8,7 @@ export class HotService {
   constructor(protected http: HttpService, protected coreService: CoreService) {}
 
   async Topologies(params: any) {
-    const ret = await this.http.QueryString(params).Get('/api/topologies');
+    const ret = await this.http.QueryString(params).Get('http://localhost:8210/topology/getShared');
     if (ret.error) {
       return {
         list: [],

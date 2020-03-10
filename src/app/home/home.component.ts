@@ -491,7 +491,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
     this.data.data = this.canvas.data;
     this.canvas.toImage(null, null, async blob => {
-      if (this.data.id && !this.coreService.isVip(this.user)) {
+      if (this.data.id) {
         if (!(await this.service.DelImage(this.data.image))) {
           return;
         }
@@ -511,7 +511,7 @@ export class HomeComponent implements OnInit, OnDestroy {
           body: '保存成功！',
           theme: 'success'
         });
-
+        // this.data.id = ret.id;
         if (!this.data.id || this.activateRoute.snapshot.queryParamMap.get('version')) {
           this.data.id = ret.id;
           this.router.navigate(['/workspace'], {queryParams: {id: this.data.id}});
@@ -689,13 +689,24 @@ export class HomeComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (
-      !(await this.service.Patch({
+    if ((await this.service.Patch({
         id: this.data.id,
         image: this.data.image,
         shared: !this.data.shared
       }))
     ) {
+      let str = '';
+      if (!this.data.shared) {
+        str = '分享成功';
+      } else {
+        str = '取消分享成功';
+      }
+      const _noticeService: NoticeService = new NoticeService();
+      _noticeService.notice({
+        body: str,
+        theme: 'success'
+      });
+    } else {
       return;
     }
 

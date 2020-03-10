@@ -6,7 +6,7 @@
     <div class="flex wrap">
       <div class="topo" *ngFor="let item of data.list" [title]="item.desc" (click)="onOpen(item)">
         <div class="image">
-          <img [src]="item.image" />
+          <img [src]="url + item.image" />
         </div>
         <div class="ph15 pv10">
           <div class="title line one" [title]="item.name">{{ item.name }}</div>

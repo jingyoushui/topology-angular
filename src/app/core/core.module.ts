@@ -111,7 +111,7 @@ export class CoreModule {
     // 此处用来模拟登录，设置token,正常情况应该在登录模块
     const data = {
       // tslint:disable-next-line:max-line-length
-      token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI3ZjBjMjk5MzAxZGI0ZjcwYTUwN2ZmOTBkNmVkODFiYSJ9.Qf_MSePhL6DMq-P1ZiWkNWr-IYMfdpJohGIv2k9VB6Y'
+      token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI3ZjBjMjk5MzAxZGI0ZjcwYTUwN2ZmOTBkNmVkODFiYSIsInN1YiI6IuadjuihjCJ9.Z-9M8BcYDccoJSDFdvaPKcMSdNdyyWsnglBl2gT8_Ic'
     };
     this._coreService.saveToken(data);
   }

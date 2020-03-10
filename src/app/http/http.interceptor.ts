@@ -24,7 +24,6 @@ export class AppHttpInterceptor implements HttpInterceptor {
     const authReq = req.clone({
       headers: req.headers.set('Authorization', Cookie.get(environment.token))
     });
-    console.log('http27:' + Cookie.get(environment.token))
     return next.handle(authReq).pipe(
       tap(
         // Succeeds when there is a response; ignore other events

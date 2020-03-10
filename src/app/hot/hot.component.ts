@@ -23,6 +23,7 @@ export class HotComponent implements OnInit, OnDestroy {
     list: [],
     count: 0
   };
+  url = 'http://localhost:8210/blob/'
   loading = true;
 
   subRoute: any;

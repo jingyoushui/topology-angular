@@ -148,7 +148,6 @@ export class AppComponent implements OnInit, OnDestroy {
 
   onMenu(menu: string, data?: any) {
     const isOpen = menu.indexOf('open') === 0;
-    console.log('data_app151' + data);
     if (!this.editMode && menu !== 'new' && !isOpen) {
       return;
     }
@@ -162,7 +161,6 @@ export class AppComponent implements OnInit, OnDestroy {
       this.router.navigate(['/workspace'], {
         queryParams
       });
-      console.log('queryParams_app164' + queryParams.id + '|' + queryParams.version );
     }
 
     setTimeout(
