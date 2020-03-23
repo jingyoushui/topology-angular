@@ -61,7 +61,7 @@ export class CoreModule {
 
   initWebsocket() {
     // 连接websocket
-    const wsUrl: string = (location.protocol === 'http:' ? 'ws://' : 'wss://') + 'localhost:8210' + '/ws';
+    const wsUrl: string = (location.protocol === 'http:' ? 'ws://' : 'wss://') + '/api' + '/ws';
     console.log('wsUrl:' + wsUrl);
     this.socket = new WebSocket(wsUrl);
     Store.set('socket', this.socket);
@@ -97,7 +97,15 @@ export class CoreModule {
   }
 
   async onProfile(): Promise<void> {
-    const ret = await this._httpService.Get('http://localhost:8210/user/profile');
+
+    // 此处用来模拟登录，设置token,正常情况应该在登录模块
+    const data = {
+      // tslint:disable-next-line:max-line-length
+      token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI3ZjBjMjk5MzAxZGI0ZjcwYTUwN2ZmOTBkNmVkODFiYSIsInN1YiI6IuadjuihjCJ9.Z-9M8BcYDccoJSDFdvaPKcMSdNdyyWsnglBl2gT8_Ic'
+    };
+    this._coreService.saveToken(data);
+
+    const ret = await this._httpService.Get('/api/user/profile');
     if (ret.error) {
       return;
     }
@@ -108,11 +116,6 @@ export class CoreModule {
     // this.initWebsocket();
 
 
-    // 此处用来模拟登录，设置token,正常情况应该在登录模块
-    const data = {
-      // tslint:disable-next-line:max-line-length
-      token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI3ZjBjMjk5MzAxZGI0ZjcwYTUwN2ZmOTBkNmVkODFiYSIsInN1YiI6IuadjuihjCJ9.Z-9M8BcYDccoJSDFdvaPKcMSdNdyyWsnglBl2gT8_Ic'
-    };
-    this._coreService.saveToken(data);
+
   }
 }

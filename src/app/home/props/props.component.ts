@@ -472,7 +472,7 @@ export class PropsComponent implements OnInit, OnChanges {
   ];
 
   constructor(private service: PropsService) {
-    this.getImages();
+    // this.getImages();
   }
 
   ngOnInit() {
@@ -522,7 +522,7 @@ export class PropsComponent implements OnInit, OnChanges {
   }
 
   async getImages() {
-    this.images = await this.service.GetImages();
+    // this.images = await this.service.GetImages();
   }
 
   ngOnChanges(changes: { [propertyName: string]: SimpleChange }) {

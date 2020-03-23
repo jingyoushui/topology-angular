@@ -8,7 +8,7 @@ export class HotService {
   constructor(protected http: HttpService, protected coreService: CoreService) {}
 
   async Topologies(params: any) {
-    const ret = await this.http.QueryString(params).Get('http://localhost:8210/topology/getShared');
+    const ret = await this.http.QueryString(params).Get('/api/topology/getShared');
     if (ret.error) {
       return {
         list: [],
@@ -22,9 +22,9 @@ export class HotService {
   async Star(data: any) {
     let ret: any;
     if (data.stared) {
-      ret = await this.http.Delete('/api/user/star/' + data.id);
+      ret = await this.http.Delete('/api/star/deleteStar/' + data.id);
     } else {
-      ret = await this.http.Post('/api/user/star', { id: data.id });
+      ret = await this.http.Post('/api/star/saveStar', { id: data.id });
     }
 
     if (ret.error) {

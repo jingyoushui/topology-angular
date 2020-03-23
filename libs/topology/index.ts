@@ -1386,7 +1386,7 @@ export class Topology {
     canvas.style.height = rect.height + 'px';
     const ctx = canvas.getContext('2d');
     if (type && type !== 'image/png') {
-      ctx.fillStyle = 'white';
+      ctx.fillStyle = '#ffffffff';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
     ctx.drawImage(

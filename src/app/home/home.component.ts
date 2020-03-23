@@ -58,7 +58,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   data = {
     id: '',
     version: '',
-    data: {nodes: [], lines: []},
+    data: {nodes: [], lines: [], bkColor: '#ffffffff'},
     name: '空白文件',
     desc: '',
     image: '',
@@ -78,6 +78,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   locked = false;
 
   editFilename = false;
+  editFiledesc = false;
 
   divNode: any;
 
@@ -216,7 +217,7 @@ export class HomeComponent implements OnInit, OnDestroy {
           this.data = {
             id: '',
             version: '',
-            data: {nodes: [], lines: []},
+            data: {nodes: [], lines: [], bkColor: '#ffffffff'},
             name: '空白文件',
             desc: '',
             image: '',
@@ -317,10 +318,12 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   onNew() {
+    // @ts-ignore
+    // @ts-ignore
     this.data = {
       id: '',
       version: '',
-      data: {nodes: [], lines: []},
+      data: {nodes: [], lines: [], bkColor: '#ffffffff'},
       name: '空白文件',
       desc: '',
       image: '',
@@ -534,6 +537,13 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
   }
 
+  onEditFileDesc(input: HTMLElement) {
+    this.editFiledesc = true;
+    setTimeout(() => {
+      input.focus();
+    });
+  }
+
   async onSaveFilename() {
     if (!this.data.name) {
       return;
@@ -549,6 +559,24 @@ export class HomeComponent implements OnInit, OnDestroy {
       name: this.data.name
     })) {
       this.editFilename = false;
+    }
+  }
+
+  async onSaveFiledesc() {
+    if (!this.data.desc) {
+      return;
+    }
+
+    if (!this.data.id) {
+      this.editFiledesc = false;
+      return;
+    }
+
+    if (await this.service.Patch({
+      id: this.data.id,
+      desc: this.data.desc
+    })) {
+      this.editFiledesc = false;
     }
   }
 
@@ -610,7 +638,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     const _noticeService: NoticeService = new NoticeService();
     _noticeService.notice({
       body: '正在下载打包中，可能需要几分钟，请耐心等待...',
-      theme: 'success'
+      theme: 'success',
     });
 
     const data = this.canvas.data;

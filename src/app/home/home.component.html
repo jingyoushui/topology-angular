@@ -16,8 +16,8 @@
   </div>
   <div class="full">
     <div class="canvas" #workspace (contextmenu)="onContextMenu($event)"></div>
-    <div class="flex ph15 pv5">
-      <div class="full flex">
+    <div class="flex ph15 pv5" >
+      <div style="width: 30%;" >
         文件名：
         <label *ngIf="!editFilename" (dblclick)="onEditFile(filenameInput)" title="双击编辑，点击空白保存">{{data.name}}</label>
         <form class="inline" [class.hidden]="!editFilename" #myForm="ngForm" [uiTouchForm]="myForm" title="双击编辑，点击空白保存">
@@ -26,6 +26,16 @@
         </form>
         <i class="iconfont icon-edit" *ngIf="!editFilename" (click)="onEditFile(filenameInput)" title="双击编辑，点击空白保存"></i>
       </div>
+      <div class="full flex">
+        文件描述：
+        <label *ngIf="!editFilename" (dblclick)="onEditFileDesc(filedescInput)" title="双击编辑，点击空白保存">{{data.desc}}</label>
+        <form class="inline" [class.hidden]="!editFiledesc" #myForm="ngForm" [uiTouchForm]="myForm" title="双击编辑，点击空白保存">
+          <input name="filedesc" #filedescInput class="input" [(ngModel)]="data.desc" (blur)="onSaveFiledesc()"
+                 required/>
+        </form>
+        <i class="iconfont icon-edit" *ngIf="!editFiledesc" (click)="onEditFileDesc(filedescInput)" title="双击编辑，点击空白保存"></i>
+      </div>
+
       <div *ngIf="data.id">
         <a routerLink="/user/history" [queryParams]="{ id: data.id, name: data.name }">-> 文件历史</a>
       </div>
