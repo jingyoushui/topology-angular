@@ -19,6 +19,14 @@ export class Offscreen extends Canvas {
 
     const ctx = this.canvas.getContext('2d');
     ctx.strokeStyle = this.options.color;
+    const w = this.width / 3;
+    const h = this.height;
+    ctx.fillStyle = '#E9E9E9';
+    ctx.fillRect(0, 25, w, h);
+    ctx.fillStyle = '#F3F3F3';
+    ctx.fillRect(w, 25, w * 2 , h);
+    ctx.fillStyle = '#E9E9EE';
+    ctx.fillRect(2 * w, 25, 3 * w, h);
 
     this.renderNodes();
     this.renderLines();

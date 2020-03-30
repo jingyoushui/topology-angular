@@ -1,4 +1,6 @@
 
+// @ts-ignore
+// @ts-ignore
 export const Tools = [
   {
     group: '基本形状',
@@ -6,6 +8,10 @@ export const Tools = [
       {
         name: 'rectangle',
         icon: 'icon-rect',
+        style: {
+          width: '40px',
+          height: '40px',
+        },
         data: {
           text: '正方形',
           rect: {
@@ -22,6 +28,10 @@ export const Tools = [
       {
         name: 'rectangle',
         icon: 'icon-rectangle',
+        style: {
+          width: '40px',
+          height: '40px',
+        },
         data: {
           text: '圆角矩形',
           rect: {
@@ -39,6 +49,10 @@ export const Tools = [
       {
         name: 'circle',
         icon: 'icon-circle',
+        style: {
+          width: '40px',
+          height: '40px',
+        },
         data: {
           text: '圆',
           rect: {
@@ -52,6 +66,10 @@ export const Tools = [
       {
         name: 'triangle',
         icon: 'icon-triangle',
+        style: {
+          width: '40px',
+          height: '40px',
+        },
         data: {
           text: '三角形',
           rect: {
@@ -64,6 +82,10 @@ export const Tools = [
       {
         name: 'message',
         icon: 'icon-msg',
+        style: {
+          width: '40px',
+          height: '40px',
+        },
         data: {
           text: '消息框',
           rect: {
@@ -80,6 +102,10 @@ export const Tools = [
       {
         name: 'text',
         icon: 'icon-text',
+        style: {
+          width: '40px',
+          height: '40px',
+        },
         data: {
           text: '工业布线画图软件',
           rect: {
@@ -92,6 +118,10 @@ export const Tools = [
       {
         name: 'image',
         icon: 'icon-image',
+        style: {
+          width: '40px',
+          height: '40px',
+        },
         data: {
           text: '',
           rect: {
@@ -105,6 +135,10 @@ export const Tools = [
       {
         name: 'cube',
         icon: 'icon-cube',
+        style: {
+          width: '40px',
+          height: '40px',
+        },
         data: {
           rect: {
             width: 50,
@@ -121,22 +155,49 @@ export const Tools = [
   {
     group: '分线盒产品',
     children: [
+      // {
+      //   name: '分线板',
+      //   img: '/assets/img/tools/fenxianban.png',
+      //   style: {
+      //     width: '30px',
+      //     height: '70px',
+      //   },
+      //   data: {
+      //     text: '分线板',
+      //     rect: {
+      //       width: 60,
+      //       height: 190
+      //     },
+      //     image: '/assets/img/tools/fenxianban.png',
+      //     // name: 'fenXianHe'
+      //     name: 'branchbox',
+      //     attribute: {
+      //       productName: '出线式分线盒',
+      //       channelType: 0,
+      //       signalType: 0,
+      //       portType: 0,
+      //       feature: 0,
+      //       configuration: 0,
+      //       modelsType: 'g',
+      //       }
+      //   }
+      // },
       {
-        name: '分线板',
-        img: '/assets/img/tools/fenxianban.png',
+        name: '分线盒',
+        img: '/assets/img/tools/fenxianhe_y.png',
         style: {
           width: '30px',
-          height: '70px',
+          height: '110px',
         },
         data: {
-          text: '分线板',
+          text: '',
           rect: {
-            width: 60,
-            height: 190
+            width: 230,
+            height: 50
           },
-          image: '/assets/img/tools/fenxianban.png',
+          image: '/assets/img/tools/fenxianhe.png',
           // name: 'fenXianHe'
-          name: 'branchbox',
+          name: 'fenxianhe',
           attribute: {
             productName: '出线式分线盒',
             channelType: 0,
@@ -148,72 +209,106 @@ export const Tools = [
             }
         }
       },
-      {
-        name: '分线盒',
-        img: '/assets/img/tools/fenxianhe.png',
-        style: {
-          width: '30px',
-          height: '70px',
-        },
-        data: {
-          text: '分线盒',
-          rect: {
-            width: 60,
-            height: 190
-          },
-          image: '/assets/img/tools/fenxianhe.png',
-          // name: 'fenXianHe'
-          name: 'image',
-        }
-      },
-      {
-        name: 'Sprider67模块',
-        img: '/assets/img/tools/spider67.png',
-        style: {
-          width: '30px',
-          height: '70px',
-        },
-        data: {
-          text: 'Sprider67模块',
-          rect: {
-            width: 60,
-            height: 190
-          },
-          image: '/assets/img/tools/spider67.png',
-          // name: 'fenXianHe'
-          name: 'sprider67',
-        }
-      },
 
+
+    ]
+  },
+  {
+    group: '终端产品',
+    children: [
+      {
+        name: '急停按钮',
+        img: '/assets/img/tools/jitingButton.png',
+        style: {
+          width: '37px',
+          height: '60px',
+        },
+        data: {
+          text: '急停按钮',
+          rect: {
+            width: 50,
+            height: 90
+          },
+          image: '/assets/img/tools/jitingButton.png',
+          name: 'jitingButton',
+        }
+      },
+      {
+        name: '急停按钮',
+        img: '/assets/img/tools/jitingButton2.png',
+        style: {
+          width: '37px',
+          height: '60px',
+          padding: '0 0 0 6px'
+        },
+        data: {
+          text: '急停按钮',
+          rect: {
+            width: 70,
+            height: 90
+          },
+          image: '/assets/img/tools/jitingButton2.png',
+          name: 'jitingButton2',
+        }
+      },
+      {
+        name: 'OK/NG显示',
+        img: '/assets/img/tools/OKNG.png',
+        style: {
+          width: '37px',
+          height: '60px',
+          padding: '0 0 0 6px'
+        },
+        data: {
+          text: 'OK/NG显示',
+          rect: {
+            width: 50,
+            height: 90
+          },
+          image: '/assets/img/tools/OKNG.png',
+          name: 'OKNG',
+        }
+      },
+      {
+        name: '吹气中继',
+        img: '/assets/img/tools/zhongji.png',
+        style: {
+          width: '37px',
+          height: '60px',
+          padding: '0 0 0 6px'
+        },
+        data: {
+          text: '吹气中继',
+          rect: {
+            width: 50,
+            height: 90
+          },
+          image: '/assets/img/tools/zhongji.png',
+          name: 'zhongji',
+        }
+      },
     ]
   },
   {
     group: '法兰连接器产品',
     children: [
       {
-        name: '电源T型分支',
-        img: '/assets/img/tools/T.png',
+        name: '法兰式连接器',
+        img: '/assets/img/tools/flangeCouplingConnector.png',
         style: {
-          width: '30px',
-          height: '20px',
+          width: '37px',
+          height: '60px',
         },
         data: {
-          text: 'T型分支',
+          text: '法兰式连接器',
           rect: {
-            width: 40,
-            height: 30
+            width: 80,
+            height: 110
           },
-          image: '/assets/img/tools/T.png',
-          name: 't',
+          image: '/assets/img/tools/flangeCouplingConnector.png',
+          name: 'flangeCouplingConnector',
         }
       },
-
-    ]
-  },
-  {
-    group: 'I/O预注连接器',
-    children: [
-
     ]
   },
   {

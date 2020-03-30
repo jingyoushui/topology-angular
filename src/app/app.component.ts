@@ -28,7 +28,7 @@ export class AppComponent implements OnInit, OnDestroy {
   };
   lineName = 'curve';
   fromArrowType = '';
-  toArrowType = 'triangleSolid';
+  toArrowType = '';
 
   lineNames = [{
     name: '曲线',
@@ -40,10 +40,16 @@ export class AppComponent implements OnInit, OnDestroy {
     name: '直线',
     value: 'line'
   }];
-  arrowTypes = [
+  from_arrowTypes = [
     '',
     'line',
-    'imageSolid',
+    'leftASolid'
+  ];
+  to_arrowTypes = [
+    '',
+    'line',
+    'rightASolid',
+    'rightBSolid'
   ];
 
   menuClicked = false;

@@ -7,7 +7,7 @@ export class TopologyData {
   lines: Line[] = [];
   lineName = 'curve';
   fromArrowType = '';
-  toArrowType = 'triangleSolid';
+  toArrowType = '';
   scale = 1;
   bkImage: string;
   bkColor = '#ffffffff';
@@ -24,7 +24,7 @@ export class TopologyData {
       }
       this.lineName = json.lineName || 'curve';
       this.fromArrowType = json.fromArrowType || '';
-      this.toArrowType = json.toArrowType || 'triangleSolid';
+      this.toArrowType = json.toArrowType || '';
       this.scale = json.scale || 1;
       this.locked = json.locked || Lock.None;
       this.bkImage = json.bkImage;

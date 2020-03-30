@@ -1,6 +1,6 @@
 import { Point } from '../../models/point';
 
-export function imageSolid(ctx: CanvasRenderingContext2D, from: Point, to: Point, size: number, fillStyle?: string) {
+export function rightASolid(ctx: CanvasRenderingContext2D, from: Point, to: Point, size: number, fillStyle?: string) {
   size += ctx.lineWidth * 3;
   const r = size / 2;
   if (ctx.lineWidth < 2) {
@@ -9,9 +9,10 @@ export function imageSolid(ctx: CanvasRenderingContext2D, from: Point, to: Point
   ctx.translate(to.x, to.y);
   ctx.rotate(Math.atan2(to.y - from.y, to.x - from.x));
   const img = new Image();
-  img.src = 'assets/img/tools/xiantou.png';
+  img.src = 'assets/img/tools/rightA.png';
+  // img.setAttribute('crossorigin', 'anonymous'); // 注意设置图片跨域应该在图片加载之前
   img.crossOrigin = 'anonymous';
-  ctx.drawImage(img, 0 - 20, 0 - 8);
+  ctx.drawImage(img, 0 - 35 , 0 - 6);
   ctx.stroke();
   // ctx.rotate(90 * Math.PI / 180 );
   if (fillStyle) {
@@ -21,5 +22,5 @@ export function imageSolid(ctx: CanvasRenderingContext2D, from: Point, to: Point
 }
 
 export function image(ctx: CanvasRenderingContext2D, from: Point, to: Point, size: number) {
-  imageSolid(ctx, from, to, size, '#fff');
+  rightASolid(ctx, from, to, size, '#fff');
 }

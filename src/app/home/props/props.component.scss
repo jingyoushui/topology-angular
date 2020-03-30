@@ -102,10 +102,10 @@
   }
 
   a {
-    .from-imageSolid {
-      width: 65px;height: 20px;
+    .from-leftASolid {
+      width: 40px;height: 20px;
       display: inline-block;
-      background: url("../../../assets/img/tools/xiantou1.png") no-repeat;
+      background: url("../../../assets/img/tools/leftA.png") no-repeat;
       -moz-transform:rotate(180deg);
       -webkit-transform:rotate(180deg);
       transform:rotate(180deg);
@@ -113,10 +113,16 @@
       background-position: center center;
 
     }
-    .to-imageSolid {
-      width: 65px;height: 20px;
+    .to-rightASolid {
+      width: 45px;height: 20px;
       display: inline-block;
-      background: url("../../../assets/img/tools/xiantou1.png") no-repeat;
+      background: url("../../../assets/img/tools/rightA.png") no-repeat;
+      background-position: center center;
+    }
+    .to-rightBSolid {
+      width: 45px;height: 20px;
+      display: inline-block;
+      background: url("../../../assets/img/tools/rightB.png") no-repeat;
       background-position: center center;
     }
   }

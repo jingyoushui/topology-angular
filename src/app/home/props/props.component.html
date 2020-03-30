@@ -290,8 +290,8 @@
         </div>
       </div>
       <div class="flex grid mt5">
-        <div class="mr5">起点箭头</div>
-        <div>终点箭头</div>
+        <div class="mr5">起点接头</div>
+        <div>终点接头</div>
       </div>
       <div class="flex grid">
         <div class="mr5">
@@ -313,9 +313,9 @@
                   </g>
                 </svg>
               </div>
-              <div class="icon-item" [class.hidden]="props.data.fromArrow !== 'imageSolid'">
+              <div class="icon-item" [class.hidden]="props.data.fromArrow !== 'leftASolid'">
                 <a>
-                <i class="from-imageSolid"></i>
+                <i class="from-leftASolid"></i>
                 </a>
               </div>
             </div>
@@ -336,9 +336,9 @@
                   </g>
                 </svg>
               </div>
-              <div class="icon-item ph10 pv5" (click)="onClickFromArrow('imageSolid')">
+              <div class="icon-item ph10 pv5" (click)="onClickFromArrow('leftASolid')">
                 <a>
-                  <i class="from-imageSolid"></i>
+                  <i class="from-leftASolid"></i>
                 </a>
               </div>
             </div>
@@ -363,9 +363,14 @@
                   </g>
                 </svg>
               </div>
-              <div class="icon-item" [class.hidden]="props.data.toArrow !== 'imageSolid'">
+              <div class="icon-item" [class.hidden]="props.data.toArrow !== 'rightASolid'">
                 <a>
-                  <i class="to-imageSolid"></i>
+                  <i class="to-rightASolid"></i>
+                </a>
+              </div>
+              <div class="icon-item" [class.hidden]="props.data.toArrow !== 'rightBSolid'">
+                <a>
+                  <i class="to-rightBSolid"></i>
                 </a>
               </div>
             </div>
@@ -386,49 +391,54 @@
                   </g>
                 </svg>
               </div>
-              <div class="icon-item ph10 pv5" (click)="onClickToArrow('imageSolid')">
+              <div class="icon-item ph10 pv5" (click)="onClickToArrow('rightASolid')">
                 <a>
-                  <i class="to-imageSolid"></i>
+                  <i class="to-rightASolid"></i>
+                </a>
+              </div>
+              <div class="icon-item ph10 pv5" (click)="onClickToArrow('rightBSolid')">
+                <a>
+                  <i class="to-rightBSolid"></i>
                 </a>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="flex grid mt5">
-        <div class="mr5">起点箭头颜色</div>
-        <div>终点箭头颜色</div>
-      </div>
-      <div class="flex grid">
-        <div class="input color mr5" [class.readonly]="readonly">
-          <i [(colorPicker)]="props.data.fromArrowColor" [style.background]="props.data.fromArrowColor"
-            cpPosition="bottom" cpAlphaChannel="always" cpOutputFormat="hex" [cpPresetColors]="cpPresetColors"
-            (colorPickerChange)="onChangeProp(false)"></i>
-          <input name="fromArrowColor" [(ngModel)]="props.data.fromArrowColor" [readonly]="readonly"
-            (change)="onChangeProp()" />
-        </div>
-        <div class="input color " [class.readonly]="readonly">
-          <i [(colorPicker)]="props.data.toArrowColor" [style.background]="props.data.toArrowColor" cpPosition="bottom"
-            cpAlphaChannel="always" cpOutputFormat="hex" [cpPresetColors]="cpPresetColors"
-            (colorPickerChange)="onChangeProp(false)"></i>
-          <input name="toArrowColor" [(ngModel)]="props.data.toArrowColor" [readonly]="readonly"
-            (change)="onChangeProp()" />
-        </div>
-      </div>
-      <div class="flex grid mt5">
-        <div class="mr5">起点箭头大小</div>
-        <div>终点箭头大小</div>
-      </div>
-      <div class="flex grid mt5">
-        <div class="mr5">
-          <input type="number" name="fromArrowSize" class="input" [(ngModel)]="props.data.fromArrowSize" [uiMin]="1"
-            [uiMax]="100" [readonly]="readonly" (change)="onChangeProp()" />
-        </div>
-        <div>
-          <input type="number" name="toArrowSize" class="input" [(ngModel)]="props.data.toArrowSize" [uiMin]="1"
-            [uiMax]="100" [readonly]="readonly" (change)="onChangeProp()" />
-        </div>
-      </div>
+<!--      <div class="flex grid mt5">-->
+<!--        <div class="mr5">起点箭头颜色</div>-->
+<!--        <div>终点箭头颜色</div>-->
+<!--      </div>-->
+<!--      <div class="flex grid">-->
+<!--        <div class="input color mr5" [class.readonly]="readonly">-->
+<!--          <i [(colorPicker)]="props.data.fromArrowColor" [style.background]="props.data.fromArrowColor"-->
+<!--            cpPosition="bottom" cpAlphaChannel="always" cpOutputFormat="hex" [cpPresetColors]="cpPresetColors"-->
+<!--            (colorPickerChange)="onChangeProp(false)"></i>-->
+<!--          <input name="fromArrowColor" [(ngModel)]="props.data.fromArrowColor" [readonly]="readonly"-->
+<!--            (change)="onChangeProp()" />-->
+<!--        </div>-->
+<!--        <div class="input color " [class.readonly]="readonly">-->
+<!--          <i [(colorPicker)]="props.data.toArrowColor" [style.background]="props.data.toArrowColor" cpPosition="bottom"-->
+<!--            cpAlphaChannel="always" cpOutputFormat="hex" [cpPresetColors]="cpPresetColors"-->
+<!--            (colorPickerChange)="onChangeProp(false)"></i>-->
+<!--          <input name="toArrowColor" [(ngModel)]="props.data.toArrowColor" [readonly]="readonly"-->
+<!--            (change)="onChangeProp()" />-->
+<!--        </div>-->
+<!--      </div>-->
+<!--      <div class="flex grid mt5">-->
+<!--        <div class="mr5">起点箭头大小</div>-->
+<!--        <div>终点箭头大小</div>-->
+<!--      </div>-->
+<!--      <div class="flex grid mt5">-->
+<!--        <div class="mr5">-->
+<!--          <input type="number" name="fromArrowSize" class="input" [(ngModel)]="props.data.fromArrowSize" [uiMin]="1"-->
+<!--            [uiMax]="100" [readonly]="readonly" (change)="onChangeProp()" />-->
+<!--        </div>-->
+<!--        <div>-->
+<!--          <input type="number" name="toArrowSize" class="input" [(ngModel)]="props.data.toArrowSize" [uiMin]="1"-->
+<!--            [uiMax]="100" [readonly]="readonly" (change)="onChangeProp()" />-->
+<!--        </div>-->
+<!--      </div>-->
     </div>
     <div class="group">
       <div class="title">外观</div>

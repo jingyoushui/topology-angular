@@ -8,7 +8,7 @@ export abstract class Pen {
   name = '';
   tags: string[] = [];
   rect: Rect = new Rect(0, 0, 0, 0);
-  lineWidth = 5;
+  lineWidth = 3;
   rotate = 0;
   offsetRotate = 0;
   globalAlpha = 1;

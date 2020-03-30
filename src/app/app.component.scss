@@ -28,10 +28,10 @@ $color-border: #ddd;
         line-height: 0.28rem;
         padding: 0;
       }
-      .icon-from-imageSolid {
+      .icon-from-leftASolid {
         width: 30px;height: 30px;
         display: inline-block;
-        background: url("http://localhost:3200/assets/img/tools/xiantou.png") no-repeat;
+        background: url("../assets/img/tools/leftA.png") no-repeat;
         -moz-transform:rotate(180deg);
         -webkit-transform:rotate(180deg);
         transform:rotate(180deg);
@@ -39,10 +39,17 @@ $color-border: #ddd;
         background-position: center center;
 
       }
-      .icon-to-imageSolid {
+
+      .icon-to-rightASolid {
         width: 30px;height: 30px;
         display: inline-block;
-        background: url("../assets/img/tools/xiantou.png") no-repeat;
+        background: url("../assets/img/tools/rightA.png") no-repeat;
+        background-position: center center;
+      }
+      .icon-to-rightBSolid {
+        width: 30px;height: 30px;
+        display: inline-block;
+        background: url("../assets/img/tools/rightB.png") no-repeat;
         background-position: center center;
       }
 

@@ -37,7 +37,9 @@ import { triangleSolid, triangle as arrowTriangle } from './arrows/triangle';
 import { diamondSolid, diamond as arrowDiamond } from './arrows/diamond';
 import { circleSolid, circle as arrowCircle } from './arrows/circle';
 import {imageSolid} from './arrows/image';
-import {tou1Solid, tou1} from './arrows/tou1';
+import {leftASolid} from './arrows/leftA';
+import {rightASolid} from './arrows/rightA';
+import {rightBSolid} from './arrows/rightB';
 
 import { circleAnchors } from './nodes/circle.anchor';
 import { lineUp, lineDown, line as arrowLine } from './arrows/line';
@@ -58,10 +60,11 @@ import { messageIconRect, messageTextRect } from './nodes/message.rect';
 import { messageAnchors } from './nodes/message.anchor';
 import { file } from './nodes/file';
 import { imageIconRect, imageTextRect } from './nodes/image.rect';
-import {branchboxAnchors} from './nodes/branch/branchbox.anchor';
-import {tIconRect, tTextRect} from './nodes/t.rect';
-import {sprider67Anchors} from './nodes/branch/sprider67.anchor';
-import {tAnchors} from './nodes/t.anchor';
+
+import {fenXianHeAnchors} from './nodes/branch/fenxianhe.anchor';
+import {jitingButtonAnchors} from './nodes/branch/jitingButton.anchor';
+import {flangeCouplingConnectorAnchors} from './nodes/branch/flangeCouplingConnector.anchor';
+
 import { cube } from './nodes/cube';
 import { cubeAnchors } from './nodes/cube.anchor';
 import { cubeIconRect, cubeTextRect } from './nodes/cube.rect';
@@ -180,22 +183,48 @@ function init() {
   iconRectFns.image = imageIconRect;
   textRectFns.image = imageTextRect;
 
-  // branchbox
-  drawNodeFns.branchbox = (ctx: CanvasRenderingContext2D, node: Rect) => { };
-  iconRectFns.branchbox = imageIconRect;
-  textRectFns.branchbox = imageTextRect;
-  anchorsFns.branchbox = branchboxAnchors;
+  // // branchbox
+  // drawNodeFns.branchbox = (ctx: CanvasRenderingContext2D, node: Rect) => { };
+  // iconRectFns.branchbox = imageIconRect;
+  // textRectFns.branchbox = imageTextRect;
+  // anchorsFns.branchbox = branchboxAnchors;
 
-  // t
-  drawNodeFns.t = (ctx: CanvasRenderingContext2D, node: Rect) => { };
-  iconRectFns.t = tIconRect;
-  textRectFns.t = tTextRect;
-  anchorsFns.t = tAnchors;
-  // sprider67
-  drawNodeFns.sprider67 = (ctx: CanvasRenderingContext2D, node: Rect) => { };
-  iconRectFns.sprider67 = imageIconRect;
-  textRectFns.sprider67 = imageTextRect;
-  anchorsFns.sprider67 = sprider67Anchors;
+  // 分线盒fenxianhe
+  drawNodeFns.fenxianhe = (ctx: CanvasRenderingContext2D, node: Rect) => { };
+  iconRectFns.fenxianhe = imageIconRect;
+  textRectFns.fenxianhe = imageTextRect;
+  anchorsFns.fenxianhe = fenXianHeAnchors;
+
+  // 急停按钮
+  drawNodeFns.jitingButton = (ctx: CanvasRenderingContext2D, node: Rect) => { };
+  iconRectFns.jitingButton = imageIconRect;
+  textRectFns.jitingButton = imageTextRect;
+  anchorsFns.jitingButton = jitingButtonAnchors;
+
+  // 急停按钮2
+  drawNodeFns.jitingButton2 = (ctx: CanvasRenderingContext2D, node: Rect) => { };
+  iconRectFns.jitingButton2 = imageIconRect;
+  textRectFns.jitingButton2 = imageTextRect;
+  anchorsFns.jitingButton2 = jitingButtonAnchors;
+
+  // 吹气中继
+  drawNodeFns.zhongji = (ctx: CanvasRenderingContext2D, node: Rect) => { };
+  iconRectFns.zhongji = imageIconRect;
+  textRectFns.zhongji = imageTextRect;
+  anchorsFns.zhongji = jitingButtonAnchors;
+
+  // OK/NG显示
+  drawNodeFns.OKNG = (ctx: CanvasRenderingContext2D, node: Rect) => { };
+  iconRectFns.OKNG = imageIconRect;
+  textRectFns.OKNG = imageTextRect;
+  anchorsFns.OKNG = jitingButtonAnchors;
+
+  // 法兰式连接器
+  drawNodeFns.flangeCouplingConnector = (ctx: CanvasRenderingContext2D, node: Rect) => { };
+  iconRectFns.flangeCouplingConnector = imageIconRect;
+  textRectFns.flangeCouplingConnector = imageTextRect;
+  anchorsFns.flangeCouplingConnector = flangeCouplingConnectorAnchors;
+
   // Cube
   drawNodeFns.cube = cube;
   anchorsFns.cube = cubeAnchors;
@@ -247,13 +276,14 @@ function init() {
   drawArrowFns.circle = arrowCircle;
 
   drawArrowFns.imageSolid = imageSolid;
+  drawArrowFns.leftASolid = leftASolid;
+  drawArrowFns.rightASolid = rightASolid;
+  drawArrowFns.rightBSolid = rightBSolid;
 
   drawArrowFns.line = arrowLine;
   drawArrowFns.lineUp = lineUp;
   drawArrowFns.lineDown = lineDown;
 
-  drawArrowFns.tou1 = tou1;
-  drawArrowFns.tou1Solid = tou1Solid;
   // ********end********
 }
 init();

@@ -30,8 +30,8 @@ export class HotComponent implements OnInit, OnDestroy {
   constructor(private service: HotService, private router: Router, private activateRoute: ActivatedRoute) {}
 
   ngOnInit() {
-    const data = Store.get('hots');
 
+    const data = Store.get('hots');
     this.subRoute = this.activateRoute.queryParamMap.subscribe(params => {
       this.search.pageIndex = +params.get('pageIndex') || 1;
       this.search.pageCount = +params.get('pageCount') || 8;
