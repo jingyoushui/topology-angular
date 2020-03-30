@@ -6,6 +6,12 @@ export class Rect {
   ey: number;
   center: Point = new Point(0, 0);
   constructor(public x: number, public y: number, public width: number, public height: number) {
+    if (width < 0) {
+      width = 0;
+    }
+    if (height < 0) {
+      height = 0;
+    }
     this.ex = this.x + this.width;
     this.ey = this.y + this.height;
     this.calceCenter();
@@ -71,14 +77,27 @@ export class Rect {
     ];
   }
 
-  scale(scale: number, center?: Point) {
+  translate(x: number, y: number) {
+    this.x += x;
+    this.y += y;
+    this.ex += x;
+    this.ey += y;
+    this.calceCenter();
+  }
+
+  scale(scale: number, center?: Point, scaleY?: number) {
     if (!center) {
       center = this.center;
     }
+
+    if (scaleY === undefined) {
+      scaleY = scale;
+    }
+
     this.x = center.x - (center.x - this.x) * scale;
-    this.y = center.y - (center.y - this.y) * scale;
+    this.y = center.y - (center.y - this.y) * scaleY;
     this.width *= scale;
-    this.height *= scale;
+    this.height *= scaleY;
     this.ex = this.x + this.width;
     this.ey = this.y + this.height;
     this.calceCenter();

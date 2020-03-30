@@ -77,6 +77,7 @@ export class Node extends Pen {
     marginBottom?: number | string;
     marginLeft?: number | string;
     rotate: number;
+    rect?: Rect;
   };
   // Can selected as child.
   stand: boolean;
@@ -106,15 +107,16 @@ export class Node extends Pen {
   nextPlay: string;
 
   iframe: string;
-  // 加载外部dom id
+  // 和节点绑定的（多是临时生成）的dom元素
   elementId: string;
   // 外部dom是否完成初始化（用于第三方库辅助变量）
   elementLoaded: any;
   // 外部dom是否已经渲染。当需要重绘时，设置为false（用于第三方库辅助变量）
   elementRendered: boolean;
 
-  constructor(json: any) {
+  constructor(json: any, noChild = false) {
     super(json);
+
     this.is3D = json.is3D;
     this.z = json.z;
     this.zRotate = json.zRotate || 0;
@@ -194,7 +196,7 @@ export class Node extends Pen {
       this.animateFrames = json.animateFrames;
       for (const item of this.animateFrames) {
         if (!item.state.init) {
-          item.state = new Node(item.state);
+          item.state = new Node(item.state, true);
         }
       }
     }
@@ -212,7 +214,11 @@ export class Node extends Pen {
 
     this.init();
 
-    this.setChild(json.children);
+    if (!noChild) {
+      this.setChild(json.children);
+    } else {
+      this.children = null;
+    }
   }
 
   static cloneState(json: any) {
@@ -318,7 +324,17 @@ export class Node extends Pen {
     if (!this.rectInParent.rotate) {
       this.rectInParent.rotate = 0;
     }
-    this.rotate = this.rectInParent.rotate + parent.rotate + parent.offsetRotate;
+
+    const offsetR = parent.rotate + parent.offsetRotate;
+    this.rotate = this.rectInParent.rotate + offsetR;
+
+    if (!this.rectInParent.rect) {
+      this.rectInParent.rect = this.rect.clone();
+    }
+
+    // const oldCenter = this.rectInParent.rect.center.clone();
+    // const newCenter = this.rectInParent.rect.center.clone().rotate(offsetR, parent.rect.center);
+    // this.rect.translate(newCenter.x - oldCenter.x, newCenter.y - oldCenter.y);
   }
 
   draw(ctx: CanvasRenderingContext2D) {
@@ -367,6 +383,8 @@ export class Node extends Pen {
       from.rotate(this.gradientAngle, this.rect.center);
       to.rotate(this.gradientAngle, this.rect.center);
     }
+
+    // contributor: https://github.com/sunnyguohua/topology
     const grd = ctx.createLinearGradient(from.x, from.y, to.x, to.y);
     grd.addColorStop(0, this.gradientFromColor);
     grd.addColorStop(1, this.gradientToColor);
@@ -538,7 +556,8 @@ export class Node extends Pen {
       y: ((this.rect.y - parent.rect.y) / parent.rect.height) * 100 + '%',
       width: (this.rect.width / parent.rect.width) * 100 + '%',
       height: (this.rect.height / parent.rect.height) * 100 + '%',
-      rotate: this.rotate
+      rotate: this.rotate,
+      rect: this.rect.clone()
     };
   }
 
@@ -696,6 +715,7 @@ export class Node extends Pen {
       }
     }
 
+    this.elementRendered = false;
     this.init();
 
     if (this.children) {

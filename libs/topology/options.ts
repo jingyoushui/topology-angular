@@ -1,3 +1,11 @@
+export enum KeyType {
+  CtrlOrAlt,
+  None,
+  Ctrl,
+  Shift,
+  Alt
+}
+
 export interface Options {
   extDpiRatio?: number;
   width?: string | number;
@@ -18,10 +26,14 @@ export interface Options {
   rotateCursor?: string;
   hideInput?: boolean;
   hideRotateCP?: boolean;
+  hideSizeCP?: boolean;
   disableEmptyLine?: boolean;
+  disableScale?: boolean;
   playIcon?: string;
   pauseIcon?: string;
   fullScreenIcon?: string;
   loopIcon?: string;
+  translateKey?: KeyType;
+  scaleKey?: KeyType;
   on?: (event: string, data: any) => void;
 }

@@ -8,7 +8,7 @@ export abstract class Pen {
   name = '';
   tags: string[] = [];
   rect: Rect = new Rect(0, 0, 0, 0);
-  lineWidth = 3;
+  lineWidth = 1;
   rotate = 0;
   offsetRotate = 0;
   globalAlpha = 1;
@@ -46,13 +46,15 @@ export abstract class Pen {
   animateCycle: number;
   animateCycleIndex = 0;
   nextAnimate: string;
+  // Auto-play
   animatePlay: boolean;
 
   locked = false;
 
   link: string;
   markdown: string;
-  elementId: string;
+  // 外部用于提示的dom id
+  tipId: string;
   title: string;
 
   // User data.
@@ -92,18 +94,26 @@ export abstract class Pen {
       this.animateCycle = json.animateCycle;
       this.nextAnimate = json.nextAnimate;
       this.animatePlay = json.animatePlay;
-      this.data = json.data || '';
+
       this.locked = json.locked;
       this.link = json.link;
       this.markdown = json.markdown;
-      this.elementId = json.elementId;
+      this.tipId = json.tipId;
       this.title = json.title;
+
+      if (typeof json.data === 'object') {
+        this.data = JSON.parse(JSON.stringify(json.data));
+      } else {
+        this.data = json.data || '';
+      }
     } else {
       this.id = s8();
       this.textOffsetX = 0;
       this.textOffsetY = 0;
     }
   }
+
+
   render(ctx: CanvasRenderingContext2D) {
     ctx.save();
 
@@ -117,7 +127,7 @@ export abstract class Pen {
       ctx.lineWidth = this.lineWidth;
     }
 
-    ctx.strokeStyle = this.strokeStyle || '';
+    ctx.strokeStyle = this.strokeStyle || '#222';
     ctx.fillStyle = this.fillStyle || 'transparent';
 
     if (this.lineCap) {
@@ -170,5 +180,6 @@ export abstract class Pen {
     return pointInRect(point, pts);
   }
 
+  abstract getTextRect(): Rect;
   abstract draw(ctx: CanvasRenderingContext2D): void;
 }

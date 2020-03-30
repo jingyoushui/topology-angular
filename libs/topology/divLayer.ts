@@ -15,11 +15,11 @@ export class DivLayer {
   progress: HTMLElement;
   loop: HTMLElement;
   media: HTMLMediaElement;
-  videos: { [key: string]: { player: HTMLElement; current: HTMLElement; media: HTMLMediaElement } } = {};
-  audios: { [key: string]: { player: HTMLElement; current: HTMLElement; media: HTMLMediaElement } } = {};
-  iframes: { [key: string]: HTMLIFrameElement } = {};
-  elements: { [key: string]: HTMLElement } = {};
-  gifs: { [key: string]: HTMLImageElement } = {};
+  videos: { [key: string]: { player: HTMLElement; current: HTMLElement; media: HTMLMediaElement; }; } = {};
+  audios: { [key: string]: { player: HTMLElement; current: HTMLElement; media: HTMLMediaElement; }; } = {};
+  iframes: { [key: string]: HTMLIFrameElement; } = {};
+  elements: { [key: string]: HTMLElement; } = {};
+  gifs: { [key: string]: HTMLImageElement; } = {};
 
   private subcribe: Observer;
   private subcribeNode: Observer;
@@ -63,7 +63,9 @@ export class DivLayer {
       }
 
       this.curNode = node;
-      this.player.style.top = this.parentElem.offsetTop + this.parentElem.clientHeight - 40 + 'px';
+      this.player.style.top = this.parentElem.offsetTop + this.parentElem.clientHeight + 'px';
+      this.player.style.left = this.parentElem.getBoundingClientRect().left + 'px';
+      this.player.style.width = this.parentElem.clientWidth + 'px';
       this.getMediaCurrent();
       if (this.media.paused) {
         this.playBtn.className = this.options.playIcon;
@@ -109,13 +111,6 @@ export class DivLayer {
     }
 
     if (node.elementId) {
-      if (this.elements[node.id] && this.elements[node.id].id !== node.elementId) {
-        if (this.elements[node.id]) {
-          this.canvas.removeChild(this.elements[node.id]);
-          this.elements[node.id] = null;
-        }
-      }
-
       if (!this.elements[node.id]) {
         this.elements[node.id] = document.getElementById(node.elementId);
 
@@ -126,6 +121,7 @@ export class DivLayer {
 
       this.setElemPosition(node, this.elements[node.id]);
     }
+
     if (node.gif) {
       if (node.image.indexOf('.gif') < 0) {
         node.gif = false;
@@ -149,9 +145,7 @@ export class DivLayer {
   createPlayer() {
     this.player.style.position = 'fixed';
     this.player.style.outline = 'none';
-    this.player.style.left = this.parentElem.offsetLeft + 'px';
     this.player.style.top = '-99999px';
-    this.player.style.width = this.parentElem.clientWidth + 'px';
     this.player.style.height = '40px';
     this.player.style.padding = '10px 15px';
     this.player.style.background = 'rgba(200,200,200,.1)';
@@ -406,28 +400,12 @@ export class DivLayer {
   }
 
   clear() {
-    for (const item of this.data.nodes) {
-      if (item.audio) {
-        this.canvas.removeChild(this.audios[item.id].player);
-        this.audios[item.id] = null;
-      }
-      if (item.video) {
-        this.canvas.removeChild(this.videos[item.id].player);
-        this.videos[item.id] = null;
-      }
-      if (item.iframe) {
-        this.canvas.removeChild(this.iframes[item.id]);
-        this.iframes[item.id] = null;
-      }
-      if (item.elementId) {
-        this.canvas.removeChild(this.elements[item.id]);
-        this.elements[item.id] = null;
-      }
-      if (item.gif) {
-        this.canvas.removeChild(this.gifs[item.id]);
-        this.gifs[item.id] = null;
-      }
-    }
+    this.canvas.innerHTML = '';
+    this.audios = {};
+    this.videos = {};
+    this.iframes = {};
+    this.elements = {};
+    this.gifs = {};
   }
 
   formatSeconds(seconds: number) {
@@ -448,7 +426,7 @@ export class DivLayer {
     return txt;
   }
 
-  resize(size?: { width: number; height: number }) {
+  resize(size?: { width: number; height: number; }) {
     if (size) {
       this.canvas.style.width = size.width + 'px';
       this.canvas.style.height = size.height + 'px';
