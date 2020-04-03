@@ -68,7 +68,6 @@ export class AppComponent implements OnInit, OnDestroy {
       this.user = user;
       this.getRecently();
     });
-    console.log('user_app65:' + this.user);
     Store.subscribe('file', (file: any) => {
       this.locked = 0;
       if (file && file.data) {

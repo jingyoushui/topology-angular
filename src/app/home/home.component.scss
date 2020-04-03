@@ -86,6 +86,75 @@ $props-width: 2.4rem;
       }
     }
   }
+
+  .item {
+    position: relative;
+
+    & > .dropdown {
+      padding: 0.08rem 0;
+
+      .item {
+        padding: 0 0.1rem;
+
+        a {
+          display: flex;
+          justify-content: space-between;
+          padding: 0 0.15rem;
+          font-size: 0.13rem !important;
+          min-width: 2rem;
+
+          &:hover {
+            .icon-delete {
+              display: block !important;
+            }
+          }
+        }
+
+        &.line {
+          background-color: transparent !important;
+          padding: 0;
+          margin: 0.05rem 0.1rem;
+          border-top: 1px solid $color-gray;
+        }
+
+        .icon-delete {
+          display: none;
+          font-size: 0.14rem;
+          color: #888;
+          &:hover {
+            color: $color-primary;
+          }
+        }
+      }
+    }
+
+    &:hover {
+      & > .dropdown {
+        display: block;
+        background: #fff !important;
+      }
+    }
+
+    &.lines {
+      a {
+        i {
+          font-size: 0.3rem !important;
+        }
+      }
+      .dropdown {
+        .item {
+          a {
+            min-width: 1.5rem;
+            padding: 0.05rem 0;
+            i {
+              font-size: 0.4rem !important;
+            }
+          }
+        }
+      }
+    }
+  }
+
 }
 
 .props {

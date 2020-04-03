@@ -35,14 +35,38 @@
         </form>
         <i class="iconfont icon-edit" *ngIf="!editFiledesc" (click)="onEditFileDesc(filedescInput)" title="双击编辑，点击空白保存"></i>
       </div>
+      <div class="item full flex">
+        <a>增加模板</a>
+        <div class="dropdown">
+          <div class="item">
+            <a (click)="newM8()">
+              单通道M8
+            </a>
+          </div>
+          <div class="item line"></div>
+          <div class="item">
+            <a >
+              其他
+            </a>
+          </div>
+        </div>
+      </div>
 
       <div *ngIf="data.id">
         <a routerLink="/user/history" [queryParams]="{ id: data.id, name: data.name }">-> 文件历史</a>
       </div>
     </div>
 
-<!--    <div class="flex ph15 pv5" style="background-color: red;width: 200px;height: 200px;">-->
-
+<!--    <div *ngFor="let zone_s of zone_style" class="flex ph15 pv5" [ngStyle] ="zone_s.style">-->
+<!--      <div style="width: 100%;" >-->
+<!--        区域名：-->
+<!--        <label *ngIf="!editZonename" (dblclick)="onEditZone(zonenameInput)" title="双击编辑，点击空白保存">{{report_list[zone_s.i].name}}</label>-->
+<!--        <form class="inline" [class.hidden]="!editZonename" #myForm="ngForm" [uiTouchForm]="myForm" title="双击编辑，点击空白保存">-->
+<!--          <input name="filename" #zonenameInput class="input" [(ngModel)]="report_list[zone_s.i].name" (blur)="onSaveZoneName()"-->
+<!--                 required/>-->
+<!--        </form>-->
+<!--        <i class="iconfont icon-edit" *ngIf="!editZonename" (click)="onEditZone(zonenameInput)" title="双击编辑，点击空白保存"></i>-->
+<!--      </div>-->
 <!--    </div>-->
 
   </div>
@@ -81,34 +105,24 @@
           </div>
         </div>
         <div class="group">
-          <div style="font-weight: 600" (click)="generateTable()">生成表格
+          <div style="font-weight: 600">报目单
           </div>
-          <table *ngIf="canvasnodes" >
+          <table>
             <thead >
             <tr>
-              <th style="background-color: #F8F8F8">节点名字</th>
-              <th style="background-color: #F8F8F8">数量</th>
+              <th style="background-color: #F8F8F8">区域号</th>
+              <th style="background-color: #F8F8F8">区域名</th>
+              <th style="background-color: #F8F8F8">品名</th>
             </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let node of nodesnamelist" >
-                <th *ngIf="nodesnames[node] !=0">{{ node }}</th>
-                <th *ngIf="nodesnames[node] !=0">{{nodesnames[node]}}</th>
+              <tr *ngFor="let list of report_list" >
+                <th>{{ list.id }}</th>
+                <th>{{list.name}}</th>
+                <th>
+                  <div *ngFor="let node of list.report_nodes" >{{zh_en.get(node.name) }}<hr/></div>
+                </th>
                 </tr>
-            </tbody>
-          </table>
-          <table *ngIf="canvaslines">
-            <thead>
-            <tr>
-              <th style="background-color: #F8F8F8">接头名称</th>
-              <th style="background-color: #F8F8F8">数量</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr *ngFor="let line of arrownamelist" >
-              <th *ngIf="arrownames[line] !=0">{{ line }}</th>
-              <th *ngIf="arrownames[line] !=0">{{arrownames[line]}}</th>
-            </tr>
             </tbody>
           </table>
         </div>

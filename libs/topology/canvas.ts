@@ -15,7 +15,6 @@ export class Canvas {
     this.canvas.style.left = '0';
     this.canvas.style.top = '0';
     this.canvas.style.outline = 'none';
-
     if (!Canvas.dpiRatio) {
       const ctx = this.canvas.getContext('2d');
       const bsr =
@@ -35,6 +34,7 @@ export class Canvas {
   }
 
   resize(size?: { width: number; height: number }) {
+
     if (size) {
       this.width = size.width | 0;
       this.height = size.height | 0;
@@ -50,13 +50,11 @@ export class Canvas {
         this.height = this.parentElem.clientHeight - 8;
       }
     }
-
     this.canvas.style.width = this.width + 'px';
     this.canvas.style.height = this.height + 'px';
     this.canvas.width = (this.width * Canvas.dpiRatio) | 0;
     this.canvas.height = (this.height * Canvas.dpiRatio) | 0;
     this.canvas.getContext('2d').scale(Canvas.dpiRatio, Canvas.dpiRatio);
-
     Store.set('LT:size', { width: this.canvas.width, height: this.canvas.height });
   }
 

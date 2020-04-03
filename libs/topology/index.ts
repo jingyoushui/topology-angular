@@ -286,6 +286,28 @@ export class Topology {
     const json = JSON.parse(event.dataTransfer.getData('Text'));
     json.rect.x = (event.offsetX - json.rect.width / 2) << 0;
     json.rect.y = (event.offsetY - json.rect.height / 2) << 0;
+    // 分线盒限定区域 begin
+    // tslint:disable-next-line:triple-equals
+    if (json.name == 'fenxianhe' ) {
+      const w = this.canvas.width / 3;
+      if (json.rect.x < w ) {
+        json.rect.x = w ;
+      } else if (json.rect.x + json.rect.width > 2 * w ) {
+        json.rect.x = 2 * w - json.rect.width;
+      }
+    }
+    // end
+    const node = new Node(json);
+    this.addNode(node, true);
+    if (node.name === 'div') {
+      if (this.options.on) {
+        this.options.on('LT:addDiv', node);
+      }
+    }
+    this.divLayer.canvas.focus();
+  }
+  // 用来初始化的时候添加节点
+  initAddNode(json: any) {
     const node = new Node(json);
     this.addNode(node, true);
     if (node.name === 'div') {
@@ -354,7 +376,6 @@ export class Topology {
     if (this.options.on) {
       this.options.on('addNode', node);
     }
-
     return true;
   }
 
@@ -1503,6 +1524,7 @@ export class Topology {
   }
 
   removeNode(node: Node) {
+    console.log('remove node')
     const i = this.findNode(node);
     if (i > -1) {
       this.divLayer.removeDiv(this.data.nodes[i]);

@@ -11,6 +11,7 @@ import { TopologyData } from './models/data';
 import { Lock } from './models/status';
 
 import { drawLineFns } from './middles';
+import {RenderLayer} from './renderLayer';
 
 export class ActiveLayer {
   protected data: TopologyData = Store.get('topology-data');
@@ -18,6 +19,7 @@ export class ActiveLayer {
   rotateCPs: Point[] = [];
   sizeCPs: Point[] = [];
   rect: Rect;
+  canvas: RenderLayer;
 
   nodes: Node[] = [];
   lines: Line[] = [];

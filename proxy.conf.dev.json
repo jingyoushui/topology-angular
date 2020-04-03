@@ -6,7 +6,7 @@
     "secure": false
   },
   "/api": {
-    "target": "http://192.168.18.5:8210",
+    "target": "http://192.168.18.4:8210",
     "secure": false,
     "logLevel": "debug",
     "changeOrigin": true,

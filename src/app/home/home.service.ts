@@ -8,7 +8,6 @@ export class HomeService {
 
   async Get(data: any) {
     const ret = await this.http.QueryString({ version: data.version }).Get('/api/topology/get/' + data.id);
-    console.log(data.id);
     if (ret.error) {
       return null;
     }

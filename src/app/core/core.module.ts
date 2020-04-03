@@ -34,7 +34,6 @@ export class CoreModule {
 
     // 监听用户认证
     Store.subscribe('auth', (ret: any) => {
-      console.log('core37:' + ret);
       // 认证失败
       if (ret === -1) {
         this._coreService.removeToken();
@@ -62,7 +61,7 @@ export class CoreModule {
   initWebsocket() {
     // 连接websocket
     const wsUrl: string = (location.protocol === 'http:' ? 'ws://' : 'wss://') + '/api' + '/ws';
-    console.log('wsUrl:' + wsUrl);
+    // console.log('wsUrl:' + wsUrl);
     this.socket = new WebSocket(wsUrl);
     Store.set('socket', this.socket);
     Store.set('socketCallback', this.socketCallback);
@@ -112,7 +111,7 @@ export class CoreModule {
 
     ret.usernamePinyin = this._coreService.getPinyin(ret.username);
     Store.set('user', ret);
-    console.log(Store.get('user'));
+    // console.log(Store.get('user'));
     // this.initWebsocket();
 
 

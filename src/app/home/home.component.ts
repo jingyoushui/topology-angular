@@ -39,22 +39,20 @@ export class HomeComponent implements OnInit, OnDestroy {
   @ViewChild('workspace', {static: true}) workspace: ElementRef;
   tools: any[] = Tools;
   canvas: Topology;
-  canvasnodes: Array<Node>;
-  nodesnamelist = ['分线板', 'Sprider67模块', 'T型分支'];
-  arrownamelist = ['triangleSolid', 'imageSolid', 'circleSolid'];
-  arrownames = Map;
-  nodesnames = Map;
+  // canvasnodes: Array<Node>;
+  // nodesnamelist = ['分线板', 'Sprider67模块', 'T型分支'];
+  // arrownamelist = ['triangleSolid', 'imageSolid', 'circleSolid'];
+  // arrownames = Map;
+  // nodesnames = Map;
   cavasbkColor = '#ffffffff';
-  canvaslines: Array<Line>;
+  // canvaslines: Array<Line>;
   canvasOptions: Options = {};
   selected: Props;
   subMenu: any;
-
   size = {
-    width: 900,
-    height: 600
+    width: 1505,
+    height: 500
   };
-
   data = {
     id: '',
     version: '',
@@ -65,6 +63,31 @@ export class HomeComponent implements OnInit, OnDestroy {
     userId: '',
     shared: false
   };
+  // 每一个模板的高度,固定为430
+  muban_height = 500;
+  report_list_id = 1;
+  // 用来生成报目表的数据,将整个画板分成多个区域,每个区域都有名字和id,nodes[],lines[].
+  // report_node : id, name, 型号, 备注
+  report_list = [
+    {
+      id: 1,
+      name: '',
+      report_nodes: [],
+      report_lines: [],
+    }
+  ];
+  // 中英对应表
+  zh_en = new Map([
+    [ 'fenxianhe', '分线盒'],
+    [ 'circle', '圆形' ],
+    [ 'rectangle', '正方形' ],
+    [ 'triangle', '三角形' ],
+    [ 'jitingButton', '急停按钮' ],
+    [ 'jitingButton2', '急停按钮' ],
+    [ 'OKNG', 'OK/NG显示' ],
+    [ 'zhongji', '中继器' ],
+  ]);
+  remove_id = [];
   icons: { icon: string; iconFamily: string; }[] = [];
   readonly = false;
 
@@ -77,8 +100,31 @@ export class HomeComponent implements OnInit, OnDestroy {
   selNodes: any;
   locked = false;
 
-  editFilename = false;
-  editFiledesc = false;
+  editFilename = false; // 文件名
+  editFiledesc = false; // 文件描述
+  // editZonename = false; // 区域名称
+
+  // zone_style = [
+  //   {
+  //     i: 0,
+  //     style: {
+  //       width: '25%',
+  //       backgroundColor: 'red',
+  //       marginTop: '25px',
+  //     },
+  //   }
+  // ]
+  json = {
+    text: '模块1',
+    rect: {
+      width: 160,
+      height: 30,
+      x: 4,
+      y: 26
+    },
+    name: 'text'
+  }
+
 
   divNode: any;
 
@@ -110,7 +156,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     private coreService: CoreService,
     private router: Router,
     private activateRoute: ActivatedRoute,
-    private http: HttpClient
+    private http: HttpClient,
   ) {
   }
 
@@ -123,7 +169,11 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.data.id = '';
       }
     });
+    console.log('home init');
     this.canvasOptions.on = this.onMessage;
+
+    this.canvasOptions.height = this.muban_height;
+
     this.subMenu = Store.subscribe('clickMenu', (menu: { event: string; data: any; }) => {
       if (!this.canvas) {
         return;
@@ -209,7 +259,9 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     // Wait for parent dom render.
     setTimeout(() => {
+
       this.canvas = new Topology(this.workspace.nativeElement, this.canvasOptions);
+      this.size.width = this.canvas.parentElem.clientWidth;
       this.subRoute = this.activateRoute.queryParamMap.subscribe(params => {
         if (params.get('id')) {
           this.onOpen({id: params.get('id'), version: params.get('version')});
@@ -226,6 +278,7 @@ export class HomeComponent implements OnInit, OnDestroy {
           };
         }
       });
+      this.initAddNode(this.json);
       // For debug
       (window as any).canvas = this.canvas;
       // End
@@ -332,6 +385,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     };
     Store.set('file', this.data);
     this.canvas.open(this.data.data);
+    this.canvas.resize(this.size);
+    this.initAddNode(this.json);
   }
 
   async onOpen(data: { id: string; version?: string; }) {
@@ -544,6 +599,12 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
   }
 
+  // onEditZone(input: HTMLElement) {
+  //   this.editZonename = true;
+  //   setTimeout(() => {
+  //     input.focus();
+  //   });
+  // }
   async onSaveFilename() {
     if (!this.data.name) {
       return;
@@ -579,7 +640,35 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.editFiledesc = false;
     }
   }
+  // async onSaveZoneName() {
+  //   if (!this.report_list[0].name) {
+  //     return;
+  //   }
+  //   this.editZonename = false;
+  //
+  // }
+  newM8() {
+    this.size.height += this.muban_height;
+    // @ts-ignore
+    this.size.width = this.canvas.parentElem.clientWidth;
+    this.canvas.resize(this.size);
+    this.report_list_id += 1;
+    this.report_list.push(
+      {
 
+        id: this.report_list_id,
+        name: '',
+        report_nodes: [],
+        report_lines: [],
+
+      }
+    );
+    this.json.rect.y = 25 + this.muban_height * (this.report_list_id - 1);
+    this.json.text = '模块' + this.report_list_id;
+    this.initAddNode(this.json)
+    console.log(this.report_list);
+
+  }
   onSaveLocal() {
     if (!this.canvas) {
       return;
@@ -592,36 +681,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     );
   }
 
-  generateTable() {
-    const data = this.canvas.data;
-    this.canvasnodes = data.nodes;
-    this.canvaslines = data.lines;
-    for (const nodesname of this.nodesnamelist) {
-      this.nodesnames[nodesname] = 0;
-    }
-
-    this.getnode(this.canvasnodes);
-    for (const arrowname of this.arrownamelist) {
-      this.arrownames[arrowname] = 0;
-    }
-    for (const line of this.canvaslines) {
-      this.arrownames[line.fromArrow] += 1;
-      this.arrownames[line.toArrow] += 1;
-    }
-    // console.log(this.nodesnames);
-    // console.log(data);
-    // console.log(this.canvas.options.width);
-  }
-
-  getnode(nodes) {
-    for (const node of nodes) {
-      if (!node.children) {
-        this.nodesnames[node.text] += 1;
-      } else {
-        this.getnode(node.children);
-      }
-    }
-
+  initAddNode(json: any) {
+    this.canvas.initAddNode(json);
   }
   changebkColor() {
     // console.log(this.cavasbkColor);
@@ -753,8 +814,18 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   onMessage = (event: string, data: any) => {
+    console.log(event);
+    console.log(data);
     switch (event) {
       case 'node':
+        this.selNodes = [data];
+        this.selected = {
+          type: 'node',
+          data
+        };
+        this.locked = data.locked;
+        this.readonly = this.locked || !!this.canvas.data.locked;
+        break;
       case 'addNode':
         this.selNodes = [data];
         this.selected = {
@@ -763,7 +834,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         };
         this.locked = data.locked;
         this.readonly = this.locked || !!this.canvas.data.locked;
-        this.generateTable();
+        this.addNodes(data);
         break;
       case 'line':
       case 'addLine':
@@ -773,7 +844,6 @@ export class HomeComponent implements OnInit, OnDestroy {
         };
         this.locked = data.locked;
         this.readonly = this.locked || !!this.canvas.data.locked;
-        this.generateTable();
         break;
       case 'multi':
         this.locked = true;
@@ -828,11 +898,87 @@ export class HomeComponent implements OnInit, OnDestroy {
         break;
 
       case 'delete':
-        this.generateTable();
+        this.deleteNodes(data);
         break;
 
+      case 'moveNodes':
+        for (const item of data) {
+          if (item.name === 'fenxianhe') {
+            const w = this.canvas.canvas.width / 3;
+            if (item.rect.x < w ) {
+              item.rect.x = w ;
+              item.textRect.x = w;
+              item.iconRect.x = w;
+            } else if (item.rect.x + item.rect.width > 2 * w ) {
+              item.rect.x = 2 * w - item.rect.width;
+              item.textRect.x = 2 * w - item.rect.width;
+              item.iconRect.x = 2 * w - item.rect.width;
+            }
+          }
+        }
+        break;
+
+      // tslint:disable-next-line:no-switch-case-fall-through
+      case 'moveInNode':
+        this.delete1(data);
+        break;
+
+      // tslint:disable-next-line:no-switch-case-fall-through
+      case 'moveOutNode':
+        this.addNodes(data);
+        break;
     }
+
+
   }
+  addNodes(data: any) {
+    for (const id of this.remove_id) {
+      if (data.id === id) {
+        return;
+      }
+    }
+    // tslint:disable-next-line:radix
+    const n = parseInt(String(data.rect.y / this.muban_height));
+    this.report_list[n].report_nodes.push(
+      {
+        id: data.id,
+        name: data.name,
+      }
+    )
+
+    console.log(this.report_list);
+  }
+  delete1(data: any) {
+    // tslint:disable-next-line:radix
+    const n = parseInt(String(data.rect.y / this.muban_height));
+    const id = data.id;
+    // const i = this.findNode(node, n);
+    // console.log(i);
+    this.report_list[n].report_nodes = this.report_list[n].report_nodes.filter(x => x.id !== id);
+
+  }
+  deleteNodes(data: any) {
+    for (const node of data.nodes) {
+      // tslint:disable-next-line:radix
+      const n = parseInt(String(node.rect.y / this.muban_height));
+      this.remove_id.push(node.id);
+      const id = node.id;
+      // const i = this.findNode(node, n);
+      // console.log(i);
+      this.report_list[n].report_nodes = this.report_list[n].report_nodes.filter(x => x.id !== id);
+    }
+    console.log(this.report_list);
+  }
+  private findNode(node: Node, n: number) {
+    for (let i = 0; i < this.report_list[n].report_nodes.length; ++i) {
+      if (node.id === this.report_list[n].report_nodes[i].id) {
+        return i;
+      }
+    }
+
+    return -1;
+  }
+
 
   onChangeProps(props: any) {
     if (this.canvas.data.locked) {
