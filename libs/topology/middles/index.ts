@@ -63,6 +63,7 @@ import { imageIconRect, imageTextRect } from './nodes/image.rect';
 
 import {fenXianHeAnchors} from './nodes/branch/fenxianhe.anchor';
 import {jitingButtonAnchors} from './nodes/branch/jitingButton.anchor';
+import {jitingButtonRect, jitingButtonTextRect} from './nodes/branch/jitingButton.rect';
 import {flangeCouplingConnectorAnchors} from './nodes/branch/flangeCouplingConnector.anchor';
 
 import { cube } from './nodes/cube';
@@ -172,6 +173,7 @@ function init() {
   iconRectFns.text = lineIconRect;
   anchorsFns.text = (node: Rect) => { };
 
+
   // Line
   drawNodeFns.line = nodeLine;
   anchorsFns.line = lineAnchors;
@@ -197,8 +199,8 @@ function init() {
 
   // 急停按钮
   drawNodeFns.jitingButton = (ctx: CanvasRenderingContext2D, node: Rect) => { };
-  iconRectFns.jitingButton = imageIconRect;
-  textRectFns.jitingButton = imageTextRect;
+  iconRectFns.jitingButton = jitingButtonRect;
+  textRectFns.jitingButton = jitingButtonTextRect;
   anchorsFns.jitingButton = jitingButtonAnchors;
 
   // 急停按钮2

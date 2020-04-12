@@ -16,8 +16,8 @@
   </div>
   <div class="full">
     <div class="canvas" #workspace (contextmenu)="onContextMenu($event)"></div>
-    <div class="flex ph15 pv5" >
-      <div style="width: 30%;" >
+    <div class="flex ph25 pv5" style="background-color: #242424;color: white" >
+      <div style="width: 20%;" >
         文件名：
         <label *ngIf="!editFilename" (dblclick)="onEditFile(filenameInput)" title="双击编辑，点击空白保存">{{data.name}}</label>
         <form class="inline" [class.hidden]="!editFilename" #myForm="ngForm" [uiTouchForm]="myForm" title="双击编辑，点击空白保存">
@@ -26,17 +26,34 @@
         </form>
         <i class="iconfont icon-edit" *ngIf="!editFilename" (click)="onEditFile(filenameInput)" title="双击编辑，点击空白保存"></i>
       </div>
-      <div class="full flex">
+      <div style="width: 20%">
         文件描述：
-        <label *ngIf="!editFilename" (dblclick)="onEditFileDesc(filedescInput)" title="双击编辑，点击空白保存">{{data.desc}}</label>
+        <label *ngIf="!editFiledesc" (dblclick)="onEditFileDesc(filedescInput)" title="双击编辑，点击空白保存">{{data.desc}}</label>
         <form class="inline" [class.hidden]="!editFiledesc" #myForm="ngForm" [uiTouchForm]="myForm" title="双击编辑，点击空白保存">
           <input name="filedesc" #filedescInput class="input" [(ngModel)]="data.desc" (blur)="onSaveFiledesc()"
                  required/>
         </form>
         <i class="iconfont icon-edit" *ngIf="!editFiledesc" (click)="onEditFileDesc(filedescInput)" title="双击编辑，点击空白保存"></i>
       </div>
-      <div class="item full flex">
-        <a>增加模板</a>
+      <div class="item  flex" style="width: 200px;">
+        <a style="color:yellow;">增加模板</a>
+        <div class="dropdown">
+          <div class="item">
+            <a (click)="newM8()">
+              单通道M8
+            </a>
+          </div>
+          <div class="item line"></div>
+          <div class="item">
+            <a >
+              其他
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="item  flex" style="width: 200px;">
+        <a style="color:yellow;">删除模板</a>
         <div class="dropdown">
           <div class="item">
             <a (click)="newM8()">
@@ -57,17 +74,6 @@
       </div>
     </div>
 
-<!--    <div *ngFor="let zone_s of zone_style" class="flex ph15 pv5" [ngStyle] ="zone_s.style">-->
-<!--      <div style="width: 100%;" >-->
-<!--        区域名：-->
-<!--        <label *ngIf="!editZonename" (dblclick)="onEditZone(zonenameInput)" title="双击编辑，点击空白保存">{{report_list[zone_s.i].name}}</label>-->
-<!--        <form class="inline" [class.hidden]="!editZonename" #myForm="ngForm" [uiTouchForm]="myForm" title="双击编辑，点击空白保存">-->
-<!--          <input name="filename" #zonenameInput class="input" [(ngModel)]="report_list[zone_s.i].name" (blur)="onSaveZoneName()"-->
-<!--                 required/>-->
-<!--        </form>-->
-<!--        <i class="iconfont icon-edit" *ngIf="!editZonename" (click)="onEditZone(zonenameInput)" title="双击编辑，点击空白保存"></i>-->
-<!--      </div>-->
-<!--    </div>-->
 
   </div>
   <div class="props" style="font-size: 12px;">
@@ -105,7 +111,10 @@
           </div>
         </div>
         <div class="group">
-          <div style="font-weight: 600">报目单
+          <div style="font-weight: 600">
+            <a (click)="showReport = true">
+            查看报目表
+          </a>
           </div>
           <table>
             <thead >
@@ -116,11 +125,11 @@
             </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let list of report_list" >
-                <th>{{ list.id }}</th>
-                <th>{{list.name}}</th>
+              <tr *ngFor="let list of report_list2" >
+                <th>{{ list.muban_id }}</th>
+                <th>{{list.muban_name}}</th>
                 <th>
-                  <div *ngFor="let node of list.report_nodes" >{{zh_en.get(node.name) }}<hr/></div>
+                  <div *ngFor="let node of list.report_nodes" >{{zh_en.get(node.node_name) }}<hr/></div>
                 </th>
                 </tr>
             </tbody>
@@ -154,6 +163,53 @@
     </div>
   </div>
 </div>
+
+<div class="modal" *ngIf="showReport">
+  <div class="modal-content">
+    <div class="modal-header pointer" uiDivMove [isHead]="true">
+      <div class="caption">报目表</div>
+      <i class="fr iconfont icon-close" (click)="showReport = null"></i>
+    </div>
+    <div class="modal-body">
+
+
+      <table>
+        <thead >
+        <tr style="background-color: #e7e27aff">
+          <th>区域号</th>
+          <th>区域名</th>
+          <th>品名</th>
+          <th>型号</th>
+          <th>数量</th>
+          <th>备注</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let list of report_list2" >
+          <th>{{ list.muban_id }}</th>
+          <th>{{list.muban_name}}</th>
+          <th>
+            <div *ngFor="let node of list.report_nodes" >{{zh_en.get(node.node_name) }}</div>
+          </th>
+          <th><div *ngFor="let node of list.report_nodes" >{{node.node_type}}</div></th>
+          <th></th>
+          <th><div *ngFor="let node of list.report_nodes" >{{node.remarks}}</div></th>
+        </tr>
+        </tbody>
+      </table>
+
+
+
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="button" (click)="showReport = null">
+        确定
+      </button>
+    </div>
+  </div>
+</div>
+
+
 <app-context-menu [contextmenu]="contextmenu" [canvas]="canvas" [selNodes]="selNodes" [selected]="selected"
                   [locked]="locked"></app-context-menu>
 

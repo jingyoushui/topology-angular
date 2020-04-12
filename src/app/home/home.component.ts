@@ -21,6 +21,11 @@ import {Node} from 'topology-core/models/node';
 import {Line} from 'topology-core/models/line';
 // 树型插件
 import { NzTreeModule } from 'ng-zorro-antd/tree';
+import {M8json} from './json/M8_json';
+import {ReportList} from './report-list/reportList';
+import {ReportListNode} from './report-list/reportListNode';
+
+
 declare var C2S: any;
 declare var JSZip: any;
 
@@ -39,19 +44,14 @@ export class HomeComponent implements OnInit, OnDestroy {
   @ViewChild('workspace', {static: true}) workspace: ElementRef;
   tools: any[] = Tools;
   canvas: Topology;
-  // canvasnodes: Array<Node>;
-  // nodesnamelist = ['分线板', 'Sprider67模块', 'T型分支'];
-  // arrownamelist = ['triangleSolid', 'imageSolid', 'circleSolid'];
-  // arrownames = Map;
-  // nodesnames = Map;
   cavasbkColor = '#ffffffff';
   // canvaslines: Array<Line>;
   canvasOptions: Options = {};
   selected: Props;
   subMenu: any;
   size = {
-    width: 1505,
-    height: 500
+    width: 1500,
+    height: 600
   };
   data = {
     id: '',
@@ -64,23 +64,16 @@ export class HomeComponent implements OnInit, OnDestroy {
     shared: false
   };
   // 每一个模板的高度,固定为430
-  muban_height = 500;
+  muban_height = 600;
   report_list_id = 1;
   // 用来生成报目表的数据,将整个画板分成多个区域,每个区域都有名字和id,nodes[],lines[].
   // report_node : id, name, 型号, 备注
-  report_list = [
-    {
-      id: 1,
-      name: '',
-      report_nodes: [],
-      report_lines: [],
-    }
-  ];
+  report_list2: ReportList[] = [];
+  showReport = false;
   // 中英对应表
   zh_en = new Map([
     [ 'fenxianhe', '分线盒'],
     [ 'circle', '圆形' ],
-    [ 'rectangle', '正方形' ],
     [ 'triangle', '三角形' ],
     [ 'jitingButton', '急停按钮' ],
     [ 'jitingButton2', '急停按钮' ],
@@ -102,30 +95,30 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   editFilename = false; // 文件名
   editFiledesc = false; // 文件描述
-  // editZonename = false; // 区域名称
-
-  // zone_style = [
-  //   {
-  //     i: 0,
-  //     style: {
-  //       width: '25%',
-  //       backgroundColor: 'red',
-  //       marginTop: '25px',
-  //     },
-  //   }
-  // ]
+  // 这是模块上的名字
   json = {
     text: '模块1',
     rect: {
       width: 160,
       height: 30,
       x: 4,
-      y: 26
+      y: 35
     },
-    name: 'text'
-  }
-
-
+    strokeStyle: '#e7e27aff',
+    fillStyle: '#e7e27aff',
+    // locked: true,
+    name: 'rectangle'
+  };
+  // m8模板初始化
+  m8_json: {
+    lines: any;
+    fenxianhe: any;
+  };
+  fenxianheid = [
+    {
+      id : ''
+    },
+  ];
   divNode: any;
 
   subRoute: any;
@@ -278,7 +271,10 @@ export class HomeComponent implements OnInit, OnDestroy {
           };
         }
       });
+      this.report_list2.push(new ReportList(1, '模块1'));
       this.initAddNode(this.json);
+      this.initNew();
+      this.report_list2[0].muban_name = this.json.text;
       // For debug
       (window as any).canvas = this.canvas;
       // End
@@ -385,8 +381,43 @@ export class HomeComponent implements OnInit, OnDestroy {
     };
     Store.set('file', this.data);
     this.canvas.open(this.data.data);
+    this.size = {
+      width: 1500,
+      height: 600
+    };
     this.canvas.resize(this.size);
+    this.json = {
+      text: '模块1',
+      rect: {
+        width: 160,
+        height: 30,
+        x: 4,
+        y: 35
+      },
+      strokeStyle: '#e7e27aff',
+      fillStyle: '#e7e27aff',
+      // locked: true,
+      name: 'rectangle'
+    }
     this.initAddNode(this.json);
+    this.report_list_id = 1;
+    this.report_list2 = [];
+    this.report_list2.push(new ReportList(1, '模块1'));
+    this.report_list2[0].muban_name = this.json.text;
+
+    this.initNew();
+
+  }
+  // 初始化和新建文件时, 提前将分线盒和八根线绘制好
+  initNew() {
+    this.m8_json = (new M8json()).M8_json;
+    this.m8_json.fenxianhe.id = this.fenxianheid[0].id = s8();
+    this.initAddNode(this.m8_json.fenxianhe);
+    for (const line of this.m8_json.lines) {
+      line.from.id = line.controlPoints[0].id = this.fenxianheid[0].id;
+      this.initAddLine(line);
+    }
+    console.log(this.m8_json);
   }
 
   async onOpen(data: { id: string; version?: string; }) {
@@ -414,6 +445,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     Store.set('scale', ret.data.scale);
     Store.set('locked', ret.data.locked);
     this.canvas.open(ret.data);
+    // this.canvas = new Topology(this.workspace.nativeElement, this.canvasOptions);
+    // this.size.width = this.canvas.parentElem.clientWidth;
+    // this.canvas.resize(this.size);
 
     Store.set('file', this.data);
   }
@@ -569,6 +603,8 @@ export class HomeComponent implements OnInit, OnDestroy {
           body: '保存成功！',
           theme: 'success'
         });
+        // 保存成功文件数据之后,获取文件id,然后保存报目表数据
+
         // this.data.id = ret.id;
         if (!this.data.id || this.activateRoute.snapshot.queryParamMap.get('version')) {
           this.data.id = ret.id;
@@ -598,13 +634,6 @@ export class HomeComponent implements OnInit, OnDestroy {
       input.focus();
     });
   }
-
-  // onEditZone(input: HTMLElement) {
-  //   this.editZonename = true;
-  //   setTimeout(() => {
-  //     input.focus();
-  //   });
-  // }
   async onSaveFilename() {
     if (!this.data.name) {
       return;
@@ -640,33 +669,41 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.editFiledesc = false;
     }
   }
-  // async onSaveZoneName() {
-  //   if (!this.report_list[0].name) {
-  //     return;
-  //   }
-  //   this.editZonename = false;
-  //
-  // }
+
   newM8() {
+
     this.size.height += this.muban_height;
     // @ts-ignore
     this.size.width = this.canvas.parentElem.clientWidth;
     this.canvas.resize(this.size);
+    const n = this.report_list_id;
     this.report_list_id += 1;
-    this.report_list.push(
+    // 增加模块名称组件
+    this.json.rect.y = 30 + this.muban_height * (this.report_list_id - 1);
+    this.json.text = '模块' + this.report_list_id;
+
+    this.report_list2.push(new ReportList(this.report_list_id, this.json.text));
+    this.initAddNode(this.json);
+    // end
+    // 增加分线盒和线
+    this.fenxianheid.push(
       {
-
-        id: this.report_list_id,
-        name: '',
-        report_nodes: [],
-        report_lines: [],
-
+        id: ''
       }
     );
-    this.json.rect.y = 25 + this.muban_height * (this.report_list_id - 1);
-    this.json.text = '模块' + this.report_list_id;
-    this.initAddNode(this.json)
-    console.log(this.report_list);
+    this.m8_json.fenxianhe.id = this.fenxianheid[n].id = s8();
+    this.m8_json.fenxianhe.rect.y += this.muban_height;
+    this.initAddNode(this.m8_json.fenxianhe);
+    for (const line of this.m8_json.lines) {
+      line.from.id = line.controlPoints[0].id = this.m8_json.fenxianhe.id;
+      line.from.y += this.muban_height;
+      line.to.y += this.muban_height;
+      line.controlPoints[0].y += this.muban_height;
+      line.controlPoints[1].y += this.muban_height ;
+      this.initAddLine(line);
+    }
+    // end
+    console.log(this.report_list2);
 
   }
   onSaveLocal() {
@@ -683,6 +720,13 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   initAddNode(json: any) {
     this.canvas.initAddNode(json);
+    setTimeout(() => {
+      this.selected = null;
+    });
+    console.log(this.selected);
+  }
+  initAddLine(json: any) {
+    this.canvas.addLineByJson(json);
   }
   changebkColor() {
     // console.log(this.cavasbkColor);
@@ -927,9 +971,41 @@ export class HomeComponent implements OnInit, OnDestroy {
       case 'moveOutNode':
         this.addNodes(data);
         break;
+
+      case 'moveOutLine':
+        this.changeLine(data);
+        break;
     }
 
 
+  }
+  // 当线连接到终端的时候就把线改为实线,并且根据两端终端的类型判断需要的接头类型,并自动生成接头
+  changeLine(data: any) {
+    if (data.controlPoints.length === 3) { // 此时说明两端都连接到了节点上
+      data.dash = 0 ; // 首先将虚线变为实线;
+      const to_nodename = this.findTypeById(data.to.id);
+      const from_nodename = this.findTypeById(data.from.id);
+      const text = 'HB-08-08AN-030-26U';
+      if (from_nodename === 'fenxianhe') {
+        data.fromArrow = 'leftASolid';
+        // TODO 给text赋值拼接
+      }
+      if (to_nodename === 'jitingButton') {
+        data.toArrow = 'rightASolid';
+        // TODO 给text赋值拼接
+      }
+      data.text = text;
+
+    }
+  }
+  // 根据id查找出节点的类型
+  findTypeById(id: string) {
+    for (const node of this.canvas.data.nodes) {
+      if (node.id === id) {
+        return node.name;
+      }
+    }
+    return null;
   }
   addNodes(data: any) {
     for (const id of this.remove_id) {
@@ -937,47 +1013,46 @@ export class HomeComponent implements OnInit, OnDestroy {
         return;
       }
     }
-    // tslint:disable-next-line:radix
-    const n = parseInt(String(data.rect.y / this.muban_height));
-    this.report_list[n].report_nodes.push(
-      {
-        id: data.id,
-        name: data.name,
-      }
-    )
+    if (data.name === 'rectangle') {
 
-    console.log(this.report_list);
+      return;
+    }
+    // tslint:disable-next-line:radix
+    const n = Math.floor(data.rect.y / this.muban_height);
+    this.report_list2[n].report_nodes.push(new ReportListNode(data.id, data.name, 'type', data.text))
+    console.log(this.report_list2);
   }
   delete1(data: any) {
     // tslint:disable-next-line:radix
-    const n = parseInt(String(data.rect.y / this.muban_height));
+    const n = Math.floor(data.rect.y / this.muban_height);
     const id = data.id;
     // const i = this.findNode(node, n);
     // console.log(i);
-    this.report_list[n].report_nodes = this.report_list[n].report_nodes.filter(x => x.id !== id);
+    this.report_list2[n].report_nodes = this.report_list2[n].report_nodes.filter(x => x.node_id !== id);
 
   }
+  // 删除节点时将报目单中的相应节点删除
   deleteNodes(data: any) {
     for (const node of data.nodes) {
       // tslint:disable-next-line:radix
-      const n = parseInt(String(node.rect.y / this.muban_height));
+      const n = Math.floor(node.rect.y / this.muban_height);
       this.remove_id.push(node.id);
       const id = node.id;
       // const i = this.findNode(node, n);
       // console.log(i);
-      this.report_list[n].report_nodes = this.report_list[n].report_nodes.filter(x => x.id !== id);
+      this.report_list2[n].report_nodes = this.report_list2[n].report_nodes.filter(x => x.node_id !== id);
     }
-    console.log(this.report_list);
+    console.log(this.report_list2);
   }
-  private findNode(node: Node, n: number) {
-    for (let i = 0; i < this.report_list[n].report_nodes.length; ++i) {
-      if (node.id === this.report_list[n].report_nodes[i].id) {
-        return i;
-      }
-    }
-
-    return -1;
-  }
+  // private findNode(node: Node, n: number) {
+  //   for (let i = 0; i < this.report_list[n].report_nodes.length; ++i) {
+  //     if (node.id === this.report_list[n].report_nodes[i].id) {
+  //       return i;
+  //     }
+  //   }
+  //
+  //   return -1;
+  // }
 
 
   onChangeProps(props: any) {

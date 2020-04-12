@@ -1,95 +1,95 @@
 <form #propForm="ngForm" *ngIf="props.data" (click)="drowdown = 0">
   <div *ngIf="props.type !== 'multi'">
     <div *ngIf="props.type === 'node'">
-      <div class="group">
-        <div class="title">位置和大小</div>
-        <div class="flex grid">
-          <div>X（px）</div>
-          <div>Y（px）</div>
-        </div>
-        <div class="flex grid mt5">
-          <div class="mr5">
-            <input type="number" name="x" class="input" [(ngModel)]="props.data.rect.x" [uiMin]="0"  [uiMax]="5000"
-              [readonly]="readonly" required (change)="onChangeProp()" />
-          </div>
-          <div>
-            <input type="number" name="y" class="input" [(ngModel)]="props.data.rect.y" [uiMin]="0" [uiMax]="5000"
-              [readonly]="readonly" required (change)="onChangeProp()" />
-          </div>
-        </div>
-        <div class="flex grid mt5">
-          <div>宽（px）</div>
-          <div>高（px）</div>
-        </div>
-        <div class="flex grid">
-          <div class="mr5">
-            <input type="number" name="width" class="input" [(ngModel)]="props.data.rect.width" [uiMin]="0"
-              [uiMax]="5000" [readonly]="readonly" required (change)="onChangeProp()" />
-          </div>
-          <div>
-            <input type="number" name="height" class="input" [(ngModel)]="props.data.rect.height" [uiMin]="0"
-              [uiMax]="5000" [readonly]="readonly" required (change)="onChangeProp()" />
-          </div>
-        </div>
-        <div *ngIf="props.data.is3D">
-          <div class="flex grid mt5">
-            <div>Z（px）</div>
-            <div></div>
-          </div>
-          <div class="flex grid">
-            <div class="mr5">
-              <input type="number" name="z" class="input" [(ngModel)]="props.data.z" [uiMin]="0" [uiMax]="5000"
-                [readonly]="readonly" (change)="onChangeProp()" />
-            </div>
-            <div></div>
-          </div>
-        </div>
-        <div class="flex grid mt5">
-          <div title="百分比%对应的小数值">圆角（0 - 1）</div>
-          <div>旋转（°）</div>
-        </div>
-        <div class="flex grid">
-          <div class="mr5">
-            <input type="number" name="borderRadius" class="input" [(ngModel)]="props.data.borderRadius" [uiMin]="0"
-              [uiMax]="1" [readonly]="readonly" (change)="onChangeProp()" />
-          </div>
-          <div>
-            <input type="number" name="rotate" class="input" [(ngModel)]="props.data.rotate" [uiMin]="0" [uiMax]="360"
-              [readonly]="readonly" (change)="onChangeProp()" />
-          </div>
-        </div>
-        <div class="flex grid mt5">
-          <div title="padding-left">内边距-左</div>
-          <div title="padding-right">内边距-右</div>
-        </div>
-        <div class="flex grid">
-          <div class="mr5">
-            <input name="paddingLeft" class="input" [(ngModel)]="props.data.paddingLeft" [readonly]="readonly" required
-              (change)="onChangeProp()" />
-          </div>
-          <div>
-            <input name="paddingRight" class="input" [(ngModel)]="props.data.paddingRight" [readonly]="readonly"
-              required (change)="onChangeProp()" />
-          </div>
-        </div>
-        <div class="flex grid mt5">
-          <div title="padding-top">内边距-上</div>
-          <div title="padding-bottom">内边距-下</div>
-        </div>
-        <div class="flex grid">
-          <div class="mr5">
-            <input name="paddingTop" class="input" [(ngModel)]="props.data.paddingTop" [readonly]="readonly" required
-              (change)="onChangeProp()" />
-          </div>
-          <div>
-            <input name="paddingBottom" class="input" [(ngModel)]="props.data.paddingBottom" [readonly]="readonly"
-              required (change)="onChangeProp()" />
-          </div>
-        </div>
-        <div class="mt5 gray" style="line-height: 1.5">
-          内边距：输入数字表示像素；输入%表示百分比
-        </div>
-      </div>
+<!--      <div class="group">-->
+<!--        <div class="title">位置和大小</div>-->
+<!--        <div class="flex grid">-->
+<!--          <div>X（px）</div>-->
+<!--          <div>Y（px）</div>-->
+<!--        </div>-->
+<!--        <div class="flex grid mt5">-->
+<!--          <div class="mr5">-->
+<!--            <input type="number" name="x" class="input" [(ngModel)]="props.data.rect.x" [uiMin]="0"  [uiMax]="5000"-->
+<!--              [readonly]="readonly" required (change)="onChangeProp()" />-->
+<!--          </div>-->
+<!--          <div>-->
+<!--            <input type="number" name="y" class="input" [(ngModel)]="props.data.rect.y" [uiMin]="0" [uiMax]="5000"-->
+<!--              [readonly]="readonly" required (change)="onChangeProp()" />-->
+<!--          </div>-->
+<!--        </div>-->
+<!--        <div class="flex grid mt5">-->
+<!--          <div>宽（px）</div>-->
+<!--          <div>高（px）</div>-->
+<!--        </div>-->
+<!--        <div class="flex grid">-->
+<!--          <div class="mr5">-->
+<!--            <input type="number" name="width" class="input" [(ngModel)]="props.data.rect.width" [uiMin]="0"-->
+<!--              [uiMax]="5000" [readonly]="readonly" required (change)="onChangeProp()" />-->
+<!--          </div>-->
+<!--          <div>-->
+<!--            <input type="number" name="height" class="input" [(ngModel)]="props.data.rect.height" [uiMin]="0"-->
+<!--              [uiMax]="5000" [readonly]="readonly" required (change)="onChangeProp()" />-->
+<!--          </div>-->
+<!--        </div>-->
+<!--        <div *ngIf="props.data.is3D">-->
+<!--          <div class="flex grid mt5">-->
+<!--            <div>Z（px）</div>-->
+<!--            <div></div>-->
+<!--          </div>-->
+<!--          <div class="flex grid">-->
+<!--            <div class="mr5">-->
+<!--              <input type="number" name="z" class="input" [(ngModel)]="props.data.z" [uiMin]="0" [uiMax]="5000"-->
+<!--                [readonly]="readonly" (change)="onChangeProp()" />-->
+<!--            </div>-->
+<!--            <div></div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--        <div class="flex grid mt5">-->
+<!--          <div title="百分比%对应的小数值">圆角（0 - 1）</div>-->
+<!--          <div>旋转（°）</div>-->
+<!--        </div>-->
+<!--        <div class="flex grid">-->
+<!--          <div class="mr5">-->
+<!--            <input type="number" name="borderRadius" class="input" [(ngModel)]="props.data.borderRadius" [uiMin]="0"-->
+<!--              [uiMax]="1" [readonly]="readonly" (change)="onChangeProp()" />-->
+<!--          </div>-->
+<!--          <div>-->
+<!--            <input type="number" name="rotate" class="input" [(ngModel)]="props.data.rotate" [uiMin]="0" [uiMax]="360"-->
+<!--              [readonly]="readonly" (change)="onChangeProp()" />-->
+<!--          </div>-->
+<!--        </div>-->
+<!--        <div class="flex grid mt5">-->
+<!--          <div title="padding-left">内边距-左</div>-->
+<!--          <div title="padding-right">内边距-右</div>-->
+<!--        </div>-->
+<!--        <div class="flex grid">-->
+<!--          <div class="mr5">-->
+<!--            <input name="paddingLeft" class="input" [(ngModel)]="props.data.paddingLeft" [readonly]="readonly" required-->
+<!--              (change)="onChangeProp()" />-->
+<!--          </div>-->
+<!--          <div>-->
+<!--            <input name="paddingRight" class="input" [(ngModel)]="props.data.paddingRight" [readonly]="readonly"-->
+<!--              required (change)="onChangeProp()" />-->
+<!--          </div>-->
+<!--        </div>-->
+<!--        <div class="flex grid mt5">-->
+<!--          <div title="padding-top">内边距-上</div>-->
+<!--          <div title="padding-bottom">内边距-下</div>-->
+<!--        </div>-->
+<!--        <div class="flex grid">-->
+<!--          <div class="mr5">-->
+<!--            <input name="paddingTop" class="input" [(ngModel)]="props.data.paddingTop" [readonly]="readonly" required-->
+<!--              (change)="onChangeProp()" />-->
+<!--          </div>-->
+<!--          <div>-->
+<!--            <input name="paddingBottom" class="input" [(ngModel)]="props.data.paddingBottom" [readonly]="readonly"-->
+<!--              required (change)="onChangeProp()" />-->
+<!--          </div>-->
+<!--        </div>-->
+<!--        <div class="mt5 gray" style="line-height: 1.5">-->
+<!--          内边距：输入数字表示像素；输入%表示百分比-->
+<!--        </div>-->
+<!--      </div>-->
 
       <div class="group" *ngIf="props.data.attribute">
         <div class="title">相关属性</div>

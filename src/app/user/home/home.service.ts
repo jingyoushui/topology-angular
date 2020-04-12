@@ -8,7 +8,7 @@ export class UserHomeService {
   constructor(protected http: HttpService, protected coreService: CoreService) {}
 
   async Topologies(params: any) {
-    const ret = await this.http.QueryString(params).Get('/api/user/topologies');
+    const ret = await this.http.QueryString(params).Get('/api/topology/getByUserId');
     if (ret.error || !ret.list) {
       return {
         list: [],
@@ -95,7 +95,7 @@ export class UserHomeService {
   }
 
   async Del(id: string) {
-    const ret = await this.http.Delete('/api/user/topology/' + id);
+    const ret = await this.http.Delete('/api/topology/deleteTopology/' + id);
     if (ret.error) {
       return false;
     }

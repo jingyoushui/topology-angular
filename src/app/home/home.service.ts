@@ -73,6 +73,17 @@ export class HomeService {
     return ret;
   }
 
+  async SaveReportList(data: any) {
+    data = Object.assign({}, data);
+    let ret: any;
+    ret = await this.http.Post('/api/report_list/save', data);
+    if (ret.error) {
+      return null;
+    }
+
+    return ret;
+  }
+
   async Patch(data: any) {
     if (data.image) {
       const retImage = await this.http.Patch('/api/blob/' + data.image, {

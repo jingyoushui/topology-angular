@@ -226,8 +226,12 @@ export const Tools = [
         data: {
           text: '急停按钮',
           rect: {
-            width: 50,
-            height: 90
+            width: 100,
+            height: 45
+          },
+          imageWidth: 25,
+          font: {
+            textAlign: 'left',
           },
           image: '/assets/img/tools/jitingButton.png',
           name: 'jitingButton',

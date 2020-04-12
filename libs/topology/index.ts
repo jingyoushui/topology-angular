@@ -105,7 +105,7 @@ export class Topology {
         fontFamily: '"Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial',
         fontSize: 12,
         lineHeight: 1.5,
-        textAlign: 'center',
+        textAlign: 'left',
         textBaseline: 'middle'
       };
     }
@@ -133,7 +133,7 @@ export class Topology {
       this.options.font.lineHeight = 1.5;
     }
     if (!this.options.font.textAlign) {
-      this.options.font.textAlign = 'center';
+      this.options.font.textAlign = 'left';
     }
     if (!this.options.font.textBaseline) {
       this.options.font.textBaseline = 'middle';
@@ -407,6 +407,10 @@ export class Topology {
       to,
       toArrow
     });
+    this.addLine(line, focus);
+  }
+  addLineByJson(json: any , focus = false) {
+    const line = new Line(json);
     this.addLine(line, focus);
   }
 
