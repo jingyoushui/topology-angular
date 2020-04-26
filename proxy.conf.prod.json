@@ -1,40 +1,18 @@
 {
   "/ws": {
-    "target": "",
+    "target": "ws://127.0.0.1:8210",
     "ws": true,
     "changeOrigin": true,
     "secure": false
   },
-  "/api/user/profile": {
-    "target": "",
-    "changeOrigin": true,
-    "secure": false
-  },
-
-  "/image": {
-    "target": "",
-    "changeOrigin": true,
-    "secure": false
-  },
-  "/file": {
-    "target": "",
-    "changeOrigin": true,
-    "secure": false
-  },
-  "/api/image": {
-    "target": "",
-    "changeOrigin": true,
-    "secure": false
-  },
-  "/api/file": {
-    "target": "",
-    "changeOrigin": true,
-    "secure": false
-  },
-
   "/api": {
-    "target": "",
+    "target": "http://106.52.178.196:8210",
+    "secure": false,
+    "logLevel": "debug",
     "changeOrigin": true,
-    "secure": false
+    "pathRewrite": {
+      "^/api": ""
+
+    }
   }
 }

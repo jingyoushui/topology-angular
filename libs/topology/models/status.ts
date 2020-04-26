@@ -9,3 +9,8 @@ export enum AnchorMode {
   In,
   Out
 }
+
+export enum FileTypes {
+  Default,
+  Fenxianhe,
+}

@@ -18,6 +18,7 @@ export const Tools = [
             width: 100,
             height: 100
           },
+          mubanId: 1,
           paddingLeft: 10,
           paddingRight: 10,
           paddingTop: 10,
@@ -155,33 +156,6 @@ export const Tools = [
   {
     group: '分线盒产品',
     children: [
-      // {
-      //   name: '分线板',
-      //   img: '/assets/img/tools/fenxianban.png',
-      //   style: {
-      //     width: '30px',
-      //     height: '70px',
-      //   },
-      //   data: {
-      //     text: '分线板',
-      //     rect: {
-      //       width: 60,
-      //       height: 190
-      //     },
-      //     image: '/assets/img/tools/fenxianban.png',
-      //     // name: 'fenXianHe'
-      //     name: 'branchbox',
-      //     attribute: {
-      //       productName: '出线式分线盒',
-      //       channelType: 0,
-      //       signalType: 0,
-      //       portType: 0,
-      //       feature: 0,
-      //       configuration: 0,
-      //       modelsType: 'g',
-      //       }
-      //   }
-      // },
       {
         name: '分线盒',
         img: '/assets/img/tools/fenxianhe_y.png',
@@ -198,6 +172,7 @@ export const Tools = [
           image: '/assets/img/tools/fenxianhe.png',
           // name: 'fenXianHe'
           name: 'fenxianhe',
+          mubanId: 1,
           attribute: {
             productName: '出线式分线盒',
             channelType: 0,
@@ -206,7 +181,7 @@ export const Tools = [
             feature: 0,
             configuration: 0,
             modelsType: 'g',
-            }
+           },
         }
       },
 
@@ -227,7 +202,7 @@ export const Tools = [
           text: '急停按钮',
           rect: {
             width: 100,
-            height: 45
+            height: 25
           },
           imageWidth: 25,
           font: {
@@ -235,6 +210,17 @@ export const Tools = [
           },
           image: '/assets/img/tools/jitingButton.png',
           name: 'jitingButton',
+          mubanId: 1,
+          // 底层组件的属性
+          property: {
+            jixing: 'NPN',
+            leixing: 'in',
+            xianzhi: '3',
+            jiekou: 'M8',
+            current: 2,
+            name: '急停按钮1',
+            desc: ''
+          }
         }
       },
       {
@@ -248,11 +234,25 @@ export const Tools = [
         data: {
           text: '急停按钮',
           rect: {
-            width: 70,
-            height: 90
+            width: 100,
+            height: 25
+          },
+          imageWidth: 25,
+          font: {
+            textAlign: 'left',
           },
           image: '/assets/img/tools/jitingButton2.png',
           name: 'jitingButton2',
+          mubanId: 1,
+          property: {
+            jixing: 'PNP',
+            leixing: 'in',
+            xianzhi: '4',
+            jiekou: 'M12',
+            current: 2,
+            name: '急停按钮2',
+            desc: ''
+          }
         }
       },
       {
@@ -264,13 +264,27 @@ export const Tools = [
           padding: '0 0 0 6px'
         },
         data: {
-          text: 'OK/NG显示',
+          text: 'OK、NG显示',
           rect: {
-            width: 50,
-            height: 90
+            width: 100,
+            height: 25
+          },
+          imageWidth: 25,
+          font: {
+            textAlign: 'left',
           },
           image: '/assets/img/tools/OKNG.png',
           name: 'OKNG',
+          mubanId: 1,
+          property: {
+            jixing: 'PNP',
+            leixing: 'out',
+            xianzhi: '5',
+            jiekou: 'M12',
+            current: 2,
+            name: 'OK/NG显示',
+            desc: ''
+          }
         }
       },
       {
@@ -284,13 +298,306 @@ export const Tools = [
         data: {
           text: '吹气中继',
           rect: {
-            width: 50,
-            height: 90
+            width: 100,
+            height: 25
+          },
+          imageWidth: 25,
+          font: {
+            textAlign: 'left',
           },
           image: '/assets/img/tools/zhongji.png',
           name: 'zhongji',
+          mubanId: 1,
+          property: {
+            jixing: 'NPN',
+            leixing: 'out',
+            xianzhi: '2',
+            jiekou: 'M8',
+            current: 2,
+            name: '吹气中继',
+            desc: ''
+          }
         }
       },
+
+
+      {
+        name: '急停按钮',
+        img: '/assets/img/tools/jitingButton.png',
+        style: {
+          width: '37px',
+          height: '60px',
+        },
+        data: {
+          text: '急停按钮',
+          rect: {
+            width: 100,
+            height: 25
+          },
+          imageWidth: 25,
+          font: {
+            textAlign: 'left',
+          },
+          image: '/assets/img/tools/jitingButton.png',
+          name: 'jitingButton',
+          mubanId: 1,
+          // 底层组件的属性
+          property: {
+            jixing: 'NPN',
+            leixing: 'in',
+            xianzhi: '3',
+            jiekou: 'M8',
+            current: 2,
+            name: '急停按钮1',
+            desc: ''
+          }
+        }
+      },
+      {
+        name: '急停按钮',
+        img: '/assets/img/tools/jitingButton2.png',
+        style: {
+          width: '37px',
+          height: '60px',
+          padding: '0 0 0 6px'
+        },
+        data: {
+          text: '急停按钮',
+          rect: {
+            width: 100,
+            height: 25
+          },
+          imageWidth: 25,
+          font: {
+            textAlign: 'left',
+          },
+          image: '/assets/img/tools/jitingButton2.png',
+          name: 'jitingButton2',
+          mubanId: 1,
+          property: {
+            jixing: 'PNP',
+            leixing: 'in',
+            xianzhi: '4',
+            jiekou: 'M12',
+            current: 2,
+            name: '急停按钮2',
+            desc: ''
+          }
+        }
+      },
+      {
+        name: 'OK/NG显示',
+        img: '/assets/img/tools/OKNG.png',
+        style: {
+          width: '37px',
+          height: '60px',
+          padding: '0 0 0 6px'
+        },
+        data: {
+          text: 'OK、NG显示',
+          rect: {
+            width: 100,
+            height: 25
+          },
+          imageWidth: 25,
+          font: {
+            textAlign: 'left',
+          },
+          image: '/assets/img/tools/OKNG.png',
+          name: 'OKNG',
+          mubanId: 1,
+          property: {
+            jixing: 'PNP',
+            leixing: 'out',
+            xianzhi: '5',
+            jiekou: 'M12',
+            current: 2,
+            name: 'OK/NG显示',
+            desc: ''
+          }
+        }
+      },
+      {
+        name: '吹气中继',
+        img: '/assets/img/tools/zhongji.png',
+        style: {
+          width: '37px',
+          height: '60px',
+          padding: '0 0 0 6px'
+        },
+        data: {
+          text: '吹气中继',
+          rect: {
+            width: 100,
+            height: 25
+          },
+          imageWidth: 25,
+          font: {
+            textAlign: 'left',
+          },
+          image: '/assets/img/tools/zhongji.png',
+          name: 'zhongji',
+          mubanId: 1,
+          property: {
+            jixing: 'NPN',
+            leixing: 'out',
+            xianzhi: '2',
+            jiekou: 'M8',
+            current: 2,
+            name: '吹气中继',
+            desc: ''
+          }
+        }
+      },
+
+      {
+        name: '急停按钮',
+        img: '/assets/img/tools/jitingButton.png',
+        style: {
+          width: '37px',
+          height: '60px',
+        },
+        data: {
+          text: '急停按钮',
+          rect: {
+            width: 100,
+            height: 25
+          },
+          imageWidth: 25,
+          font: {
+            textAlign: 'left',
+          },
+          image: '/assets/img/tools/jitingButton.png',
+          name: 'jitingButton',
+          mubanId: 1,
+          // 底层组件的属性
+          property: {
+            jixing: 'NPN',
+            leixing: 'in',
+            xianzhi: '3',
+            jiekou: 'M8',
+            current: 2,
+            name: '急停按钮1',
+            desc: ''
+          }
+        }
+      },
+      {
+        name: '急停按钮',
+        img: '/assets/img/tools/jitingButton2.png',
+        style: {
+          width: '37px',
+          height: '60px',
+          padding: '0 0 0 6px'
+        },
+        data: {
+          text: '急停按钮',
+          rect: {
+            width: 100,
+            height: 25
+          },
+          imageWidth: 25,
+          font: {
+            textAlign: 'left',
+          },
+          image: '/assets/img/tools/jitingButton2.png',
+          name: 'jitingButton2',
+          mubanId: 1,
+          property: {
+            jixing: 'PNP',
+            leixing: 'in',
+            xianzhi: '4',
+            jiekou: 'M12',
+            current: 2,
+            name: '急停按钮2',
+            desc: ''
+          }
+        }
+      },
+      {
+        name: 'OK/NG显示',
+        img: '/assets/img/tools/OKNG.png',
+        style: {
+          width: '37px',
+          height: '60px',
+          padding: '0 0 0 6px'
+        },
+        data: {
+          text: 'OK、NG显示',
+          rect: {
+            width: 100,
+            height: 25
+          },
+          imageWidth: 25,
+          font: {
+            textAlign: 'left',
+          },
+          image: '/assets/img/tools/OKNG.png',
+          name: 'OKNG',
+          mubanId: 1,
+          property: {
+            jixing: 'PNP',
+            leixing: 'out',
+            xianzhi: '5',
+            jiekou: 'M12',
+            current: 2,
+            name: 'OK/NG显示',
+            desc: ''
+          }
+        }
+      },
+      {
+        name: '吹气中继',
+        img: '/assets/img/tools/zhongji.png',
+        style: {
+          width: '37px',
+          height: '60px',
+          padding: '0 0 0 6px'
+        },
+        data: {
+          text: '吹气中继',
+          rect: {
+            width: 100,
+            height: 25
+          },
+          imageWidth: 25,
+          font: {
+            textAlign: 'left',
+          },
+          image: '/assets/img/tools/zhongji.png',
+          name: 'zhongji',
+          mubanId: 1,
+          property: {
+            jixing: 'NPN',
+            leixing: 'out',
+            xianzhi: '2',
+            jiekou: 'M8',
+            current: 2,
+            name: '吹气中继',
+            desc: ''
+          }
+        }
+      },
+
+
+
+      // {
+      //   name: '默认电阻',
+      //   icon: 'icon-rect',
+      //   style: {
+      //     width: '40px',
+      //     height: '40px',
+      //   },
+      //   data: {
+      //     text: '',
+      //     rect: {
+      //       width: 30,
+      //       height: 20
+      //     },
+      //     mubanId: 1,
+      //     name: 'plug',
+      //   }
+      // },
     ]
   },
   {

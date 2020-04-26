@@ -1,9 +1,11 @@
-import { Store } from 'le5le-store';
-import { Options } from './options';
-import { Canvas } from './canvas';
+import {Store} from 'le5le-store';
+import {Options} from './options';
+import {Canvas} from './canvas';
 import {ActiveLayer} from './activeLayer';
-import { HoverLayer } from './hoverLayer';
-import { AnimateLayer } from './animateLayer';
+import {HoverLayer} from './hoverLayer';
+import {AnimateLayer} from './animateLayer';
+import {FileTypes} from './models/status';
+
 
 export class Offscreen extends Canvas {
   public activeLayer: ActiveLayer = Store.get('LT:ActiveLayer');
@@ -18,13 +20,21 @@ export class Offscreen extends Canvas {
     super.render();
     const ctx = this.canvas.getContext('2d');
     ctx.strokeStyle = this.options.color;
-
-
-    const w = this.width / 3;
-    const n = this.height / 600;
+    if (this.data.filetype === FileTypes.Fenxianhe) {
+      this.drawFenxianHeFile(ctx, this.width, this.height);
+    }
+    this.renderNodes();
+    this.renderLines();
+    this.activeLayer.render(ctx);
+    this.animateLayer.render(ctx);
+    this.hoverLayer.render(ctx);
+  }
+  drawFenxianHeFile(ctx: CanvasRenderingContext2D, width: number, height: number) {
+    const w = width / 3;
+    const n = height / 450;
     const top_y = 30;
-    const h = 600;
-    const h1 = 590;
+    const h = 450;
+    const h1 = 440;
     for (let i = 0; i < n; i++) {
 
       ctx.fillStyle = '#E9E9EE';
@@ -37,12 +47,13 @@ export class Offscreen extends Canvas {
       ctx.strokeStyle = '#ca9a06ff';
       ctx.translate(160 , 200 + h * i);
       ctx.rotate(35 * Math.PI / 180);
-      ctx.strokeText(message, 0, 0)
+      ctx.strokeText(message, 0, 0);
       ctx.restore();
 
 
       ctx.fillStyle = '#F3F3F3';
       ctx.fillRect(w, top_y + h * i, w , h1);
+
 
       ctx.save();
       // 绘制空心文字
@@ -50,8 +61,9 @@ export class Offscreen extends Canvas {
       ctx.strokeStyle = '#ca9a06ff';
       ctx.translate(160 + w , 200 + h * i);
       ctx.rotate(35 * Math.PI / 180);
-      ctx.strokeText(message, 0, 0)
+      ctx.strokeText(message, 0, 0);
       ctx.restore();
+
 
       ctx.fillStyle = '#E9E9E9';
       ctx.fillRect(2 * w, top_y + h * i, w, h1);
@@ -62,22 +74,21 @@ export class Offscreen extends Canvas {
       ctx.strokeStyle = '#ca9a06ff';
       ctx.translate(160 + 2 * w , 200 + h * i);
       ctx.rotate(35 * Math.PI / 180);
-      ctx.strokeText(message, 0, 0)
+      ctx.strokeText(message, 0, 0);
       ctx.restore();
 
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, top_y + h1 + h * i, 3 * w, 10);
 
+      ctx.save();
+      ctx.font = 'bold 15px 宋体';
+      ctx.fillStyle = 'black';
+      ctx.fillText('附件：', w + 10, top_y + h * i + 400);
+      ctx.restore();
+
 
     }
-
-    this.renderNodes();
-    this.renderLines();
-    this.activeLayer.render(ctx);
-    this.animateLayer.render(ctx);
-    this.hoverLayer.render(ctx);
   }
-
   renderNodes() {
     if (!this.data.nodes.length) {
       return;

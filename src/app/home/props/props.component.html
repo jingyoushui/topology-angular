@@ -90,6 +90,34 @@
 <!--          内边距：输入数字表示像素；输入%表示百分比-->
 <!--        </div>-->
 <!--      </div>-->
+      <div class="group" *ngIf="props.data.property">
+        <div class="title">产品参数</div>
+        <div class="flex grid">
+          <div>极性：</div>
+          <div>{{props.data.property.jixing}}</div>
+          <div>类型：</div>
+          <div *ngIf="props.data.property.leixing === 'in'">输入型</div>
+          <div *ngIf="props.data.property.leixing === 'out'">输出型</div>
+        </div>
+        <div class="flex grid">
+          <div>线制：</div>
+          <div>{{props.data.property.xianzhi}}线</div>
+          <div>电流：</div>
+          <div>{{props.data.property.current}}mA</div>
+        </div>
+        <div class="flex grid">
+          <div>接头类型：</div>
+          <div>{{props.data.property.jiekou}}</div>
+        </div>
+        <div class="flex grid">
+          <div>产品名称：</div>
+          <div>{{props.data.property.name}}</div>
+        </div>
+        <div class="flex grid" *ngIf="props.data.property.desc">
+          <div>产品描述：</div>
+          <div>{{props.data.property.desc}}</div>
+        </div>
+      </div>
 
       <div class="group" *ngIf="props.data.attribute">
         <div class="title">相关属性</div>
@@ -157,13 +185,13 @@
             <i class="iconfont icon-help-circle" style="color:#c4c9cd"></i>
           </div>
         </div>
-        <div class="flex middle input-line">
+        <div class="flex middle ">
           <label>图片选择</label>
           <div class="pointer icon" (click)="showDialog = 1">
             <div *ngIf="!props.data.image" class="image-upload">
               <i class="iconfont icon-add inline"></i>
             </div>
-            <img *ngIf="props.data.image" [src]="props.data.image" style="height: .3rem" />
+            <img *ngIf="props.data.image" [src]="props.data.image"  />
           </div>
         </div>
         <div *ngIf="showDialog === 1" class="tools">
@@ -188,29 +216,29 @@
             </div>
           </div>
         </div>
-        <div class="flex grid mt5">
-          <div>宽（px）</div>
-          <div>高（px）</div>
-        </div>
-        <div class="flex grid">
-          <div class="mr5">
-            <input type="number" name="imageWidth" class="input" [(ngModel)]="props.data.imageWidth" [uiMin]="0"
-              [uiMax]="5000" (change)="onChangeImgWidth()" [readonly]="readonly" />
-          </div>
-          <div>
-            <input type="number" name="imageHeight" class="input" [(ngModel)]="props.data.imageHeight" [uiMin]="0"
-              [uiMax]="5000" (change)="onChangeImgHeight()" [readonly]="readonly" />
-          </div>
-        </div>
-        <div class="mt5">
-          <label class="checkbox">
-            <input name="imageRatio" type="checkbox" [(ngModel)]="props.data.imageRatio"
-              (change)="onChangeImgRatio()" />
-            <span>保存图片比例</span>
-          </label>
-        </div>
+<!--        <div class="flex grid mt5">-->
+<!--          <div>宽（px）</div>-->
+<!--          <div>高（px）</div>-->
+<!--        </div>-->
+<!--        <div class="flex grid">-->
+<!--          <div class="mr5">-->
+<!--            <input type="number" name="imageWidth" class="input" [(ngModel)]="props.data.imageWidth" [uiMin]="0"-->
+<!--              [uiMax]="5000" (change)="onChangeImgWidth()" [readonly]="readonly" />-->
+<!--          </div>-->
+<!--          <div>-->
+<!--            <input type="number" name="imageHeight" class="input" [(ngModel)]="props.data.imageHeight" [uiMin]="0"-->
+<!--              [uiMax]="5000" (change)="onChangeImgHeight()" [readonly]="readonly" />-->
+<!--          </div>-->
+<!--        </div>-->
+<!--        <div class="mt5">-->
+<!--          <label class="checkbox">-->
+<!--            <input name="imageRatio" type="checkbox" [(ngModel)]="props.data.imageRatio"-->
+<!--              (change)="onChangeImgRatio()" />-->
+<!--            <span>保存图片比例</span>-->
+<!--          </label>-->
+<!--        </div>-->
       </div>
-      <div class="group">
+      <!--<div class="group">
         <div class="title mb5">字体图标</div>
         <div class="flex input-line middle mb10">
           <label>字体图标</label>
@@ -252,7 +280,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div>-->
       <div class="group">
         <div class="title">图片/图标对齐方式</div>
         <div class="mt5">
@@ -262,8 +290,8 @@
       </div>
     </div>
     <div class="group" *ngIf="props.type === 'line'">
-      <div class="title">位置</div>
-      <div>
+      <div class="title">接头</div>
+      <!--<div>
         起点
       </div>
       <div class="flex grid mt5">
@@ -289,6 +317,7 @@
             [uiMax]="5000" [readonly]="readonly" required (change)="onChangeProp()" />
         </div>
       </div>
+      -->
       <div class="flex grid mt5">
         <div class="mr5">起点接头</div>
         <div>终点接头</div>
@@ -405,42 +434,42 @@
           </div>
         </div>
       </div>
-<!--      <div class="flex grid mt5">-->
-<!--        <div class="mr5">起点箭头颜色</div>-->
-<!--        <div>终点箭头颜色</div>-->
-<!--      </div>-->
-<!--      <div class="flex grid">-->
-<!--        <div class="input color mr5" [class.readonly]="readonly">-->
-<!--          <i [(colorPicker)]="props.data.fromArrowColor" [style.background]="props.data.fromArrowColor"-->
-<!--            cpPosition="bottom" cpAlphaChannel="always" cpOutputFormat="hex" [cpPresetColors]="cpPresetColors"-->
-<!--            (colorPickerChange)="onChangeProp(false)"></i>-->
-<!--          <input name="fromArrowColor" [(ngModel)]="props.data.fromArrowColor" [readonly]="readonly"-->
-<!--            (change)="onChangeProp()" />-->
-<!--        </div>-->
-<!--        <div class="input color " [class.readonly]="readonly">-->
-<!--          <i [(colorPicker)]="props.data.toArrowColor" [style.background]="props.data.toArrowColor" cpPosition="bottom"-->
-<!--            cpAlphaChannel="always" cpOutputFormat="hex" [cpPresetColors]="cpPresetColors"-->
-<!--            (colorPickerChange)="onChangeProp(false)"></i>-->
-<!--          <input name="toArrowColor" [(ngModel)]="props.data.toArrowColor" [readonly]="readonly"-->
-<!--            (change)="onChangeProp()" />-->
-<!--        </div>-->
-<!--      </div>-->
-<!--      <div class="flex grid mt5">-->
-<!--        <div class="mr5">起点箭头大小</div>-->
-<!--        <div>终点箭头大小</div>-->
-<!--      </div>-->
-<!--      <div class="flex grid mt5">-->
-<!--        <div class="mr5">-->
-<!--          <input type="number" name="fromArrowSize" class="input" [(ngModel)]="props.data.fromArrowSize" [uiMin]="1"-->
-<!--            [uiMax]="100" [readonly]="readonly" (change)="onChangeProp()" />-->
-<!--        </div>-->
-<!--        <div>-->
-<!--          <input type="number" name="toArrowSize" class="input" [(ngModel)]="props.data.toArrowSize" [uiMin]="1"-->
-<!--            [uiMax]="100" [readonly]="readonly" (change)="onChangeProp()" />-->
-<!--        </div>-->
-<!--      </div>-->
+      <!--<div class="flex grid mt5">
+        <div class="mr5">起点箭头颜色</div>
+        <div>终点箭头颜色</div>
+      </div>
+      <div class="flex grid">
+        <div class="input color mr5" [class.readonly]="readonly">
+          <i [(colorPicker)]="props.data.fromArrowColor" [style.background]="props.data.fromArrowColor"
+            cpPosition="bottom" cpAlphaChannel="always" cpOutputFormat="hex" [cpPresetColors]="cpPresetColors"
+            (colorPickerChange)="onChangeProp(false)"></i>
+          <input name="fromArrowColor" [(ngModel)]="props.data.fromArrowColor" [readonly]="readonly"
+            (change)="onChangeProp()" />
+        </div>
+        <div class="input color " [class.readonly]="readonly">
+          <i [(colorPicker)]="props.data.toArrowColor" [style.background]="props.data.toArrowColor" cpPosition="bottom"
+            cpAlphaChannel="always" cpOutputFormat="hex" [cpPresetColors]="cpPresetColors"
+            (colorPickerChange)="onChangeProp(false)"></i>
+          <input name="toArrowColor" [(ngModel)]="props.data.toArrowColor" [readonly]="readonly"
+            (change)="onChangeProp()" />
+        </div>
+      </div>
+      <div class="flex grid mt5">
+        <div class="mr5">起点箭头大小</div>
+        <div>终点箭头大小</div>
+      </div>
+      <div class="flex grid mt5">
+        <div class="mr5">
+          <input type="number" name="fromArrowSize" class="input" [(ngModel)]="props.data.fromArrowSize" [uiMin]="1"
+            [uiMax]="100" [readonly]="readonly" (change)="onChangeProp()" />
+        </div>
+        <div>
+          <input type="number" name="toArrowSize" class="input" [(ngModel)]="props.data.toArrowSize" [uiMin]="1"
+            [uiMax]="100" [readonly]="readonly" (change)="onChangeProp()" />
+        </div>
+      </div>-->
     </div>
-    <div class="group">
+    <!--<div class="group">
       <div class="title">外观</div>
       <div class="flex grid" *ngIf="props.type === 'node'">
         <div>边框样式</div>
@@ -688,16 +717,16 @@
         <input type="number" name="globalAlpha" class="input full" [(ngModel)]="props.data.globalAlpha" [uiMin]="0"
           [uiMax]="1" [readonly]="readonly" (change)="onChangeProp()" />
       </div>
-    </div>
+    </div> -->
     <div class="group">
       <div class="title">文字</div>
-      <div class="mt5">
-        字体
-      </div>
-      <div>
-        <input name="fontFamily" class="input full" [(ngModel)]="props.data.font.fontFamily" [readonly]="readonly"
-          (change)="onChangeProp()" />
-      </div>
+<!--      <div class="mt5">-->
+<!--        字体-->
+<!--      </div>-->
+<!--      <div>-->
+<!--        <input name="fontFamily" class="input full" [(ngModel)]="props.data.font.fontFamily" [readonly]="readonly"-->
+<!--          (change)="onChangeProp()" />-->
+<!--      </div>-->
       <div class="flex grid mt5">
         <div>颜色</div>
         <div>大小</div>
@@ -717,65 +746,65 @@
             uiMax="500" [readonly]="readonly" (change)="onChangeProp()" />
         </div>
       </div>
-      <div class="flex grid mt5">
-        <div>倾斜</div>
-        <div>加粗</div>
-      </div>
-      <div class="flex grid">
-        <div class="mr5">
-          <ui-select name="fontStyle" [(ngModel)]="props.data.font.fontStyle" [options]="fontStyleOptions"
-            [multi]="false" (change)="onChangeProp()" placeholder="正常" [readonly]="readonly"></ui-select>
-        </div>
-        <div>
-          <ui-select name="fontWeight" [(ngModel)]="props.data.font.fontWeight" [options]="fontWeightOptions"
-            [multi]="false" (change)="onChangeProp()" placeholder="正常" [readonly]="readonly"></ui-select>
-        </div>
-      </div>
+<!--      <div class="flex grid mt5">-->
+<!--        <div>倾斜</div>-->
+<!--        <div>加粗</div>-->
+<!--      </div>-->
+<!--      <div class="flex grid">-->
+<!--        <div class="mr5">-->
+<!--          <ui-select name="fontStyle" [(ngModel)]="props.data.font.fontStyle" [options]="fontStyleOptions"-->
+<!--            [multi]="false" (change)="onChangeProp()" placeholder="正常" [readonly]="readonly"></ui-select>-->
+<!--        </div>-->
+<!--        <div>-->
+<!--          <ui-select name="fontWeight" [(ngModel)]="props.data.font.fontWeight" [options]="fontWeightOptions"-->
+<!--            [multi]="false" (change)="onChangeProp()" placeholder="正常" [readonly]="readonly"></ui-select>-->
+<!--        </div>-->
+<!--      </div>-->
 
-      <div class="flex grid mt5">
-        <div>水平对齐</div>
-        <div>垂直对齐</div>
-      </div>
-      <div class="flex grid">
-        <div class="mr5">
-          <ui-select name="textAlign" [(ngModel)]="props.data.font.textAlign" [options]="textAlignOptions"
-            [multi]="false" (change)="onChangeProp()" [readonly]="readonly"></ui-select>
-        </div>
-        <div>
-          <ui-select name="textBaseline" [(ngModel)]="props.data.font.textBaseline" [options]="textBaselineOptions"
-            [multi]="false" (change)="onChangeProp()" [readonly]="readonly"></ui-select>
-        </div>
-      </div>
+<!--      <div class="flex grid mt5">-->
+<!--        <div>水平对齐</div>-->
+<!--        <div>垂直对齐</div>-->
+<!--      </div>-->
+<!--      <div class="flex grid">-->
+<!--        <div class="mr5">-->
+<!--          <ui-select name="textAlign" [(ngModel)]="props.data.font.textAlign" [options]="textAlignOptions"-->
+<!--            [multi]="false" (change)="onChangeProp()" [readonly]="readonly"></ui-select>-->
+<!--        </div>-->
+<!--        <div>-->
+<!--          <ui-select name="textBaseline" [(ngModel)]="props.data.font.textBaseline" [options]="textBaselineOptions"-->
+<!--            [multi]="false" (change)="onChangeProp()" [readonly]="readonly"></ui-select>-->
+<!--        </div>-->
+<!--      </div>-->
 
-      <div class="flex grid mt5">
-        <div>行高</div>
-        <div>最大行数</div>
-      </div>
-      <div class="flex grid">
-        <div class="mr5">
-          <input type="number" name="lineHeight" class="input" [(ngModel)]="props.data.font.lineHeight" uiMin="1"
-            uiMax="5" [readonly]="readonly" (change)="onChangeProp()" />
-        </div>
-        <div>
-          <input type="number" name="textMaxLine" class="input" [(ngModel)]="props.data.textMaxLine" uiMin="0"
-            uiMax="500" [readonly]="readonly" placeholder="0：自动匹配高度" (change)="onChangeProp()" />
-        </div>
-      </div>
+<!--      <div class="flex grid mt5">-->
+<!--        <div>行高</div>-->
+<!--        <div>最大行数</div>-->
+<!--      </div>-->
+<!--      <div class="flex grid">-->
+<!--        <div class="mr5">-->
+<!--          <input type="number" name="lineHeight" class="input" [(ngModel)]="props.data.font.lineHeight" uiMin="1"-->
+<!--            uiMax="5" [readonly]="readonly" (change)="onChangeProp()" />-->
+<!--        </div>-->
+<!--        <div>-->
+<!--          <input type="number" name="textMaxLine" class="input" [(ngModel)]="props.data.textMaxLine" uiMin="0"-->
+<!--            uiMax="500" [readonly]="readonly" placeholder="0：自动匹配高度" (change)="onChangeProp()" />-->
+<!--        </div>-->
+<!--      </div>-->
 
-      <div class="flex grid mt5">
-        <div>水平偏移（px）</div>
-        <div>垂直偏移（px）</div>
-      </div>
-      <div class="flex grid">
-        <div class="mr5">
-          <input type="number" name="textOffsetX" class="input" [(ngModel)]="props.data.textOffsetX"
-            [readonly]="readonly" (change)="onChangeProp()" />
-        </div>
-        <div>
-          <input type="number" name="textOffsetY" class="input" [(ngModel)]="props.data.textOffsetY"
-            [readonly]="readonly" (change)="onChangeProp()" />
-        </div>
-      </div>
+<!--      <div class="flex grid mt5">-->
+<!--        <div>水平偏移（px）</div>-->
+<!--        <div>垂直偏移（px）</div>-->
+<!--      </div>-->
+<!--      <div class="flex grid">-->
+<!--        <div class="mr5">-->
+<!--          <input type="number" name="textOffsetX" class="input" [(ngModel)]="props.data.textOffsetX"-->
+<!--            [readonly]="readonly" (change)="onChangeProp()" />-->
+<!--        </div>-->
+<!--        <div>-->
+<!--          <input type="number" name="textOffsetY" class="input" [(ngModel)]="props.data.textOffsetY"-->
+<!--            [readonly]="readonly" (change)="onChangeProp()" />-->
+<!--        </div>-->
+<!--      </div>-->
 
       <div class="mt5">
         内容
@@ -785,7 +814,7 @@
           (change)="onChangeProp()"></textarea>
       </div>
     </div>
-    <div class="group">
+    <!--<div class="group">
       <div class="flex">
         <div class="title">
           <label class="checkbox">
@@ -1073,7 +1102,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div>-->
   </div>
   <div *ngIf="props.type === 'multi'">
     <div class="group">

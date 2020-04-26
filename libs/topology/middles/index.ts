@@ -65,6 +65,7 @@ import {fenXianHeAnchors} from './nodes/branch/fenxianhe.anchor';
 import {jitingButtonAnchors} from './nodes/branch/jitingButton.anchor';
 import {jitingButtonRect, jitingButtonTextRect} from './nodes/branch/jitingButton.rect';
 import {flangeCouplingConnectorAnchors} from './nodes/branch/flangeCouplingConnector.anchor';
+import {plug} from './nodes/branch/plug';
 
 import { cube } from './nodes/cube';
 import { cubeAnchors } from './nodes/cube.anchor';
@@ -205,20 +206,20 @@ function init() {
 
   // 急停按钮2
   drawNodeFns.jitingButton2 = (ctx: CanvasRenderingContext2D, node: Rect) => { };
-  iconRectFns.jitingButton2 = imageIconRect;
-  textRectFns.jitingButton2 = imageTextRect;
+  iconRectFns.jitingButton2 = jitingButtonRect;
+  textRectFns.jitingButton2 = jitingButtonTextRect;
   anchorsFns.jitingButton2 = jitingButtonAnchors;
 
   // 吹气中继
   drawNodeFns.zhongji = (ctx: CanvasRenderingContext2D, node: Rect) => { };
-  iconRectFns.zhongji = imageIconRect;
-  textRectFns.zhongji = imageTextRect;
+  iconRectFns.zhongji = jitingButtonRect;
+  textRectFns.zhongji = jitingButtonTextRect;
   anchorsFns.zhongji = jitingButtonAnchors;
 
   // OK/NG显示
   drawNodeFns.OKNG = (ctx: CanvasRenderingContext2D, node: Rect) => { };
-  iconRectFns.OKNG = imageIconRect;
-  textRectFns.OKNG = imageTextRect;
+  iconRectFns.OKNG = jitingButtonRect;
+  textRectFns.OKNG = jitingButtonTextRect;
   anchorsFns.OKNG = jitingButtonAnchors;
 
   // 法兰式连接器
@@ -226,6 +227,11 @@ function init() {
   iconRectFns.flangeCouplingConnector = imageIconRect;
   textRectFns.flangeCouplingConnector = imageTextRect;
   anchorsFns.flangeCouplingConnector = flangeCouplingConnectorAnchors;
+
+  // 默认的塞子
+  drawNodeFns.plug = plug;
+  anchorsFns.plug = jitingButtonAnchors;
+
 
   // Cube
   drawNodeFns.cube = cube;

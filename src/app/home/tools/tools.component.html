@@ -1,0 +1,12 @@
+<div *ngFor="let item of tools">
+  <div class="title" style="font-size: smaller;padding-top: 10px;">{{ item.group }}</div>
+  <div class="buttons" style="min-height: 80px;">
+    <a *ngFor="let button of item.children" [title]="button.name" [draggable]="button.data"
+       (dragstart)="onDrag($event, button)" (touchstart)="onTouchstart(button)" (click)="onclick(button.data)">
+      <i *ngIf="button.icon" class="iconfont {{ button.icon }}"></i>
+      <i *ngIf="button.img">
+        <img src="{{button.img}}" [ngStyle]="button.style">
+      </i>
+    </a>
+  </div>
+</div>

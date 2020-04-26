@@ -489,7 +489,7 @@ export class PropsComponent implements OnInit, OnChanges {
       };
     }
     // console.log(this.props.data)
-    // this.props.data.lineWidth = 5;
+    // this.props.data.lineWidth = 3;
     if (!this.props.data.font.fontStyle) {
       this.props.data.font.fontStyle = 'normal';
     }
@@ -526,6 +526,7 @@ export class PropsComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: { [propertyName: string]: SimpleChange }) {
+    // console.log('prop change');
     if (changes['props']) {
       this.ngOnInit();
     }

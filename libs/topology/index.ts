@@ -1,23 +1,23 @@
-import { Store, Observer } from 'le5le-store';
+import {Observer, Store} from 'le5le-store';
 
-import { Options, KeyType } from './options';
-import { Pen } from './models/pen';
-import { Node, images } from './models/node';
-import { Point } from './models/point';
-import { Line } from './models/line';
-import { TopologyData } from './models/data';
-import { Lock, AnchorMode } from './models/status';
-import { drawNodeFns, drawLineFns } from './middles/index';
-import { Offscreen } from './offscreen';
-import { RenderLayer } from './renderLayer';
-import { HoverLayer } from './hoverLayer';
-import { ActiveLayer } from './activeLayer';
-import { AnimateLayer } from './animateLayer';
-import { DivLayer } from './divLayer';
-import { Rect } from './models/rect';
-import { s8 } from './uuid/uuid';
-import { getBezierPoint } from './middles/lines/curve';
-import { pointInRect } from './utils';
+import {KeyType, Options} from './options';
+import {Pen} from './models/pen';
+import {images, Node} from './models/node';
+import {Point} from './models/point';
+import {Line} from './models/line';
+import {TopologyData} from './models/data';
+import {AnchorMode, FileTypes, Lock} from './models/status';
+import {drawLineFns, drawNodeFns} from './middles/index';
+import {Offscreen} from './offscreen';
+import {RenderLayer} from './renderLayer';
+import {HoverLayer} from './hoverLayer';
+import {ActiveLayer} from './activeLayer';
+import {AnimateLayer} from './animateLayer';
+import {DivLayer} from './divLayer';
+import {Rect} from './models/rect';
+import {s8} from './uuid/uuid';
+import {getBezierPoint} from './middles/lines/curve';
+import {pointInRect} from './utils';
 
 const resizeCursors = ['nw-resize', 'ne-resize', 'se-resize', 'sw-resize'];
 enum MoveInType {
@@ -105,7 +105,7 @@ export class Topology {
         fontFamily: '"Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial',
         fontSize: 12,
         lineHeight: 1.5,
-        textAlign: 'left',
+        textAlign: 'center',
         textBaseline: 'middle'
       };
     }
@@ -316,6 +316,7 @@ export class Topology {
       }
     }
     this.divLayer.canvas.focus();
+    return node;
   }
 
   getTouchOffset(touch: Touch) {
@@ -422,7 +423,6 @@ export class Topology {
       this.hoverLayer.node = null;
       this.hoverLayer.line = null;
     }
-
     this.offscreen.render();
     this.canvas.render();
   }
@@ -444,6 +444,7 @@ export class Topology {
     }
 
     this.data.scale = data.scale || 1;
+    this.data.filetype = data.filetype || FileTypes.Default;
     Store.set('LT:scale', this.data.scale);
     if (this.options.on) {
       this.options.on('scale', this.data.scale);
@@ -590,10 +591,12 @@ export class Topology {
         pos.x + 50 > this.parentElem.clientWidth + this.parentElem.scrollLeft;
       const moveOutY = pos.y + 50 > this.parentElem.clientHeight + this.parentElem.scrollTop;
       if (moveOutX || moveOutY) {
+        if (this.data.filetype === FileTypes.Fenxianhe) {
+          return;
+        }
         if (this.options.on) {
           this.options.on('moveOutParent', pos);
         }
-
         let resize = false;
         if (pos.x + 50 > this.divLayer.canvas.clientWidth) {
           this.canvas.width += 200;
@@ -830,7 +833,7 @@ export class Topology {
     }
 
     this.render();
-  };
+  }
 
   private onmouseup = (e: MouseEvent) => {
     this.mouseDown = null;
@@ -1321,6 +1324,11 @@ export class Topology {
     }
 
     return new Rect(x1, y1, x2 - x1, y2 - y1);
+  }
+  // 获得整个画布区域
+  getRect2() {
+
+
   }
 
   getNodesRect(nodes: Node[]) {

@@ -1,29 +1,30 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterContentChecked } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {HttpClient} from '@angular/common/http';
 
-import { Topology } from 'topology-core';
-import { Options } from 'topology-core/options';
-import { s8 } from 'topology-core/uuid/uuid';
+import {Topology} from 'topology-core';
+import {Options} from 'topology-core/options';
+import {s8} from 'topology-core/uuid/uuid';
 
 import * as FileSaver from 'file-saver';
-import { Store } from 'le5le-store';
-import { NoticeService } from 'le5le-components/notice';
+import {Store} from 'le5le-store';
+import {NoticeService} from 'le5le-components/notice';
 
-import { HomeService } from './home.service';
-import { Props } from './props/props.model';
-import { environment } from 'src/environments/environment';
-import { CoreService } from '../core/core.service';
-import { TopologyService } from './topology.service';
-import { Tools } from './tools/config';
-import {TopologyData} from 'topology-core/models/data';
+import {HomeService} from './home.service';
+import {Props} from './props/props.model';
+import {environment} from 'src/environments/environment';
+import {CoreService} from '../core/core.service';
+import {TopologyService} from './topology.service';
+import {Tools} from './tools/config';
 import {Node} from 'topology-core/models/node';
-import {Line} from 'topology-core/models/line';
 // 树型插件
-import { NzTreeModule } from 'ng-zorro-antd/tree';
 import {M8json} from './json/M8_json';
 import {ReportList} from './report-list/reportList';
 import {ReportListNode} from './report-list/reportListNode';
+
+
+import {VoltageAndCurrent} from './parameter/VoltageAndCurrent';
+import {FileTypes} from 'topology-core/models/status';
 
 
 declare var C2S: any;
@@ -47,29 +48,47 @@ export class HomeComponent implements OnInit, OnDestroy {
   cavasbkColor = '#ffffffff';
   // canvaslines: Array<Line>;
   canvasOptions: Options = {};
+  // 这个是选中的节点数据
   selected: Props;
   subMenu: any;
   size = {
     width: 1500,
-    height: 600
+    height: 450
   };
   data = {
     id: '',
     version: '',
-    data: {nodes: [], lines: [], bkColor: '#ffffffff'},
+    data: {nodes: [], lines: [], bkColor: '#ffffffff', filetype: 0},
     name: '空白文件',
     desc: '',
     image: '',
     userId: '',
     shared: false
   };
+  currentFile: FileTypes;
+  // 下面的是弹窗中的属性
+  jixing = '';
+  leixing = '';
+  xianzhi = '';
+  jiekou = '';
+  current = 0;
+  name = '';
+  desc = '';
+
+  // end
+  checkOptionsOne = [
+    { label: 'Apple', value: 'Apple', checked: true },
+    { label: 'Pear', value: 'Pear' },
+    { label: 'Orange', value: 'Orange' }
+  ];
   // 每一个模板的高度,固定为430
-  muban_height = 600;
+  muban_height = 450;
   report_list_id = 1;
   // 用来生成报目表的数据,将整个画板分成多个区域,每个区域都有名字和id,nodes[],lines[].
   // report_node : id, name, 型号, 备注
   report_list2: ReportList[] = [];
   showReport = false;
+  showWindows = false;
   // 中英对应表
   zh_en = new Map([
     [ 'fenxianhe', '分线盒'],
@@ -79,6 +98,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     [ 'jitingButton2', '急停按钮' ],
     [ 'OKNG', 'OK/NG显示' ],
     [ 'zhongji', '中继器' ],
+    [ 'polyline', '电缆'],
+    ['flangeCouplingConnector', '法兰连接器']
   ]);
   remove_id = [];
   icons: { icon: string; iconFamily: string; }[] = [];
@@ -90,7 +111,10 @@ export class HomeComponent implements OnInit, OnDestroy {
   mouseMoving = false;
 
   contextmenu: any;
+  // 这是选中的节点列表
   selNodes: any;
+  // 选中的待更换的plug节点
+  selectedPlug: any;
   locked = false;
 
   editFilename = false; // 文件名
@@ -104,22 +128,23 @@ export class HomeComponent implements OnInit, OnDestroy {
       x: 4,
       y: 35
     },
+    font: {
+      textAlign: 'center',
+    },
     strokeStyle: '#e7e27aff',
     fillStyle: '#e7e27aff',
     // locked: true,
-    name: 'rectangle'
+    name: 'rectangle',
+    mubanId: 1,
   };
   // m8模板初始化
   m8_json: {
     lines: any;
     fenxianhe: any;
+    plugs: any;
   };
-  fenxianheid = [
-    {
-      id : ''
-    },
-  ];
   divNode: any;
+  ignoreNode = ['plug', 'rectangle'];
 
   subRoute: any;
   cpPresetColors = [
@@ -166,14 +191,16 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.canvasOptions.on = this.onMessage;
 
     this.canvasOptions.height = this.muban_height;
-
     this.subMenu = Store.subscribe('clickMenu', (menu: { event: string; data: any; }) => {
       if (!this.canvas) {
         return;
       }
       switch (menu.event) {
-        case 'new':
+        case 'newF':
           this.onNew();
+          break;
+        case 'newK':
+          this.onNewKong();
           break;
         case 'open':
           setTimeout(() => {
@@ -255,6 +282,8 @@ export class HomeComponent implements OnInit, OnDestroy {
 
       this.canvas = new Topology(this.workspace.nativeElement, this.canvasOptions);
       this.size.width = this.canvas.parentElem.clientWidth;
+      this.size.height = this.canvas.parentElem.clientHeight;
+      this.canvas.resize(this.size);
       this.subRoute = this.activateRoute.queryParamMap.subscribe(params => {
         if (params.get('id')) {
           this.onOpen({id: params.get('id'), version: params.get('version')});
@@ -262,7 +291,7 @@ export class HomeComponent implements OnInit, OnDestroy {
           this.data = {
             id: '',
             version: '',
-            data: {nodes: [], lines: [], bkColor: '#ffffffff'},
+            data: {nodes: [], lines: [], bkColor: '#ffffffff', filetype: 0},
             name: '空白文件',
             desc: '',
             image: '',
@@ -271,10 +300,6 @@ export class HomeComponent implements OnInit, OnDestroy {
           };
         }
       });
-      this.report_list2.push(new ReportList(1, '模块1'));
-      this.initAddNode(this.json);
-      this.initNew();
-      this.report_list2[0].muban_name = this.json.text;
       // For debug
       (window as any).canvas = this.canvas;
       // End
@@ -282,15 +307,6 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     this.topologySrv.canvasRegister();
   }
-
-  onDrag(event: DragEvent, node: any) {
-    event.dataTransfer.setData('Text', JSON.stringify(node.data));
-  }
-
-  onTouchstart(item: any) {
-    this.canvas.touchedNode = item.data;
-  }
-
   onkeyDocument(key: KeyboardEvent) {
     switch (key.keyCode) {
       case 79:
@@ -372,18 +388,20 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.data = {
       id: '',
       version: '',
-      data: {nodes: [], lines: [], bkColor: '#ffffffff'},
+      data: {nodes: [], lines: [], bkColor: '#ffffffff', filetype: 0},
       name: '空白文件',
       desc: '',
       image: '',
       userId: '',
       shared: false
     };
+    this.data.data.filetype = FileTypes.Fenxianhe;
+    this.currentFile = FileTypes.Fenxianhe;
     Store.set('file', this.data);
     this.canvas.open(this.data.data);
     this.size = {
       width: 1500,
-      height: 600
+      height: 450
     };
     this.canvas.resize(this.size);
     this.json = {
@@ -394,30 +412,72 @@ export class HomeComponent implements OnInit, OnDestroy {
         x: 4,
         y: 35
       },
+      font: {
+        textAlign: 'center',
+      },
       strokeStyle: '#e7e27aff',
       fillStyle: '#e7e27aff',
       // locked: true,
-      name: 'rectangle'
-    }
+      name: 'rectangle',
+      mubanId: 1,
+    };
     this.initAddNode(this.json);
     this.report_list_id = 1;
     this.report_list2 = [];
     this.report_list2.push(new ReportList(1, '模块1'));
     this.report_list2[0].muban_name = this.json.text;
-
-    this.initNew();
+    this.initNewM8();
+    this.router.navigate(['/workspace']);
 
   }
-  // 初始化和新建文件时, 提前将分线盒和八根线绘制好
-  initNew() {
+
+  onNewKong() {
+    // @ts-ignore
+    // @ts-ignore
+    this.data = {
+      id: '',
+      version: '',
+      data: {nodes: [], lines: [], bkColor: '#ffffffff', filetype: 0},
+      name: '空白文件',
+      desc: '',
+      image: '',
+      userId: '',
+      shared: false
+    };
+    this.currentFile = FileTypes.Default;
+    this.size.width = this.canvas.parentElem.clientWidth;
+    this.size.height = this.canvas.parentElem.clientHeight;
+    this.canvas.resize(this.size);
+    this.report_list2 = [];
+    Store.set('file', this.data);
+    this.canvas.open(this.data.data);
+    this.router.navigate(['/workspace']);
+
+  }
+  // 初始化和新建分线盒文件时, 提前将分线盒和八根线绘制好
+  initNewM8() {
     this.m8_json = (new M8json()).M8_json;
-    this.m8_json.fenxianhe.id = this.fenxianheid[0].id = s8();
+    this.m8_json.fenxianhe.id = s8();
     this.initAddNode(this.m8_json.fenxianhe);
     for (const line of this.m8_json.lines) {
-      line.from.id = line.controlPoints[0].id = this.fenxianheid[0].id;
+      line.from.id = line.controlPoints[0].id = this.m8_json.fenxianhe.id;
+      this.m8_json.plugs.rect.y = line.to.y - 10;
+      this.m8_json.plugs.id = s8();
+      this.initAddNode(this.m8_json.plugs);
+      line.to.direction = 4;
+      line.to.anchorIndex = 0;
+      line.to.id = this.m8_json.plugs.id;
       this.initAddLine(line);
     }
-    console.log(this.m8_json);
+    // 堆pulg设置动画
+    for (const node of this.canvas.data.nodes) {
+      if (node.name === 'plug') {
+        node.animateType = 'warning';
+        this.setPlugAnimate(node);
+        node.animatePlay = true;
+        this.canvas.animate();
+      }
+    }
   }
 
   async onOpen(data: { id: string; version?: string; }) {
@@ -425,6 +485,19 @@ export class HomeComponent implements OnInit, OnDestroy {
     if (!ret) {
       this.router.navigateByUrl('/workspace');
       return;
+    }
+    this.currentFile = ret.data.filetype;
+    const ret2 = await this.service.GetReportList(data);
+    if (ret2) {
+      this.report_list2 = ret2.data.data;
+      // 这里解决页面刷新后新增模板会重叠的bug
+      this.report_list_id = ret2.data.data.length;
+      console.log(this.report_list_id);
+      // 这里解决刷新时页面大小的问题
+      if (ret.data.filetype === FileTypes.Fenxianhe) {
+        this.size.height = this.muban_height * this.report_list_id;
+        this.canvas.resize(this.size);
+      }
     }
     Store.set('recently', {
       id: ret.id,
@@ -444,11 +517,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     Store.set('toArrowType', ret.data.toArrowType);
     Store.set('scale', ret.data.scale);
     Store.set('locked', ret.data.locked);
+    Store.set('filetype', ret.data.filetype);
     this.canvas.open(ret.data);
-    // this.canvas = new Topology(this.workspace.nativeElement, this.canvasOptions);
-    // this.size.width = this.canvas.parentElem.clientWidth;
-    // this.canvas.resize(this.size);
-
     Store.set('file', this.data);
   }
 
@@ -598,13 +668,24 @@ export class HomeComponent implements OnInit, OnDestroy {
       const ret = await this.service.Save(this.data);
       if (ret) {
         Store.set('file', this.data);
-        const _noticeService: NoticeService = new NoticeService();
-        _noticeService.notice({
-          body: '保存成功！',
-          theme: 'success'
-        });
         // 保存成功文件数据之后,获取文件id,然后保存报目表数据
-
+        const ret2 = await this.service.SaveReportList(
+          {
+            id: ret.id,
+            data: {
+              id: ret.id,
+              data: this.report_list2
+            },
+            userId: ''
+          }
+         );
+        if (ret2) {
+          const _noticeService: NoticeService = new NoticeService();
+          _noticeService.notice({
+            body: '保存成功！',
+            theme: 'success'
+          });
+        }
         // this.data.id = ret.id;
         if (!this.data.id || this.activateRoute.snapshot.queryParamMap.get('version')) {
           this.data.id = ret.id;
@@ -676,34 +757,176 @@ export class HomeComponent implements OnInit, OnDestroy {
     // @ts-ignore
     this.size.width = this.canvas.parentElem.clientWidth;
     this.canvas.resize(this.size);
-    const n = this.report_list_id;
     this.report_list_id += 1;
     // 增加模块名称组件
     this.json.rect.y = 30 + this.muban_height * (this.report_list_id - 1);
     this.json.text = '模块' + this.report_list_id;
+    this.json.mubanId  = this.report_list_id;
 
     this.report_list2.push(new ReportList(this.report_list_id, this.json.text));
     this.initAddNode(this.json);
     // end
     // 增加分线盒和线
-    this.fenxianheid.push(
-      {
-        id: ''
-      }
-    );
-    this.m8_json.fenxianhe.id = this.fenxianheid[n].id = s8();
-    this.m8_json.fenxianhe.rect.y += this.muban_height;
+    this.m8_json.fenxianhe.id  = s8();
+    // TODO 这里有bug,当页面刷新的时候，m8_json中的数据会重新加载进来，就会是初始值了
+    // 解决方法，第一种：当模板中的节点和线画上了之后，将m8_json中的值再做相反的操作改回去，这样保证每次都是从初始值加上高度×i
+    // 第二种方法：另定义一个文件，这个文件中的数据只读不更改，通过该文件中的值作为初始值加上高度×i
+    // 第一种解决方案实现比较简单，这里使用第一种方法
+    const i = this.report_list_id - 1;
+    this.m8_json.fenxianhe.rect.y += this.muban_height * i;
+    this.m8_json.fenxianhe.mubanId += i;
     this.initAddNode(this.m8_json.fenxianhe);
+
+
     for (const line of this.m8_json.lines) {
       line.from.id = line.controlPoints[0].id = this.m8_json.fenxianhe.id;
-      line.from.y += this.muban_height;
-      line.to.y += this.muban_height;
-      line.controlPoints[0].y += this.muban_height;
-      line.controlPoints[1].y += this.muban_height ;
+      line.from.y += this.muban_height * i;
+      line.to.y += this.muban_height * i;
+      line.controlPoints[0].y += this.muban_height * i;
+      line.controlPoints[1].y += this.muban_height * i ;
+      // 把电阻plug加上去
+      this.m8_json.plugs.rect.y = line.to.y - 10;
+      this.m8_json.plugs.id = s8();
+      this.m8_json.plugs.mubanId += i;
+      this.initAddNode(this.m8_json.plugs);
+
+      line.to.direction = 4;
+      line.to.anchorIndex = 0;
+      line.to.id = this.m8_json.plugs.id;
+
+      // 设置线的Muban_id
+      line.mubanId = Math.floor(line.from.y / this.muban_height) + 1;
       this.initAddLine(line);
     }
+
+    // 堆pulg设置动画
+    for (const node of this.canvas.data.nodes) {
+      if (node.name === 'plug' && node.mubanId === this.report_list_id) {
+        node.animateType = 'warning';
+        this.setPlugAnimate(node);
+        node.animatePlay = true;
+        this.canvas.animate();
+      }
+    }
+
+    // 这里做相反的操作，保证M8_json的数据不被改变
+    setTimeout(() => {
+      this.m8_json.fenxianhe.rect.y -= this.muban_height * i;
+      this.m8_json.fenxianhe.mubanId -= i;
+      this.m8_json.plugs.mubanId -= i;
+      for (const line of this.m8_json.lines) {
+        line.from.y -= this.muban_height * i;
+        line.to.y -= this.muban_height * i;
+        line.controlPoints[0].y -= this.muban_height * i;
+        line.controlPoints[1].y -= this.muban_height * i ;
+      }
+    }, 1000);
     // end
     console.log(this.report_list2);
+
+  }
+  del_muban(id: number) {
+
+    // 将该模板下的节点删除
+    this.canvas.data.nodes = this.canvas.data.nodes.filter(x => x.mubanId !== id);
+    this.canvas.data.lines = this.canvas.data.lines.filter(x => x.mubanId !== id);
+    // TODO 存在bug,当删除一个模板的时候，应该将report_list_id-1操作，这个值只是用来记录新建模板的时候从哪里开始新建，相当于指针，永远指向最后一个模板;
+    this.report_list_id -= 1;
+
+    // TODO 这里有bug,节点并不会上移
+    // 处在该模板下面的节点上移
+    for (const node of this.canvas.data.nodes) {
+      if (node.mubanId > id) {
+        node.mubanId -= 1;
+        node.rect.y -= this.muban_height;
+      }
+    }
+    // 处在该模板下面的线上移
+    for (const line of this.canvas.data.lines) {
+      if (line.mubanId > id) {
+        line.from.y -= this.muban_height;
+        line.to.y -= this.muban_height;
+        line.mubanId -= 1;
+        for (const control of line.controlPoints) {
+          control.y -= this.muban_height;
+        }
+      }
+    }
+    this.canvas.render();
+    this.size.height -= this.muban_height;
+    // @ts-ignore
+    this.size.width = this.canvas.parentElem.clientWidth;
+    this.canvas.resize(this.size);
+
+    // 将报目表中对应的数据删除
+    this.report_list2 = this.report_list2.filter(x => x.muban_id !== id);
+  }
+  // 校验所有模板的电压电流
+  jiaoyanAll() {
+    for (const i of this.report_list2) {
+      this.jiaoyan(i.muban_id);
+    }
+  }
+  // 用来校验模板的电压和电流
+  jiaoyan(id: number) {
+    console.log(id);
+    /**
+     * 基本思路：
+     *  1.定义一个列表，列表的长度为9，因为分线盒有9个接口，其中0-7为出接口，8为入接口
+     * 每个接口有电压和电流，初始化为0。
+     *  2.遍历所有变成实线的线条，查找from和to中的id,通过id查找到对应节点的名字name，通过name从电压电流表中取出该节点的标准电压。
+     *  3.将八条出线口的电压分别放在0-7列表中，然后累加和分线盒电压比较。
+     *
+     * */
+      // TODO 检查分线盒,首先模板内得有分线盒,这里假设的是一个模板最多只有一个分线盒
+    let fenxianheId = '';
+    for (const node of this.canvas.data.nodes) {
+      if (node.mubanId === id && node.name === 'fenxianhe') {
+        fenxianheId = node.id;
+      }
+    }
+    if (fenxianheId) {
+      let current = 0;
+      for (const line of this.canvas.data.lines) {
+        if (line.mubanId === id && line.to.id && line.from.id === fenxianheId) {
+          const toId = line.to.id;
+          let toName = '';
+          for (const node of this.canvas.data.nodes) {
+            if (node.id === toId) {
+              toName = node.name;
+            }
+          }
+          current += VoltageAndCurrent.current.get(toName);
+          // for (const muban of this.report_list2) {
+          //   if (muban.muban_id === id) {
+          //     for (const node of muban.report_nodes) {
+          //       if (node.node_id === toId) {
+          //
+          //       }
+          //     }
+          //   }
+          // }
+
+        }
+      }
+      const fromCurrent = VoltageAndCurrent.current.get('fenxianhe');
+      if (current <= fromCurrent) {
+        const _noticeService: NoticeService = new NoticeService();
+        _noticeService.notice({
+          body: '模块' + id + '电流校验通过，入：' + fromCurrent + 'A；出：' + current + 'A',
+          theme: 'success'
+        });
+      } else {
+        const _noticeService: NoticeService = new NoticeService();
+        _noticeService.notice({
+          body: '模块' + id + '电流校验不通过，入：' + fromCurrent + 'A；出：' + current + 'A',
+          theme: 'error'
+        });
+      }
+      console.log('电流为：' + current);
+    } else {
+      console.log('计算电流错误:没有分线盒');
+    }
 
   }
   onSaveLocal() {
@@ -719,11 +942,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   initAddNode(json: any) {
-    this.canvas.initAddNode(json);
-    setTimeout(() => {
-      this.selected = null;
-    });
-    console.log(this.selected);
+    return this.canvas.initAddNode(json);
   }
   initAddLine(json: any) {
     this.canvas.addLineByJson(json);
@@ -856,17 +1075,40 @@ export class HomeComponent implements OnInit, OnDestroy {
   onParse() {
     this.canvas.parse();
   }
-
+ // 这个是点击左侧栏的组件时候，让右侧显示属性
+  changePlugdata(data: any) {
+    this.selected = {
+      type: 'node',
+      data
+    };
+}
   onMessage = (event: string, data: any) => {
-    console.log(event);
-    console.log(data);
+    if (event !== 'moveNodes') {
+      console.log(event);
+      console.log(data);
+    }
     switch (event) {
+      case 'dblclick' :
+        // 这里是双击的时候，如果是双击的plug电阻，就会出现弹窗
+        if ('node' in data) {
+          if (data.node.name === 'plug') {
+            this.showWindows = true;
+            this.selectedPlug = data.node;
+            console.log('触发双击');
+          }
+        }
+        break;
       case 'node':
+        if (data.name === 'plug') {
+          break;
+        }
         this.selNodes = [data];
         this.selected = {
           type: 'node',
           data
+
         };
+        console.log(this.selected);
         this.locked = data.locked;
         this.readonly = this.locked || !!this.canvas.data.locked;
         break;
@@ -920,8 +1162,8 @@ export class HomeComponent implements OnInit, OnDestroy {
         });
         break;
       case 'moveOut':
-        this.workspace.nativeElement.scrollLeft += 10;
-        this.workspace.nativeElement.scrollTop += 10;
+        // this.workspace.nativeElement.scrollLeft += 10;
+        // this.workspace.nativeElement.scrollTop += 10;
         break;
       case 'resize':
         if (!this.mouseMoving) {
@@ -943,6 +1185,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
       case 'delete':
         this.deleteNodes(data);
+        this.changeLineByDeleteNode(data);
         break;
 
       case 'moveNodes':
@@ -969,11 +1212,20 @@ export class HomeComponent implements OnInit, OnDestroy {
 
       // tslint:disable-next-line:no-switch-case-fall-through
       case 'moveOutNode':
+        for (const id of this.remove_id) {
+          if (data.id === id) {
+            return;
+          }
+        }
         this.addNodes(data);
+        this.exchangeNode(data);
         break;
 
       case 'moveOutLine':
-        this.changeLine(data);
+        // this.changeLine(data);
+        break;
+      case 'moveInLine':
+        // this.delReportLine(data);
         break;
     }
 
@@ -981,7 +1233,17 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
   // 当线连接到终端的时候就把线改为实线,并且根据两端终端的类型判断需要的接头类型,并自动生成接头
   changeLine(data: any) {
-    if (data.controlPoints.length === 3) { // 此时说明两端都连接到了节点上
+    if (data.to.id) { // 此时说明两端都连接到了节点上
+      // 如果连接的节点是plug，就不需要改变线
+      if (this.findTypeById(data.to.id) === 'plug') {
+        return;
+      }
+      // 这是因为在删除线的时候也会触发一次moveOutLine事件，如果该线是被删除的，后面的操作就不要做了。
+      for (const i of this.remove_id) {
+        if (data.id === i) {
+          return;
+        }
+      }
       data.dash = 0 ; // 首先将虚线变为实线;
       const to_nodename = this.findTypeById(data.to.id);
       const from_nodename = this.findTypeById(data.from.id);
@@ -996,7 +1258,14 @@ export class HomeComponent implements OnInit, OnDestroy {
       }
       data.text = text;
 
+      // 将该线加入到报表中
+      const id = data.mubanId - 1;
+      this.report_list2[id].report_nodes.push(new ReportListNode(data.id, data.name, data.text));
     }
+  }
+  delReportLine(data: any) {
+    const id = data.mubanId - 1;
+    this.report_list2[id].report_nodes = this.report_list2[id].report_nodes.filter(x => x.node_id !== data.id);
   }
   // 根据id查找出节点的类型
   findTypeById(id: string) {
@@ -1007,42 +1276,61 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
     return null;
   }
+  // 将节点的信息添加到报目表中
   addNodes(data: any) {
-    for (const id of this.remove_id) {
-      if (data.id === id) {
-        return;
+    // 分线盒模板
+    if (this.currentFile === FileTypes.Fenxianhe) {
+      // for (const id of this.remove_id) {
+      //   if (data.id === id) {
+      //     return;
+      //   }
+      // }
+      const n = Math.floor(data.rect.y / this.muban_height);
+      // 设置节点的muban_id
+      data.mubanId = n + 1;
+      // 有些节点不需要加入到报目表中
+      for (const ignore_node of this.ignoreNode) {
+        if (data.name === ignore_node) {
+          return;
+        }
       }
-    }
-    if (data.name === 'rectangle') {
 
-      return;
+      this.report_list2[n].report_nodes.push(new ReportListNode(data.id, data.name, 'type', data.text));
+      console.log(this.report_list2);
     }
-    // tslint:disable-next-line:radix
-    const n = Math.floor(data.rect.y / this.muban_height);
-    this.report_list2[n].report_nodes.push(new ReportListNode(data.id, data.name, 'type', data.text))
-    console.log(this.report_list2);
   }
+  // 鼠标进入节点的时候将其从报目表中删除，鼠标移出的时候再将其加回来
   delete1(data: any) {
-    // tslint:disable-next-line:radix
-    const n = Math.floor(data.rect.y / this.muban_height);
-    const id = data.id;
-    // const i = this.findNode(node, n);
-    // console.log(i);
-    this.report_list2[n].report_nodes = this.report_list2[n].report_nodes.filter(x => x.node_id !== id);
-
-  }
-  // 删除节点时将报目单中的相应节点删除
-  deleteNodes(data: any) {
-    for (const node of data.nodes) {
-      // tslint:disable-next-line:radix
-      const n = Math.floor(node.rect.y / this.muban_height);
-      this.remove_id.push(node.id);
-      const id = node.id;
-      // const i = this.findNode(node, n);
-      // console.log(i);
+    if (this.currentFile === FileTypes.Fenxianhe) {
+      const n = data.mubanId - 1;
+      const id = data.id;
       this.report_list2[n].report_nodes = this.report_list2[n].report_nodes.filter(x => x.node_id !== id);
     }
-    console.log(this.report_list2);
+  }
+  // 删除节点时将报目单中的相应节点删除, 这个函数传进来的是map类型的数据，里面有nodes[]和lines[]
+  deleteNodes(data: any) {
+    if (this.currentFile === FileTypes.Fenxianhe) {
+      for (const node of data.nodes) {
+        // tslint:disable-next-line:radix
+        const n = node.mubanId - 1;
+        this.remove_id.push(node.id);
+        const id = node.id;
+        // 删除对应id的数据
+        this.report_list2[n].report_nodes = this.report_list2[n].report_nodes.filter(x => x.node_id !== id);
+      }
+      // 如果调用的是removeNode方法，就没有lines[]
+      if (data.lines) {
+        for (const line of data.lines) {
+          // tslint:disable-next-line:radix
+          const n = line.mubanId - 1;
+          this.remove_id.push(line.id);
+          const id = line.id;
+          // 删除对应id的数据
+          this.report_list2[n].report_nodes = this.report_list2[n].report_nodes.filter(x => x.node_id !== id);
+        }
+      }
+      console.log(this.report_list2);
+    }
   }
   // private findNode(node: Node, n: number) {
   //   for (let i = 0; i < this.report_list[n].report_nodes.length; ++i) {
@@ -1053,7 +1341,210 @@ export class HomeComponent implements OnInit, OnDestroy {
   //
   //   return -1;
   // }
+  changeLineByDeleteNode(data: any) {
+    for (const node of data.nodes) {
+      // 当删除底层部件节点的时候，先把线的状态改变一下
+      for (const line of this.canvas.data.lines) {
+        if (line.to.id === node.id) {
+          console.log(line);
+          line.text = '';
+          line.toArrow = '';
+          line.fromArrow = '';
+          line.dash = 1;
+          // 把plug变成动画状态
+          for (const n of this.canvas.data.nodes) {
+            if (n.name === 'plug') {
+              if (this.calculateDistance(node.rect.x, n.rect.x) && this.calculateDistance(node.rect.y, n.rect.y)) {
+                n.locked = true;
+                n.animatePlay = true;
+                n.animateStart = Date.now();
+                this.canvas.animate();
+                // 把线和plug连在一起
+                line.to.id = n.id;
+              }
+            }
+          }
+          // 把线从报目表中删除
+          this.report_list2[node.mubanId - 1].report_nodes = this.report_list2[node.mubanId - 1].
+            report_nodes.filter(x => x.node_id !== line.id);
+        }
+      }
+    }
+  }
+// 为plug设置动画
+  setPlugAnimate(data: any) {
+    data.animateFrames = [];
+    const state = Node.cloneState(data);
+    switch (data.animateType) {
+      case 'upDown':
+        state.rect.y -= 10;
+        state.rect.ey -= 10;
+        data.animateFrames.push({
+          duration: 100,
+          linear: true,
+          state
+        });
+        data.animateFrames.push({
+          duration: 100,
+          linear: true,
+          state: Node.cloneState(data)
+        });
+        data.animateFrames.push({
+          duration: 200,
+          linear: true,
+          state: Node.cloneState(state)
+        });
+        break;
+      case 'leftRight':
+        state.rect.x -= 10;
+        state.rect.ex -= 10;
+        data.animateFrames.push({
+          duration: 100,
+          linear: true,
+          state: Node.cloneState(state)
+        });
+        state.rect.x += 20;
+        state.rect.ex += 20;
+        data.animateFrames.push({
+          duration: 80,
+          linear: true,
+          state: Node.cloneState(state)
+        });
+        state.rect.x -= 20;
+        state.rect.ex -= 20;
+        data.animateFrames.push({
+          duration: 50,
+          linear: true,
+          state: Node.cloneState(state)
+        });
+        state.rect.x += 20;
+        state.rect.ex += 20;
+        data.animateFrames.push({
+          duration: 30,
+          linear: true,
+          state: Node.cloneState(state)
+        });
+        data.animateFrames.push({
+          duration: 300,
+          linear: true,
+          state: Node.cloneState(data)
+        });
+        break;
+      case 'heart':
+        state.rect.x -= 5;
+        state.rect.ex += 5;
+        state.rect.y -= 5;
+        state.rect.ey += 5;
+        state.rect.width += 5;
+        state.rect.height += 10;
+        data.animateFrames.push({
+          duration: 100,
+          linear: true,
+          state
+        });
+        data.animateFrames.push({
+          duration: 400,
+          linear: true,
+          state: Node.cloneState(data)
+        });
+        break;
+      case 'success':
+        state.strokeStyle = '#237804';
+        data.animateFrames.push({
+          duration: 100,
+          linear: true,
+          state
+        });
+        data.animateFrames.push({
+          duration: 100,
+          linear: true,
+          state: Node.cloneState(data)
+        });
+        state.strokeStyle = '#237804';
+        data.animateFrames.push({
+          duration: 100,
+          linear: true,
+          state
+        });
+        data.animateFrames.push({
+          duration: 100,
+          linear: true,
+          state: Node.cloneState(data)
+        });
+        state.strokeStyle = '#237804';
+        state.fillStyle = '#389e0d22';
+        data.animateFrames.push({
+          duration: 3000,
+          linear: true,
+          state
+        });
+        break;
+      case 'warning':
+        state.strokeStyle = '#cf1322';
+        // state.fillStyle = '#ffffff';
+        state.dash = 2;
+        data.animateFrames.push({
+          duration: 300,
+          linear: true,
+          state
+        });
+        state.strokeStyle = '#cf1322';
+        // state.fillStyle = '#cf1322';
+        state.dash = 0;
+        data.animateFrames.push({
+          duration: 500,
+          linear: true,
+          state: Node.cloneState(state)
+        });
+        state.strokeStyle = '#cf1322';
+        // state.fillStyle = '#ffffff';
+        state.dash = 2;
+        data.animateFrames.push({
+          duration: 300,
+          linear: true,
+          state: Node.cloneState(state)
+        });
+        break;
+      case 'error':
+        state.strokeStyle = '#cf1322';
+        state.fillStyle = '#cf132222';
+        data.animateFrames.push({
+          duration: 100,
+          linear: true,
+          state
+        });
+        break;
+      case 'show':
+        state.strokeStyle = '#fa541c';
+        state.rotate = -10;
+        data.animateFrames.push({
+          duration: 100,
+          linear: true,
+          state: Node.cloneState(state)
+        });
+        state.rotate = 10;
+        data.animateFrames.push({
+          duration: 100,
+          linear: true,
+          state: Node.cloneState(state)
+        });
+        state.rotate = 0;
+        data.animateFrames.push({
+          duration: 100,
+          linear: true,
+          state: Node.cloneState(state)
+        });
+        break;
+    }
 
+    this.setAnimateDuration(data);
+  }
+  setAnimateDuration(data: any) {
+    data.animateDuration = 0;
+    for (const item of data.animateFrames) {
+      data.animateDuration += item.duration;
+    }
+  }
 
   onChangeProps(props: any) {
     if (this.canvas.data.locked) {
@@ -1087,6 +1578,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   onContextMenu(event: MouseEvent) {
+    console.log(event);
     event.preventDefault();
     event.stopPropagation();
 
@@ -1143,6 +1635,62 @@ export class HomeComponent implements OnInit, OnDestroy {
     const evt = document.createEvent('MouseEvents');
     evt.initEvent('click', true, true);
     a.dispatchEvent(evt);
+  }
+
+  // 控制底层组件的弹窗
+  changeShowWindows(data: any) {
+    this.showWindows = data;
+  }
+
+
+  /**
+   * 当拖动底层部件的时候，离开节点触发moveoutNodes事件的时候，判断data.rect.x和data.rect.y的值，
+   * 需要遍历所有的组件，找到plug类型的组件，将他们的rect.x和rect.y记录下来，当data.rect.x和rect.x的距离比较近同时y也比较近的话，就用data的节点代替plug节点
+   * 将plug节点删除，将plug的id赋值给底层部件。这样避免去更改线的to.id,但是这样更改id会出现问题，因为之前添加节点的id就会消失了，在报目表中没办法更新节点了,需要将报目表中的id也更换过来
+   * 所以不要更换id,而是将line中的to.id换成现在的id
+   */
+  exchangeNode(data: any) {
+    if (data.name === 'plug') {
+      return;
+    }
+    for (const node of this.canvas.data.nodes) {
+      if (node.name === 'plug') {
+        if (this.calculateDistance(node.rect.x, data.rect.x) && this.calculateDistance(node.rect.y, data.rect.y)) {
+          // this.canvas.removeNode(node);
+          node.locked = true;
+          node.dash = 1;
+          node.strokeStyle = '#74787c';
+          node.animatePlay = false;
+          node.animateStart = 0;
+          for (const line of this.canvas.data.lines) {
+            if (line.to.id === node.id) {
+              line.to.id = data.id;
+              this.changeLine(line);
+            }
+          }
+          // data.id = node.id;
+        }
+      }
+    }
+
+  }
+  /**
+   * 这里处理从popupWindows中传过来的数据，将传过来的数据new出一个节点，覆盖在双击选中的plug上，选中的plug被记录在了selectedPlug中
+   * 需要把selectedPlug中的rect.x和rect.y赋值给新创建的节点。
+   * */
+  setNodeData(data: any) {
+
+    data.rect.x = this.selectedPlug.rect.x;
+    data.rect.y = this.selectedPlug.rect.y;
+    data.mubanId = this.selectedPlug.mubanId;
+    // 把新节点添加上
+    const node = this.initAddNode(data);
+    // 调用更换节点
+    this.exchangeNode(node);
+    console.log(node);
+  }
+  calculateDistance(from: number, to: number) {
+    return Math.abs(from - to) < 5;
   }
 
   ngOnDestroy() {

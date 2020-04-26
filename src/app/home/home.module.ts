@@ -4,6 +4,8 @@ import { ContextMenuComponent } from './context-menu/context-menu.component';
 import { HomeRoutingModule } from './home-routing.module';
 import { HomeComponent } from './home.component';
 import { PropsComponent } from './props/props.component';
+import {ToolsComponent} from './tools/tools.component';
+import {PopupWindowsComponent} from './showWindows/popupWindows.component';
 import { TopologyService } from './topology.service';
 
 import { NgZorroAntdModule, NZ_ICONS } from 'ng-zorro-antd';
@@ -27,7 +29,7 @@ const icons: IconDefinition[] = Object.keys(antDesignIcons).map(key => antDesign
 
 @NgModule({
   imports: [SharedModule, HomeRoutingModule, NgZorroAntdModule, FormsModule, ReactiveFormsModule, ScrollingModule, DragDropModule ],
-  declarations: [HomeComponent, PropsComponent, ContextMenuComponent, NzDemoTreeLineComponent],
+  declarations: [ToolsComponent, HomeComponent, PropsComponent, ContextMenuComponent, PopupWindowsComponent, NzDemoTreeLineComponent],
   bootstrap:    [ NzDemoTreeLineComponent ],
   providers: [TopologyService, { provide: NZ_I18N, useValue: en_US }, { provide: NZ_ICONS, useValue: icons }]
 })

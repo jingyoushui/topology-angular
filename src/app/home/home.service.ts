@@ -14,6 +14,14 @@ export class HomeService {
 
     return ret;
   }
+  async GetReportList(data: any) {
+    const ret = await this.http.QueryString({ version: data.version }).Get('/api/report_list/get/' + data.id);
+    if (ret.error) {
+      return null;
+    }
+
+    return ret;
+  }
 
   async Upload(blob: Blob, shared = false, filename = '/topology/thumb.png') {
     const form = new FormData();

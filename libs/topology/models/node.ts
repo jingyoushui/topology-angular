@@ -25,6 +25,18 @@ export class Node extends Pen {
     configuration: number;
     modelsType: string;
   };
+  // 底层组件的属性
+  property: {
+    jixing: string;
+    leixing: string;
+    xianzhi: string;
+    jiekou: string;
+    current: number;
+    name: string;
+    desc: string;
+  }
+  // 节点的模板id
+  mubanId: number;
   // 0 -1 之间的小数
   borderRadius: number;
 
@@ -123,6 +135,12 @@ export class Node extends Pen {
 
     if (json.attribute) {
       this.attribute = json.attribute;
+    }
+    if (json.property) {
+      this.property =  json.property;
+    }
+    if (json.mubanId) {
+      this.mubanId = json.mubanId;
     }
 
     this.borderRadius = +json.borderRadius || 0;

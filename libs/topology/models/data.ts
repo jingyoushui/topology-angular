@@ -1,6 +1,6 @@
-import { Node } from './node';
-import { Line } from './line';
-import { Lock } from './status';
+import {Node} from './node';
+import {Line} from './line';
+import {FileTypes, Lock} from './status';
 
 export class TopologyData {
   nodes: Node[] = [];
@@ -12,6 +12,8 @@ export class TopologyData {
   bkImage: string;
   bkColor = '#ffffffff';
   locked = Lock.None;
+  // 画布文件的类型
+  filetype = FileTypes.Default;
   constructor(json?: any) {
     if (json) {
       this.nodes = [];
@@ -29,6 +31,7 @@ export class TopologyData {
       this.locked = json.locked || Lock.None;
       this.bkImage = json.bkImage;
       this.bkColor = json.bkColor || '';
+      this.filetype = json.filetype || FileTypes.Default;
     }
   }
 }

@@ -8,18 +8,18 @@ export interface Props {
   data?: {
     id?: string;
     name?: string;
-    dash: number;
-    lineWidth: number;
-    strokeStyle: string;
-    fillStyle: string;
-    bkType: number;
-    gradientFromColor: string;
-    gradientToColor: string;
-    gradientAngle: number;
-    gradientRadius: number;
-    globalAlpha: number;
-    rotate: number;
-    font: {
+    dash?: number;
+    lineWidth?: number;
+    strokeStyle?: string;
+    fillStyle?: string;
+    bkType?: number;
+    gradientFromColor?: string;
+    gradientToColor?: string;
+    gradientAngle?: number;
+    gradientRadius?: number;
+    globalAlpha?: number;
+    rotate?: number;
+    font?: {
       color: string;
       fontFamily: string;
       fontSize: number;
@@ -30,9 +30,9 @@ export interface Props {
       textBaseline: CanvasTextBaseline;
     };
     animateStart?: number;
-    animateCycle: number;
-    animateColor: string;
-    animateSpan: number;
+    animateCycle?: number;
+    animateColor?: string;
+    animateSpan?: number;
     animateType?: string;
     animateDotSize?: number;
     animateDuration?: number;
@@ -43,7 +43,7 @@ export interface Props {
     }[];
     nextAnimate?: string;
     animatePlay?: boolean;
-    tags: string[];
+    tags?: string[];
     data?: any;
     locked?: boolean;
     link?: string;
@@ -57,7 +57,7 @@ export interface Props {
     z?: number;
     zRotate?: number;
     // 产品的硬件属性
-    attribute: {
+    attribute?: {
       productName: string;
       channelType: number;
       signalType: number;
@@ -66,6 +66,18 @@ export interface Props {
       configuration: number;
       modelsType: string;
     };
+    // 底层组件的属性
+    property?: {
+      jixing: string;
+      leixing: string;
+      xianzhi: string;
+      jiekou: string;
+      current: number;
+      name: string;
+      desc: string;
+    }
+    // 节点的模板id
+    mubanId?: number;
     borderRadius?: number;
     icon?: string;
     iconFamily?: string;

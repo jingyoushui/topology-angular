@@ -1,0 +1,86 @@
+
+<div class="modal-content" style="width: 550px;">
+  <div class="modal-header pointer" uiDivMove [isHead]="true">
+    <div class="caption">底层部件自定义</div>
+    <i class="fr iconfont icon-close" (click)="closeWindows()"></i>
+  </div>
+  <div class="modal-body" >
+    <div >
+      <label>极性：</label>
+      <nz-radio-group [(ngModel)]="jixing" nzButtonStyle="solid">
+        <label nz-radio-button nzValue="NPN">NPN</label>
+        <label nz-radio-button nzValue="PNP">PNP</label>
+        <label nz-radio-button nzValue="">不选</label>
+      </nz-radio-group>
+      <label style="margin-left: 10px;">类型：</label>
+      <nz-radio-group [(ngModel)]="leixing" nzButtonStyle="solid">
+        <label nz-radio-button nzValue="in">输入</label>
+        <label nz-radio-button nzValue="out">输出</label>
+        <label nz-radio-button nzValue="">不选</label>
+      </nz-radio-group>
+    </div>
+    <div style="margin-top:15px">
+      <label>线制：</label>
+      <nz-radio-group [(ngModel)]="xianzhi" nzButtonStyle="solid">
+        <label nz-radio-button nzValue="2">2线</label>
+        <label nz-radio-button nzValue="3">3线</label>
+        <label nz-radio-button nzValue="4">4线</label>
+        <label nz-radio-button nzValue="5">5线</label>
+        <label nz-radio-button nzValue="">不选</label>
+      </nz-radio-group>
+    </div>
+    <div style="margin-top:15px;" >
+      <label>接头：</label>
+      <nz-radio-group [(ngModel)]="jiekou" nzButtonStyle="solid">
+        <label nz-radio-button nzValue="M8">M8</label>
+        <label nz-radio-button nzValue="M12">M12</label>
+        <label nz-radio-button nzValue="">不选</label>
+      </nz-radio-group>
+      <label style="margin-left: 30px;">电流：</label>
+      <input type="text" nz-input [ngModel]="current" style="width: 20%;" />mA
+    </div>
+    <div style="margin-top:15px;" >
+      <label>名称：</label>
+      <input type="text" nz-input [ngModel]="name" style="width: 30%;" />
+      <label style="margin-left: 30px;">注释：</label>
+      <input type="text" nz-input [ngModel]="desc" style="width: 30%;" />
+    </div>
+    <div style="margin-top: 15px;text-align:center">
+      <button nz-button nzType="primary" [nzSize]="'large'" nzShape="round" (click)="selectZujian()">筛选</button>
+    </div>
+    <div *ngIf="selected" style=" margin-top: 5px; display: inline-flex;width:100%;border: #8c8c8c solid 1px">
+      <div style="width: 150px;">
+        <img src="{{selected.img}}" style="height: 100px;">
+      </div>
+      <div>
+        <div><label>产品名称：</label>{{selected.name}}</div>
+        <div><label>极性：</label>{{selected.data.property.jixing}}</div>
+        <div><label>类型：</label>{{selected.data.property.leixing}}</div>
+      </div>
+      <div style="margin-left: 20px;">
+        <div><label>线制：</label>{{selected.data.property.xianzhi}}线</div>
+        <div><label>接头：</label>{{selected.data.property.jiekou}}</div>
+        <div><label>电流：</label>{{selected.data.property.current}}mA</div>
+      </div>
+    </div>
+    <div style="margin-top: 10px;">
+      <label>注意：仅DC24V元件可用</label>
+    </div>
+    <div style="margin-top: 10px;">
+      <div class="buttons" style="min-height: 80px;">
+        <a *ngFor="let button of selectedZujian" [title]="button.name" [draggable]="button.data" (click)="onclick(button)" style="padding-left: 15px;">
+          <i *ngIf="button.icon" class="iconfont {{ button.icon }}"></i>
+          <i *ngIf="button.img">
+            <img src="{{button.img}}" [ngStyle]="button.style">
+          </i>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="button" (click)="closeWindowsAndSetData()">
+      确定
+    </button>
+  </div>
+</div>
+

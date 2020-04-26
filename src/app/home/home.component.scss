@@ -1,5 +1,8 @@
+@import "~ng-zorro-antd/ng-zorro-antd.min.css";
+//@import "~ng-zorro-antd/ng-zorro-antd.less";
 @import "../../../src/variables";
 @import "~le5le-ui/variables";
+
 $color-border: #ddd;
 $tools-width: 1.75rem;
 $props-width: 2.4rem;
@@ -292,3 +295,5 @@ $props-width: 2.4rem;
 
 
 }
+
+

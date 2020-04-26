@@ -54,6 +54,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   menuClicked = false;
   showFigure = false;
+  showNew = false;
   editMode = false;
   locked = 0;
   scale = 100;
@@ -153,11 +154,11 @@ export class AppComponent implements OnInit, OnDestroy {
 
   onMenu(menu: string, data?: any) {
     const isOpen = menu.indexOf('open') === 0;
-    if (!this.editMode && menu !== 'new' && !isOpen) {
+    if (!this.editMode && menu !== 'newF' && !isOpen && menu !== 'newK') {
       return;
     }
 
-    if (menu === 'new' || isOpen) {
+    if (menu === 'newF' || isOpen || menu === 'newK') {
       const queryParams: any = {};
       if (data) {
         queryParams.id = this.activateRoute.snapshot.queryParamMap.get('id');
@@ -211,6 +212,11 @@ export class AppComponent implements OnInit, OnDestroy {
   onLeaveFigure() {
     setTimeout(() => {
       this.showFigure = false;
+    }, 800);
+  }
+  onLeaveNew() {
+    setTimeout(() => {
+      this.showNew = false;
     }, 800);
   }
 

@@ -1,6 +1,7 @@
 import { Store } from 'le5le-store';
 import { Options } from './options';
 import { Canvas } from './canvas';
+import {FileTypes} from './models/status';
 
 export class RenderLayer extends Canvas {
   offscreen = Store.get('LT:offscreen');
@@ -40,7 +41,6 @@ export class RenderLayer extends Canvas {
 
     ctx.drawImage(this.offscreen, 0, 0, this.width, this.height);
   }
-
   coverRect(canvasWidth: number, canvasHeight: number, imgWidth: number, imgHeight: number) {
     let x = 0;
     let y = 0;

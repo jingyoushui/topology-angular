@@ -13,6 +13,9 @@ export abstract class Pen {
   offsetRotate = 0;
   globalAlpha = 1;
 
+  // 属于哪个模板
+  mubanId: number;
+
   dash = 0;
   lineDash: number[];
   lineDashOffset: number;

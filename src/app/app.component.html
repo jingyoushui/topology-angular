@@ -8,10 +8,20 @@
         文件
       </a>
       <div class="dropdown">
-        <div class="item">
-          <a (click)="onMenu('new')">
-            新建文件
+        <div class="item" (mouseenter)="showNew = true" (mouseleave)="onLeaveNew()">
+          <a>
+            新建文件<i class="iconfont icon-angle-right"></i>
           </a>
+          <div class="dropdown pt10" style="width: 180px;">
+            <figure style="width: 180px;">
+              <p class="item" (click)="onMenu('newF')">分线盒模板系列</p>
+              <p class="item">MODBUS模板系列</p>
+              <p class="item">分线盒系列</p>
+              <p class="item">分线盒系列</p>
+              <p class="item line"></p>
+              <p class="item" (click)="onMenu('newK')">空白文件</p>
+            </figure>
+          </div>
         </div>
         <div class="item">
           <a (click)="onMenu('open')">

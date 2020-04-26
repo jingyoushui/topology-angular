@@ -19,6 +19,7 @@ export class Line extends Pen {
   toArrowColor: string;
 
   length: number;
+  mubanId = 1;
 
   borderWidth = 0;
   borderColor = '#000000';
@@ -61,6 +62,7 @@ export class Line extends Pen {
       if (json.length) {
         this.length = json.length;
       }
+      this.mubanId = json.mubanId || 1;
       if (json.borderWidth) {
         this.borderColor = json.borderColor;
         this.borderWidth = json.borderWidth;
@@ -232,9 +234,12 @@ export class Line extends Pen {
         if (!this.controlPoints || !this.controlPoints.length) {
           this.calcControlPoints();
         }
-        // const i = Math.floor(this.controlPoints.length / 2);
-        // center = this.getLineCenter(this.controlPoints[i - 1], this.controlPoints[i]);
-        center = this.getLineCenter(this.controlPoints[1], this.to);
+        if (this.to) {
+          center = this.getLineCenter(this.controlPoints[1], this.to);
+        } else {
+          const i = Math.floor(this.controlPoints.length / 2);
+          center = this.getLineCenter(this.controlPoints[i - 1], this.controlPoints[i]);
+        }
         break;
       case 'curve':
         center = getBezierPoint(0.5, this.to, this.controlPoints[1], this.controlPoints[0], this.from);

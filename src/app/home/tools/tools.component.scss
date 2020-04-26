@@ -1,0 +1,30 @@
+
+@import "../../../../src/variables";
+@import "~le5le-ui/variables";
+.title {
+  padding: 0.05rem 0.1rem;
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+
+  &:first-child {
+    border-top: none;
+  }
+}
+
+.buttons {
+  padding: 0.1rem 0;
+  a {
+    display: inline-block;
+    color: $color;
+    line-height: 1;
+    width: 0.4rem;
+    height: 0.4rem;
+    text-align: center;
+    text-decoration: none !important;
+
+    .iconfont {
+      font-size: 0.24rem;
+    }
+  }
+}
+

@@ -47,7 +47,7 @@ export function jitingButtonTextRect(node: Node) {
   const imgWidth = getImgWidth(node);
 
   // if (l.length)
-  const nodeW = l.length * node.font.fontSize / 2 + imgWidth * 2;
+  const nodeW = (l.length + 1) * node.font.fontSize + imgWidth;
   if (nodeW < 70) {
     node.rect.width = 70;
   } else if (nodeW > 400) {

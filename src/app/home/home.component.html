@@ -1,22 +1,31 @@
 <script src="props/props.component.ts"></script>
 <div class="flex">
   <div class="tools">
-    <div *ngFor="let item of tools">
-      <div class="title" style="font-size: smaller;padding-top: 10px;">{{ item.group }}</div>
-      <div class="buttons" style="min-height: 80px;">
-        <a *ngFor="let button of item.children" [title]="button.name" [draggable]="button.data"
-           (dragstart)="onDrag($event, button)" (touchstart)="onTouchstart(button)">
-          <i *ngIf="button.icon" class="iconfont {{ button.icon }}"></i>
-          <i *ngIf="button.img">
-            <img src="{{button.img}}" [ngStyle]="button.style">
-          </i>
-        </a>
-      </div>
-    </div>
+    <app-tools (plugdata)="changePlugdata($event)"></app-tools>
   </div>
   <div class="full">
     <div class="canvas" #workspace (contextmenu)="onContextMenu($event)"></div>
-    <div class="flex ph25 pv5" style="background-color: #242424;color: white" >
+    <div *ngIf="currentFile === 1" class="flex" style="height: 20px;margin-top: 25px;background-color: #8c8c8c;font-weight: bold" >
+      <div class="item  flex" style="width: 16%;">
+        控制系统
+      </div>
+      <div class="item  flex" style="width: 18%;">
+        连接器
+      </div>
+      <div class="item  flex" style="width: 20%;">
+        智能集线器
+      </div>
+      <div class="item  flex" style="width: 14%;">
+        连接器
+      </div>
+      <div class="item  flex" style="width: 10%;">
+        底层部件
+      </div>
+      <div class="item  flex" style="width: 23%;">
+        备注
+      </div>
+    </div>
+    <div class="flex  pt2" style="background-color: #242424;color: yellow" >
       <div style="width: 20%;" >
         文件名：
         <label *ngIf="!editFilename" (dblclick)="onEditFile(filenameInput)" title="双击编辑，点击空白保存">{{data.name}}</label>
@@ -35,7 +44,7 @@
         </form>
         <i class="iconfont icon-edit" *ngIf="!editFiledesc" (click)="onEditFileDesc(filedescInput)" title="双击编辑，点击空白保存"></i>
       </div>
-      <div class="item  flex" style="width: 200px;">
+      <div *ngIf="currentFile === 1" class="item  flex" style="width: 200px;">
         <a style="color:yellow;">增加模板</a>
         <div class="dropdown">
           <div class="item">
@@ -52,26 +61,37 @@
         </div>
       </div>
 
-      <div class="item  flex" style="width: 200px;">
+      <div *ngIf="currentFile === 1" class="item  flex" style="width: 200px;">
         <a style="color:yellow;">删除模板</a>
         <div class="dropdown">
-          <div class="item">
-            <a (click)="newM8()">
-              单通道M8
-            </a>
-          </div>
-          <div class="item line"></div>
-          <div class="item">
-            <a >
-              其他
+          <div class="item" *ngFor="let muban of report_list2">
+            <a (click)="del_muban(muban.muban_id)">
+              {{muban.muban_name}}
             </a>
           </div>
         </div>
       </div>
 
-      <div *ngIf="data.id">
-        <a routerLink="/user/history" [queryParams]="{ id: data.id, name: data.name }">-> 文件历史</a>
+      <div *ngIf="currentFile === 1" class="item  flex" style="width: 200px;">
+        <a style="color:yellow;">校验电流</a>
+        <div class="dropdown">
+          <div class="item" *ngFor="let muban of report_list2">
+            <a (click)="jiaoyan(muban.muban_id)">
+              {{muban.muban_name}}
+            </a>
+          </div>
+          <div class="item line"></div>
+          <div class="item">
+            <a (click)="jiaoyanAll()">
+              整个文件
+            </a>
+          </div>
+        </div>
       </div>
+
+<!--      <div *ngIf="data.id">-->
+<!--        <a routerLink="/user/history" [queryParams]="{ id: data.id, name: data.name }">-> 文件历史</a>-->
+<!--      </div>-->
     </div>
 
 
@@ -112,26 +132,24 @@
         </div>
         <div class="group">
           <div style="font-weight: 600">
-            <a (click)="showReport = true">
-            查看报目表
+            <a (click)="showReport = true" >
+            点击查看详细产品表单
           </a>
           </div>
-          <table>
+          <table border="1px" bordercolor="#e7e27aff" >
             <thead >
-            <tr>
-              <th style="background-color: #F8F8F8">区域号</th>
-              <th style="background-color: #F8F8F8">区域名</th>
-              <th style="background-color: #F8F8F8">品名</th>
+            <tr style="background-color: #F8F8F8">
+              <th>区域号</th>
+              <th>区域名</th>
+              <th>产品名</th>
             </tr>
             </thead>
-            <tbody>
-              <tr *ngFor="let list of report_list2" >
-                <th>{{ list.muban_id }}</th>
-                <th>{{list.muban_name}}</th>
-                <th>
-                  <div *ngFor="let node of list.report_nodes" >{{zh_en.get(node.node_name) }}<hr/></div>
-                </th>
-                </tr>
+            <tbody *ngFor="let list of report_list2" >
+            <tr *ngFor="let node1 of list.report_nodes;index as i;">
+              <td *ngIf="i === 0" [attr.rowspan]="list.report_nodes.length" >{{list.muban_id}}</td>
+              <td *ngIf="i === 0"  [attr.rowspan]="list.report_nodes.length" >{{list.muban_name}}</td>
+              <td style="padding: 10px 2px;">{{zh_en.get(node1.node_name)}}</td>
+            </tr>
             </tbody>
           </table>
         </div>
@@ -173,33 +191,28 @@
     <div class="modal-body">
 
 
-      <table>
+      <table border="1">
         <thead >
         <tr style="background-color: #e7e27aff">
           <th>区域号</th>
           <th>区域名</th>
-          <th>品名</th>
+          <th>产品名</th>
           <th>型号</th>
           <th>数量</th>
           <th>备注</th>
         </tr>
         </thead>
-        <tbody>
-        <tr *ngFor="let list of report_list2" >
-          <th>{{ list.muban_id }}</th>
-          <th>{{list.muban_name}}</th>
-          <th>
-            <div *ngFor="let node of list.report_nodes" >{{zh_en.get(node.node_name) }}</div>
-          </th>
-          <th><div *ngFor="let node of list.report_nodes" >{{node.node_type}}</div></th>
-          <th></th>
-          <th><div *ngFor="let node of list.report_nodes" >{{node.remarks}}</div></th>
-        </tr>
+        <tbody *ngFor="let list of report_list2">
+          <tr *ngFor="let node1 of list.report_nodes;index as i;">
+            <td *ngIf="i === 0" [attr.rowspan]="list.report_nodes.length" >{{list.muban_id}}</td>
+            <td *ngIf="i === 0"  [attr.rowspan]="list.report_nodes.length" >{{list.muban_name}}</td>
+            <td>{{zh_en.get(node1.node_name)}}</td>
+            <td>{{node1.node_type}}</td>
+            <td>1</td>
+            <td>{{node1.remarks}}</td>
+          </tr>
         </tbody>
       </table>
-
-
-
     </div>
     <div class="modal-footer">
       <button type="button" class="button" (click)="showReport = null">
@@ -208,6 +221,13 @@
     </div>
   </div>
 </div>
+
+<div class="modal" *ngIf="showWindows" >
+  <app-windows [current]="current" [jiekou]="jiekou" [leixing]="leixing" [jixing]="jixing" [xianzhi]="xianzhi" [desc]="desc" [name]="name"
+               (changeShow)="changeShowWindows($event)" (setNodeData)="setNodeData($event)"></app-windows>
+</div>
+
+
 
 
 <app-context-menu [contextmenu]="contextmenu" [canvas]="canvas" [selNodes]="selNodes" [selected]="selected"

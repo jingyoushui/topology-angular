@@ -1,6 +1,8 @@
 @import 'variables';
 @import "../node_modules/le5le-ui/index";
-
+@import "~ng-zorro-antd/radio/style/index.min.css";
+@import "~ng-zorro-antd/input/style/index.min.css";
+@import "~ng-zorro-antd/card/style/index.min.css";
 
 .headline {
   font-size: 0.24rem;
