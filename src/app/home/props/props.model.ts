@@ -78,6 +78,8 @@ export interface Props {
     }
     // 节点的模板id
     mubanId?: number;
+    // label的类型
+    label_type?: string;
     borderRadius?: number;
     icon?: string;
     iconFamily?: string;
@@ -90,7 +92,7 @@ export interface Props {
     imageHeight?: number;
     imageRatio?: boolean;
     imageAlign?: string;
-    text?: string;
+    text?: number | string;
     textMaxLine?: number;
     textOffsetX?: number;
     textOffsetY?: number;

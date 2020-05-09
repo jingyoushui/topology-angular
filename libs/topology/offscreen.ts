@@ -30,7 +30,8 @@ export class Offscreen extends Canvas {
     this.hoverLayer.render(ctx);
   }
   drawFenxianHeFile(ctx: CanvasRenderingContext2D, width: number, height: number) {
-    const w = width / 3;
+    // const w = width / 3;
+    const w = 500;
     const n = height / 450;
     const top_y = 30;
     const h = 450;
@@ -66,7 +67,7 @@ export class Offscreen extends Canvas {
 
 
       ctx.fillStyle = '#E9E9E9';
-      ctx.fillRect(2 * w, top_y + h * i, w, h1);
+      ctx.fillRect(2 * w, top_y + h * i, width - 2 * w, h1);
 
       ctx.save();
       // 绘制空心文字
@@ -78,12 +79,16 @@ export class Offscreen extends Canvas {
       ctx.restore();
 
       ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, top_y + h1 + h * i, 3 * w, 10);
+      ctx.fillRect(0, top_y + h1 + h * i, width, 10);
 
       ctx.save();
       ctx.font = 'bold 15px 宋体';
       ctx.fillStyle = 'black';
       ctx.fillText('附件：', w + 10, top_y + h * i + 400);
+      ctx.fillText('号码牌：', w + 60, top_y + h * i + 400);
+      ctx.fillText('板(10个/板)', w + 170, top_y + h * i + 400);
+      ctx.fillText('线标牌：', w + 280, top_y + h * i + 400);
+      ctx.fillText('包(16个/包)', w + 400, top_y + h * i + 400);
       ctx.restore();
 
 

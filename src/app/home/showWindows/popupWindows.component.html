@@ -1,10 +1,14 @@
 
 <div class="modal-content" style="width: 550px;">
-  <div class="modal-header pointer" uiDivMove [isHead]="true">
+  <div *ngIf="plug_type === 'plug'"  class="modal-header pointer" uiDivMove [isHead]="true">
     <div class="caption">底层部件自定义</div>
     <i class="fr iconfont icon-close" (click)="closeWindows()"></i>
   </div>
-  <div class="modal-body" >
+  <div *ngIf="plug_type === 'leftplug'" class="modal-header pointer" uiDivMove [isHead]="true">
+    <div class="caption">连接器选择</div>
+    <i class="fr iconfont icon-close" (click)="closeWindows()"></i>
+  </div>
+  <div *ngIf="plug_type === 'plug'"  class="modal-body" >
     <div >
       <label>极性：</label>
       <nz-radio-group [(ngModel)]="jixing" nzButtonStyle="solid">

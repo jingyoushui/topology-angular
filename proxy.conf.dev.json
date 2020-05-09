@@ -6,12 +6,22 @@
     "secure": false
   },
   "/api": {
-    "target": "http://192.168.43.212:8210",
+    "target": "http://127.0.0.1:8210",
     "secure": false,
     "logLevel": "debug",
     "changeOrigin": true,
     "pathRewrite": {
       "^/api": ""
+
+    }
+  },
+  "/image": {
+    "target": "http://127.0.0.1:3201",
+    "secure": false,
+    "logLevel": "debug",
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/image": ""
 
     }
   }

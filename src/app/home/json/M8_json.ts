@@ -12,7 +12,7 @@ export class  M8json {
           x: 504,
           y: 207
         },
-        image: '/assets/img/tools/fenxianhe.png',
+        image: '/assets/img/tools/fenxianhe_x.png',
         name: 'fenxianhe',
         mubanId: 1,
         attribute: {
@@ -33,19 +33,19 @@ export class  M8json {
           dash: 1,
           controlPoints: [
             {
-              x: 611,
+              x: 627,
               y: 141,
               direction: 1,
               anchorIndex: 0,
               id: ''
             },
             {
-              x: 611,
+              x: 627,
               y: 75
             }
           ],
           from: {
-            x: 611,
+            x: 627,
             y: 207,
             direction: 1,
             anchorIndex: 0,
@@ -63,19 +63,19 @@ export class  M8json {
           dash: 1,
           controlPoints: [
             {
-              x: 642,
+              x: 658,
               y: 158,
               direction: 1,
               anchorIndex: 1,
               id: ''
             },
             {
-              x: 642,
+              x: 658,
               y: 108
             },
           ],
           from: {
-            x: 642,
+            x: 658,
             y: 207,
             direction: 1,
             anchorIndex: 1,
@@ -93,19 +93,19 @@ export class  M8json {
           dash: 1,
           controlPoints: [
             {
-              x: 674,
+              x: 690,
               y: 175,
               direction: 1,
               anchorIndex: 2,
               id: ''
             },
             {
-              x: 674,
+              x: 690,
               y: 143
             }
           ],
           from: {
-            x: 674,
+            x: 690,
             y: 207,
             direction: 1,
             anchorIndex: 2,
@@ -123,19 +123,19 @@ export class  M8json {
           dash: 1,
           controlPoints: [
             {
-              x: 704,
+              x: 720,
               y: 193,
               direction: 1,
               anchorIndex: 3,
               id: ''
             },
             {
-              x: 704,
+              x: 720,
               y: 178
             }
           ],
           from: {
-            x: 704,
+            x: 720,
             y: 207,
             direction: 1,
             anchorIndex: 3,
@@ -153,19 +153,19 @@ export class  M8json {
           dash: 1,
           controlPoints: [
             {
-              x: 704,
+              x: 720,
               y: 271,
               direction: 3,
               anchorIndex: 7,
               id: ''
             },
             {
-              x: 704,
+              x: 720,
               y: 286
             }
           ],
           from: {
-            x: 704,
+            x: 720,
             y: 257,
             direction: 3,
             anchorIndex: 7,
@@ -183,19 +183,19 @@ export class  M8json {
           dash: 1,
           controlPoints: [
             {
-              x: 674,
+              x: 690,
               y: 287,
               direction: 3,
               anchorIndex: 6,
               id: ''
             },
             {
-              x: 674,
+              x: 690,
               y: 318
             }
           ],
           from: {
-            x: 674,
+            x: 690,
             y: 257,
             direction: 3,
             anchorIndex: 6,
@@ -213,19 +213,19 @@ export class  M8json {
           dash: 1,
           controlPoints: [
             {
-              x: 642,
+              x: 658,
               y: 302,
               direction: 3,
               anchorIndex: 5,
               id: ''
             },
             {
-              x: 642,
+              x: 658,
               y: 347
             }
           ],
           from: {
-            x: 642,
+            x: 658,
             y: 257,
             direction: 3,
             anchorIndex: 5,
@@ -243,19 +243,19 @@ export class  M8json {
           dash: 1,
           controlPoints: [
             {
-              x: 611,
+              x: 627,
               y: 318,
               direction: 3,
               anchorIndex: 4,
               id: ''
             },
             {
-              x: 611,
+              x: 627,
               y: 379
             }
           ],
           from: {
-            x: 611,
+            x: 627,
             y: 257,
             direction: 3,
             anchorIndex: 4,
@@ -280,6 +280,24 @@ export class  M8json {
           name: 'plug',
           mubanId: 1,
           locked: true
+      },
+      leftLine:  {
+        name: 'line',
+        lineWidth: 1,
+        dash: 1,
+        controlPoints: [],
+        from: {
+          x: 504,
+          y: 232,
+          direction: 4,
+          anchorIndex: 8,
+          id: ''
+        },
+        to: {
+          x: 330,
+          y: 232
+        },
+        // locked: true
       },
     };
   }

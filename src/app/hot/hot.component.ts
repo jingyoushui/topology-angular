@@ -23,7 +23,8 @@ export class HotComponent implements OnInit, OnDestroy {
     list: [],
     count: 0
   };
-  url = '/api/blob/'
+  // url = '/api/blob/'
+  url = '/image/UserImage/';
   loading = true;
 
   subRoute: any;
@@ -56,12 +57,14 @@ export class HotComponent implements OnInit, OnDestroy {
     if (this.search.pageIndex === 1) {
       Store.set('hots', this.data);
     }
+    console.log(this.data);
   }
 
   onOpen(item: any) {
     this.router.navigate(['/workspace'], {
       queryParams: {
-        id: item.id
+        id: item.id,
+        hasdata: item.data
       }
     });
   }

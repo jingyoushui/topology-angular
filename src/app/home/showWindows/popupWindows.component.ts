@@ -7,7 +7,8 @@ import {Tools} from '../tools/config';
   styleUrls: ['./popupWindows.component.scss'],
 })
 export class PopupWindowsComponent implements OnInit {
-
+  @Input()
+  plug_type: string;
   @Input()
   jixing: any;
   @Input()

@@ -8,6 +8,7 @@ import { triangle } from './nodes/triangle';
 import { diamond } from './nodes/diamond';
 import { leftArrow, rightArrow, twowayArrow } from './nodes/arrow';
 import { text } from './nodes/text';
+import {label} from './nodes/label';
 import { line as nodeLine } from './nodes/line';
 import { triangleAnchors } from './nodes/triangle.anchor';
 import { arrowAnchors } from './nodes/arrow.anchor';
@@ -36,7 +37,6 @@ import { curve, curveControlPoints, pointInCurve, calcCurveControlPoints, calcMi
 import { triangleSolid, triangle as arrowTriangle } from './arrows/triangle';
 import { diamondSolid, diamond as arrowDiamond } from './arrows/diamond';
 import { circleSolid, circle as arrowCircle } from './arrows/circle';
-import {imageSolid} from './arrows/image';
 import {leftASolid} from './arrows/leftA';
 import {rightASolid} from './arrows/rightA';
 import {rightBSolid} from './arrows/rightB';
@@ -66,6 +66,8 @@ import {jitingButtonAnchors} from './nodes/branch/jitingButton.anchor';
 import {jitingButtonRect, jitingButtonTextRect} from './nodes/branch/jitingButton.rect';
 import {flangeCouplingConnectorAnchors} from './nodes/branch/flangeCouplingConnector.anchor';
 import {plug} from './nodes/branch/plug';
+import {plugAnchors} from './nodes/branch/plug.anchor';
+import {OneToTwoAnchor} from './nodes/branch/onetotwo.anchor';
 
 import { cube } from './nodes/cube';
 import { cubeAnchors } from './nodes/cube.anchor';
@@ -174,6 +176,9 @@ function init() {
   iconRectFns.text = lineIconRect;
   anchorsFns.text = (node: Rect) => { };
 
+  // label
+  drawNodeFns.label = label;
+  anchorsFns.label = (node: Rect) => { };
 
   // Line
   drawNodeFns.line = nodeLine;
@@ -222,16 +227,46 @@ function init() {
   textRectFns.OKNG = jitingButtonTextRect;
   anchorsFns.OKNG = jitingButtonAnchors;
 
+  // 开关
+  drawNodeFns.switch = (ctx: CanvasRenderingContext2D, node: Rect) => { };
+  iconRectFns.switch = jitingButtonRect;
+  textRectFns.switch = jitingButtonTextRect;
+  anchorsFns.switch = jitingButtonAnchors;
+
+  // 一分二接头
+  drawNodeFns.OneToTwo = (ctx: CanvasRenderingContext2D, node: Rect) => { };
+  iconRectFns.OneToTwo = jitingButtonRect;
+  textRectFns.OneToTwo = jitingButtonTextRect;
+  anchorsFns.OneToTwo = OneToTwoAnchor;
+
+  // 电压上升电磁阀
+  drawNodeFns.diancifaUp = (ctx: CanvasRenderingContext2D, node: Rect) => { };
+  iconRectFns.diancifaUp = jitingButtonRect;
+  textRectFns.diancifaUp = jitingButtonTextRect;
+  anchorsFns.diancifaUp = jitingButtonAnchors;
+
+  // 电压下降电磁阀
+  drawNodeFns.diancifaDown = (ctx: CanvasRenderingContext2D, node: Rect) => { };
+  iconRectFns.diancifaDown = jitingButtonRect;
+  textRectFns.diancifaDown = jitingButtonTextRect;
+  anchorsFns.diancifaDown = jitingButtonAnchors;
+
   // 法兰式连接器
   drawNodeFns.flangeCouplingConnector = (ctx: CanvasRenderingContext2D, node: Rect) => { };
   iconRectFns.flangeCouplingConnector = imageIconRect;
   textRectFns.flangeCouplingConnector = imageTextRect;
   anchorsFns.flangeCouplingConnector = flangeCouplingConnectorAnchors;
-
+// 电箱
+  drawNodeFns.dianxiang = (ctx: CanvasRenderingContext2D, node: Rect) => { };
+  iconRectFns.dianxiang = imageIconRect;
+  textRectFns.dianxiang = imageTextRect;
+  anchorsFns.dianxiang = plugAnchors;
   // 默认的塞子
   drawNodeFns.plug = plug;
-  anchorsFns.plug = jitingButtonAnchors;
-
+  anchorsFns.plug = plugAnchors;
+// 默认的塞子
+  drawNodeFns.leftplug = plug;
+  anchorsFns.leftplug = plugAnchors;
 
   // Cube
   drawNodeFns.cube = cube;
@@ -283,7 +318,6 @@ function init() {
   drawArrowFns.circleSolid = circleSolid;
   drawArrowFns.circle = arrowCircle;
 
-  drawArrowFns.imageSolid = imageSolid;
   drawArrowFns.leftASolid = leftASolid;
   drawArrowFns.rightASolid = rightASolid;
   drawArrowFns.rightBSolid = rightBSolid;

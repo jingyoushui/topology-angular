@@ -37,6 +37,7 @@ export class Node extends Pen {
   }
   // 节点的模板id
   mubanId: number;
+  label_type: string;
   // 0 -1 之间的小数
   borderRadius: number;
 
@@ -141,6 +142,10 @@ export class Node extends Pen {
     }
     if (json.mubanId) {
       this.mubanId = json.mubanId;
+    }
+
+    if (json.label_type) {
+      this.label_type = json.label_type;
     }
 
     this.borderRadius = +json.borderRadius || 0;

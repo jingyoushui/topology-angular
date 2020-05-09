@@ -175,7 +175,7 @@
         </div>
       </div>
       <div *ngIf="selected">
-        <app-props [props]="selected" [readonly]="readonly" (ok)="onChangeProps($event)"
+        <app-props [props]="selected" [readonly]="false" (ok)="onChangeProps($event)"
                    (animateChange)="onAnimateChange()"></app-props>
       </div>
     </div>
@@ -223,7 +223,7 @@
 </div>
 
 <div class="modal" *ngIf="showWindows" >
-  <app-windows [current]="current" [jiekou]="jiekou" [leixing]="leixing" [jixing]="jixing" [xianzhi]="xianzhi" [desc]="desc" [name]="name"
+  <app-windows [plug_type]="plug_type" [current]="current" [jiekou]="jiekou" [leixing]="leixing" [jixing]="jixing" [xianzhi]="xianzhi" [desc]="desc" [name]="name"
                (changeShow)="changeShowWindows($event)" (setNodeData)="setNodeData($event)"></app-windows>
 </div>
 

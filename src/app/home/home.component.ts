@@ -25,6 +25,7 @@ import {ReportListNode} from './report-list/reportListNode';
 
 import {VoltageAndCurrent} from './parameter/VoltageAndCurrent';
 import {FileTypes} from 'topology-core/models/status';
+import {label} from 'topology-core/middles/nodes/label';
 
 
 declare var C2S: any;
@@ -99,7 +100,11 @@ export class HomeComponent implements OnInit, OnDestroy {
     [ 'OKNG', 'OK/NG显示' ],
     [ 'zhongji', '中继器' ],
     [ 'polyline', '电缆'],
-    ['flangeCouplingConnector', '法兰连接器']
+    ['flangeCouplingConnector', '法兰连接器'],
+    ['switch', '开关'],
+    ['OneToTwo', '转换头'],
+    ['diancifaUp', '电压上升电磁阀'],
+    ['diancifaDown', '电压下降电磁阀']
   ]);
   remove_id = [];
   icons: { icon: string; iconFamily: string; }[] = [];
@@ -116,35 +121,89 @@ export class HomeComponent implements OnInit, OnDestroy {
   // 选中的待更换的plug节点
   selectedPlug: any;
   locked = false;
+  // 这个属性是双击plug时出现弹窗，判断是plug还是leftplug;
+  plug_type: string;
 
   editFilename = false; // 文件名
   editFiledesc = false; // 文件描述
   // 这是模块上的名字
-  json = {
-    text: '模块1',
-    rect: {
-      width: 160,
-      height: 30,
-      x: 4,
-      y: 35
+  label_json = [
+    {
+      text: '模块1',
+      rect: {
+        width: 160,
+        height: 30,
+        x: 4,
+        y: 40
+      },
+      font: {
+        textAlign: 'center',
+      },
+      strokeStyle: '#e7e27aff',
+      fillStyle: '#e7e27aff',
+      locked: true,
+      name: 'label',
+      mubanId: 1,
+      label_type: 'muban_name',
     },
-    font: {
-      textAlign: 'center',
+    {
+      text: '0',
+      rect: {
+        width: 50,
+        height: 25,
+        x: 617,
+        y: 410
+      },
+      font: {
+        textAlign: 'center',
+      },
+      strokeStyle: '#e7e27aff',
+      fillStyle: '#e7e27aff',
+      locked: true,
+      name: 'label',
+      mubanId: 1,
+      label_type: 'haomapai',
     },
-    strokeStyle: '#e7e27aff',
-    fillStyle: '#e7e27aff',
-    // locked: true,
-    name: 'rectangle',
-    mubanId: 1,
-  };
+    {
+      text: '0',
+      rect: {
+        width: 50,
+        height: 25,
+        x: 843,
+        y: 410
+      },
+      font: {
+        textAlign: 'center',
+      },
+      strokeStyle: '#e7e27aff',
+      fillStyle: '#e7e27aff',
+      locked: true,
+      name: 'label',
+      mubanId: 1,
+      label_type: 'xianbiaopai',
+    },
+  ];
   // m8模板初始化
   m8_json: {
     lines: any;
     fenxianhe: any;
     plugs: any;
+    leftLine: any;
   };
+  // 分线盒模板中的附件,号码牌和线标牌
+  fujian: {
+      mid: number,
+      haomapai: number,
+      xianbiaopai: number,
+    }[] = [
+    {
+      mid: 1,
+      haomapai: 0,
+      xianbiaopai: 0,
+    }
+  ];
   divNode: any;
-  ignoreNode = ['plug', 'rectangle'];
+  ignoreNode = ['plug', 'rectangle', 'label', 'leftplug', 'dianxiang'];
 
   subRoute: any;
   cpPresetColors = [
@@ -187,7 +246,6 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.data.id = '';
       }
     });
-    console.log('home init');
     this.canvasOptions.on = this.onMessage;
 
     this.canvasOptions.height = this.muban_height;
@@ -281,10 +339,16 @@ export class HomeComponent implements OnInit, OnDestroy {
     setTimeout(() => {
 
       this.canvas = new Topology(this.workspace.nativeElement, this.canvasOptions);
-      this.size.width = this.canvas.parentElem.clientWidth;
-      this.size.height = this.canvas.parentElem.clientHeight;
-      this.canvas.resize(this.size);
+      const width = this.canvas.parentElem.clientWidth;
+      if (width > this.size.width) {
+        this.size.width = width;
+      }
+      // // this.size.height = this.canvas.parentElem.clientHeight;
+      //  this.canvas.resize(this.size);
       this.subRoute = this.activateRoute.queryParamMap.subscribe(params => {
+        if (params.get('hasdata')) {
+          console.log((params.get('hasdata')));
+        }
         if (params.get('id')) {
           this.onOpen({id: params.get('id'), version: params.get('version')});
         } else {
@@ -382,9 +446,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
   }
 
+  // 初始化分线盒文件
   onNew() {
-    // @ts-ignore
-    // @ts-ignore
     this.data = {
       id: '',
       version: '',
@@ -399,33 +462,71 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.currentFile = FileTypes.Fenxianhe;
     Store.set('file', this.data);
     this.canvas.open(this.data.data);
-    this.size = {
-      width: 1500,
-      height: 450
-    };
+    this.size.height = 450;
     this.canvas.resize(this.size);
-    this.json = {
-      text: '模块1',
-      rect: {
-        width: 160,
-        height: 30,
-        x: 4,
-        y: 35
+    this.label_json = [
+      {
+        text: '模块1',
+        rect: {
+          width: 160,
+          height: 30,
+          x: 4,
+          y: 40
+        },
+        font: {
+          textAlign: 'center',
+        },
+        strokeStyle: '#e7e27aff',
+        fillStyle: '#e7e27aff',
+        locked: true,
+        name: 'label',
+        mubanId: 1,
+        label_type: 'muban_name',
       },
-      font: {
-        textAlign: 'center',
+      {
+        text: '0',
+        rect: {
+          width: 50,
+          height: 25,
+          x: 617,
+          y: 410
+        },
+        font: {
+          textAlign: 'center',
+        },
+        strokeStyle: '#e7e27aff',
+        fillStyle: '#e7e27aff',
+        locked: true,
+        name: 'label',
+        mubanId: 1,
+        label_type: 'haomapai',
       },
-      strokeStyle: '#e7e27aff',
-      fillStyle: '#e7e27aff',
-      // locked: true,
-      name: 'rectangle',
-      mubanId: 1,
-    };
-    this.initAddNode(this.json);
+      {
+        text: '0',
+        rect: {
+          width: 50,
+          height: 25,
+          x: 843,
+          y: 410
+        },
+        font: {
+          textAlign: 'center',
+        },
+        strokeStyle: '#e7e27aff',
+        fillStyle: '#e7e27aff',
+        locked: true,
+        name: 'label',
+        mubanId: 1,
+        label_type: 'xianbiaopai',
+      },
+    ];
+    for (const json of this.label_json) {
+      this.initAddNode(json);
+    }
     this.report_list_id = 1;
     this.report_list2 = [];
     this.report_list2.push(new ReportList(1, '模块1'));
-    this.report_list2[0].muban_name = this.json.text;
+    this.report_list2[0].muban_name = this.label_json[0].text + '';
     this.initNewM8();
     this.router.navigate(['/workspace']);
 
@@ -469,6 +570,17 @@ export class HomeComponent implements OnInit, OnDestroy {
       line.to.id = this.m8_json.plugs.id;
       this.initAddLine(line);
     }
+    const left_line = this.m8_json.leftLine;
+    left_line.from.id = this.m8_json.fenxianhe.id;
+    this.m8_json.plugs.name = 'leftplug';
+    this.m8_json.plugs.rect.y = left_line.to.y - 10;
+    this.m8_json.plugs.rect.x = left_line.to.x - 33;
+    this.m8_json.plugs.id = s8();
+    this.initAddNode(this.m8_json.plugs);
+    left_line.to.direction = 2;
+    left_line.to.anchorIndex = 1;
+    left_line.to.id = this.m8_json.plugs.id;
+    this.initAddLine(left_line);
     // 堆pulg设置动画
     for (const node of this.canvas.data.nodes) {
       if (node.name === 'plug') {
@@ -492,10 +604,15 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.report_list2 = ret2.data.data;
       // 这里解决页面刷新后新增模板会重叠的bug
       this.report_list_id = ret2.data.data.length;
-      console.log(this.report_list_id);
+      // console.log(this.report_list_id);
       // 这里解决刷新时页面大小的问题
       if (ret.data.filetype === FileTypes.Fenxianhe) {
+        // TODO 这里改变画布大小存在问题
         this.size.height = this.muban_height * this.report_list_id;
+        const width = this.canvas.parentElem.clientWidth;
+        if (width > this.size.width) {
+          this.size.width = width;
+        }
         this.canvas.resize(this.size);
       }
     }
@@ -750,23 +867,40 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.editFiledesc = false;
     }
   }
-
+// 增加m8模板模块
   newM8() {
 
     this.size.height += this.muban_height;
-    // @ts-ignore
-    this.size.width = this.canvas.parentElem.clientWidth;
     this.canvas.resize(this.size);
     this.report_list_id += 1;
     // 增加模块名称组件
-    this.json.rect.y = 30 + this.muban_height * (this.report_list_id - 1);
-    this.json.text = '模块' + this.report_list_id;
-    this.json.mubanId  = this.report_list_id;
+    this.label_json[0].rect.y = 30 + this.muban_height * (this.report_list_id - 1);
+    this.label_json[0].text = '模块' + this.report_list_id;
+    this.label_json[0].mubanId  = this.report_list_id;
 
-    this.report_list2.push(new ReportList(this.report_list_id, this.json.text));
-    this.initAddNode(this.json);
+    this.label_json[1].rect.y = 410 + this.muban_height * (this.report_list_id - 1);
+    this.label_json[1].text = '0';
+    this.label_json[1].mubanId  = this.report_list_id;
+
+    this.label_json[2].rect.y = 410 + this.muban_height * (this.report_list_id - 1);
+    this.label_json[2].text = '0';
+    this.label_json[2].mubanId  = this.report_list_id;
+
+
+    this.report_list2.push(new ReportList(this.report_list_id, this.label_json[0].text));
+    this.fujian.push(
+      {
+        mid: this.report_list_id,
+        haomapai: 0,
+        xianbiaopai: 0,
+      },
+    );
+    for (const json of this.label_json) {
+      this.initAddNode(json);
+    }
     // end
     // 增加分线盒和线
+    this.m8_json = (new M8json()).M8_json;
     this.m8_json.fenxianhe.id  = s8();
     // TODO 这里有bug,当页面刷新的时候，m8_json中的数据会重新加载进来，就会是初始值了
     // 解决方法，第一种：当模板中的节点和线画上了之后，将m8_json中的值再做相反的操作改回去，这样保证每次都是从初始值加上高度×i
@@ -777,7 +911,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.m8_json.fenxianhe.mubanId += i;
     this.initAddNode(this.m8_json.fenxianhe);
 
-
+    // 增加分线板右边线和组件
     for (const line of this.m8_json.lines) {
       line.from.id = line.controlPoints[0].id = this.m8_json.fenxianhe.id;
       line.from.y += this.muban_height * i;
@@ -798,6 +932,21 @@ export class HomeComponent implements OnInit, OnDestroy {
       line.mubanId = Math.floor(line.from.y / this.muban_height) + 1;
       this.initAddLine(line);
     }
+    // 增加分线板左边的线和组件
+    const left_line = this.m8_json.leftLine;
+    left_line.from.id = this.m8_json.fenxianhe.id;
+    left_line.from.y += this.muban_height * i;
+    left_line.to.y += this.muban_height * i;
+    this.m8_json.plugs.name = 'leftplug';
+    this.m8_json.plugs.rect.y = left_line.to.y - 10;
+    this.m8_json.plugs.rect.x = left_line.to.x - 33;
+    this.m8_json.plugs.id = s8();
+    this.m8_json.plugs.mubanId += i;
+    this.initAddNode(this.m8_json.plugs);
+    left_line.to.direction = 2;
+    left_line.to.anchorIndex = 1;
+    left_line.to.id = this.m8_json.plugs.id;
+    this.initAddLine(left_line);
 
     // 堆pulg设置动画
     for (const node of this.canvas.data.nodes) {
@@ -822,7 +971,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       }
     }, 1000);
     // end
-    console.log(this.report_list2);
+    // console.log(this.report_list2);
 
   }
   del_muban(id: number) {
@@ -855,11 +1004,12 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.canvas.render();
     this.size.height -= this.muban_height;
     // @ts-ignore
-    this.size.width = this.canvas.parentElem.clientWidth;
+    // this.size.width = this.canvas.parentElem.clientWidth;
     this.canvas.resize(this.size);
 
     // 将报目表中对应的数据删除
     this.report_list2 = this.report_list2.filter(x => x.muban_id !== id);
+    this.fujian = this.fujian.filter(x => x.mid !== id);
   }
   // 校验所有模板的电压电流
   jiaoyanAll() {
@@ -869,7 +1019,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
   // 用来校验模板的电压和电流
   jiaoyan(id: number) {
-    console.log(id);
     /**
      * 基本思路：
      *  1.定义一个列表，列表的长度为9，因为分线盒有9个接口，其中0-7为出接口，8为入接口
@@ -897,15 +1046,6 @@ export class HomeComponent implements OnInit, OnDestroy {
             }
           }
           current += VoltageAndCurrent.current.get(toName);
-          // for (const muban of this.report_list2) {
-          //   if (muban.muban_id === id) {
-          //     for (const node of muban.report_nodes) {
-          //       if (node.node_id === toId) {
-          //
-          //       }
-          //     }
-          //   }
-          // }
 
         }
       }
@@ -923,7 +1063,7 @@ export class HomeComponent implements OnInit, OnDestroy {
           theme: 'error'
         });
       }
-      console.log('电流为：' + current);
+      // console.log('电流为：' + current);
     } else {
       console.log('计算电流错误:没有分线盒');
     }
@@ -934,7 +1074,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       return;
     }
     const data = this.canvas.data;
-    console.log(data);
+    // console.log(data);
     FileSaver.saveAs(
       new Blob([JSON.stringify(data)], {type: 'text/plain;charset=utf-8'}),
       `${this.data.name || 'le5le.topology'}.json`
@@ -1091,7 +1231,8 @@ export class HomeComponent implements OnInit, OnDestroy {
       case 'dblclick' :
         // 这里是双击的时候，如果是双击的plug电阻，就会出现弹窗
         if ('node' in data) {
-          if (data.node.name === 'plug') {
+          if (data.node.name === 'plug' || data.node.name === 'leftplug') {
+            this.plug_type = data.node.name;
             this.showWindows = true;
             this.selectedPlug = data.node;
             console.log('触发双击');
@@ -1108,7 +1249,6 @@ export class HomeComponent implements OnInit, OnDestroy {
           data
 
         };
-        console.log(this.selected);
         this.locked = data.locked;
         this.readonly = this.locked || !!this.canvas.data.locked;
         break;
@@ -1186,23 +1326,24 @@ export class HomeComponent implements OnInit, OnDestroy {
       case 'delete':
         this.deleteNodes(data);
         this.changeLineByDeleteNode(data);
+        this.canvas.animate();
         break;
 
       case 'moveNodes':
-        for (const item of data) {
-          if (item.name === 'fenxianhe') {
-            const w = this.canvas.canvas.width / 3;
-            if (item.rect.x < w ) {
-              item.rect.x = w ;
-              item.textRect.x = w;
-              item.iconRect.x = w;
-            } else if (item.rect.x + item.rect.width > 2 * w ) {
-              item.rect.x = 2 * w - item.rect.width;
-              item.textRect.x = 2 * w - item.rect.width;
-              item.iconRect.x = 2 * w - item.rect.width;
-            }
-          }
-        }
+        // for (const item of data) {
+        //   if (item.name === 'fenxianhe') {
+        //     const w = this.canvas.canvas.width / 3;
+        //     if (item.rect.x < w ) {
+        //       item.rect.x = w ;
+        //       item.textRect.x = w;
+        //       item.iconRect.x = w;
+        //     } else if (item.rect.x + item.rect.width > 2 * w ) {
+        //       item.rect.x = 2 * w - item.rect.width;
+        //       item.textRect.x = 2 * w - item.rect.width;
+        //       item.iconRect.x = 2 * w - item.rect.width;
+        //     }
+        //   }
+        // }
         break;
 
       // tslint:disable-next-line:no-switch-case-fall-through
@@ -1261,6 +1402,8 @@ export class HomeComponent implements OnInit, OnDestroy {
       // 将该线加入到报表中
       const id = data.mubanId - 1;
       this.report_list2[id].report_nodes.push(new ReportListNode(data.id, data.name, data.text));
+      // 该线需要的线标牌附件
+      this.fujian[id].xianbiaopai += 1;
     }
   }
   delReportLine(data: any) {
@@ -1294,9 +1437,9 @@ export class HomeComponent implements OnInit, OnDestroy {
           return;
         }
       }
-
-      this.report_list2[n].report_nodes.push(new ReportListNode(data.id, data.name, 'type', data.text));
       console.log(this.report_list2);
+      this.report_list2[n].report_nodes.push(new ReportListNode(data.id, data.name, 'type', data.text));
+
     }
   }
   // 鼠标进入节点的时候将其从报目表中删除，鼠标移出的时候再将其加回来
@@ -1329,7 +1472,7 @@ export class HomeComponent implements OnInit, OnDestroy {
           this.report_list2[n].report_nodes = this.report_list2[n].report_nodes.filter(x => x.node_id !== id);
         }
       }
-      console.log(this.report_list2);
+      // console.log(this.report_list2);
     }
   }
   // private findNode(node: Node, n: number) {
@@ -1346,7 +1489,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       // 当删除底层部件节点的时候，先把线的状态改变一下
       for (const line of this.canvas.data.lines) {
         if (line.to.id === node.id) {
-          console.log(line);
+          // console.log(line);
           line.text = '';
           line.toArrow = '';
           line.fromArrow = '';
@@ -1358,7 +1501,6 @@ export class HomeComponent implements OnInit, OnDestroy {
                 n.locked = true;
                 n.animatePlay = true;
                 n.animateStart = Date.now();
-                this.canvas.animate();
                 // 把线和plug连在一起
                 line.to.id = n.id;
               }
@@ -1578,7 +1720,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   onContextMenu(event: MouseEvent) {
-    console.log(event);
     event.preventDefault();
     event.stopPropagation();
 
@@ -1593,7 +1734,6 @@ export class HomeComponent implements OnInit, OnDestroy {
         bottom: document.body.clientHeight - event.clientY + 'px'
       };
     }
-    console.log('onContextMenu');
   }
 
   onClickDocument(event: MouseEvent) {
@@ -1646,7 +1786,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   /**
    * 当拖动底层部件的时候，离开节点触发moveoutNodes事件的时候，判断data.rect.x和data.rect.y的值，
    * 需要遍历所有的组件，找到plug类型的组件，将他们的rect.x和rect.y记录下来，当data.rect.x和rect.x的距离比较近同时y也比较近的话，就用data的节点代替plug节点
-   * 将plug节点删除，将plug的id赋值给底层部件。这样避免去更改线的to.id,但是这样更改id会出现问题，因为之前添加节点的id就会消失了，在报目表中没办法更新节点了,需要将报目表中的id也更换过来
+   * 将plug节点删除，将plug的id赋值给底层部件。这样避免去更改线的to.id,但是这样更改id会出现问题，因为之前添加节点的id就会消失了，
+   * 在报目表中没办法更新节点了,需要将报目表中的id也更换过来
    * 所以不要更换id,而是将line中的to.id换成现在的id
    */
   exchangeNode(data: any) {
@@ -1659,7 +1800,7 @@ export class HomeComponent implements OnInit, OnDestroy {
           // this.canvas.removeNode(node);
           node.locked = true;
           node.dash = 1;
-          node.strokeStyle = '#74787c';
+          node.strokeStyle = '#E9E9E9';
           node.animatePlay = false;
           node.animateStart = 0;
           for (const line of this.canvas.data.lines) {
@@ -1687,7 +1828,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     const node = this.initAddNode(data);
     // 调用更换节点
     this.exchangeNode(node);
-    console.log(node);
   }
   calculateDistance(from: number, to: number) {
     return Math.abs(from - to) < 5;
