@@ -1,11 +1,16 @@
 import { Injectable } from '@angular/core';
-
+import { register as registerArrow} from '../../../libs/Joint';
+import {register as registerJunctionBox} from '../../../libs/junctionBox';
 import { HttpService } from 'src/app/http/http.service';
 
 @Injectable()
 export class HomeService {
   constructor(protected http: HttpService) { }
 
+  canvasRegister(){
+    registerArrow();
+    registerJunctionBox();
+  }
   async Get(data: any) {
     const ret = await this.http.QueryString({ version: data.version }).Get('/api/topology/get/' + data.id);
     if (ret.error) {

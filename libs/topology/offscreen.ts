@@ -20,9 +20,9 @@ export class Offscreen extends Canvas {
     super.render();
     const ctx = this.canvas.getContext('2d');
     ctx.strokeStyle = this.options.color;
-    if (this.data.filetype === FileTypes.Fenxianhe) {
-      this.drawFenxianHeFile(ctx, this.width, this.height);
-    }
+    // if (this.data.filetype === FileTypes.Fenxianhe) {
+    //   this.drawFenxianHeFile(ctx, this.width, this.height);
+    // }
     this.renderNodes();
     this.renderLines();
     this.activeLayer.render(ctx);

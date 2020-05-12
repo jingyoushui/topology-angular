@@ -1,4 +1,4 @@
-import { Point } from '../../models/point';
+import { Point } from 'topology-core/models/point';
 
 export function leftASolid(ctx: CanvasRenderingContext2D, from: Point, to: Point, size: number, fillStyle?: string) {
   size += ctx.lineWidth * 3;
@@ -20,6 +20,6 @@ export function leftASolid(ctx: CanvasRenderingContext2D, from: Point, to: Point
   ctx.fill();
 }
 
-export function image(ctx: CanvasRenderingContext2D, from: Point, to: Point, size: number) {
+export function leftAimage(ctx: CanvasRenderingContext2D, from: Point, to: Point, size: number) {
   leftASolid(ctx, from, to, size, '#fff');
 }

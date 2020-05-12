@@ -192,10 +192,10 @@ export class HomeComponent implements OnInit, OnDestroy {
   };
   // 分线盒模板中的附件,号码牌和线标牌
   fujian: {
-      mid: number,
-      haomapai: number,
-      xianbiaopai: number,
-    }[] = [
+    mid: number,
+    haomapai: number,
+    xianbiaopai: number,
+  }[] = [
     {
       mid: 1,
       haomapai: 0,
@@ -369,7 +369,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       // End
     });
 
-    this.topologySrv.canvasRegister();
+    this.service.canvasRegister();
   }
   onkeyDocument(key: KeyboardEvent) {
     switch (key.keyCode) {
@@ -795,7 +795,7 @@ export class HomeComponent implements OnInit, OnDestroy {
             },
             userId: ''
           }
-         );
+        );
         if (ret2) {
           const _noticeService: NoticeService = new NoticeService();
           _noticeService.notice({
@@ -1182,10 +1182,10 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
 
     if ((await this.service.Patch({
-        id: this.data.id,
-        image: this.data.image,
-        shared: !this.data.shared
-      }))
+      id: this.data.id,
+      image: this.data.image,
+      shared: !this.data.shared
+    }))
     ) {
       let str = '';
       if (!this.data.shared) {
@@ -1215,13 +1215,13 @@ export class HomeComponent implements OnInit, OnDestroy {
   onParse() {
     this.canvas.parse();
   }
- // 这个是点击左侧栏的组件时候，让右侧显示属性
+  // 这个是点击左侧栏的组件时候，让右侧显示属性
   changePlugdata(data: any) {
     this.selected = {
       type: 'node',
       data
     };
-}
+  }
   onMessage = (event: string, data: any) => {
     if (event !== 'moveNodes') {
       console.log(event);
@@ -1508,7 +1508,7 @@ export class HomeComponent implements OnInit, OnDestroy {
           }
           // 把线从报目表中删除
           this.report_list2[node.mubanId - 1].report_nodes = this.report_list2[node.mubanId - 1].
-            report_nodes.filter(x => x.node_id !== line.id);
+          report_nodes.filter(x => x.node_id !== line.id);
         }
       }
     }

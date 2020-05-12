@@ -1,4 +1,4 @@
-import { Node } from '../../../models/node';
+import { Node } from 'topology-core/models/node';
 
 export function plug(ctx: CanvasRenderingContext2D, node: Node) {
   const wr = node.rect.width * node.borderRadius;

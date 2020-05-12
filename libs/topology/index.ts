@@ -79,13 +79,13 @@ export class Topology {
     hoverLine: Line;
     lineControlPoint: Point;
   } = {
-      type: MoveInType.None,
-      activeAnchorIndex: 0,
-      hoverAnchorIndex: 0,
-      hoverNode: null,
-      hoverLine: null,
-      lineControlPoint: null
-    };
+    type: MoveInType.None,
+    activeAnchorIndex: 0,
+    hoverAnchorIndex: 0,
+    hoverNode: null,
+    hoverLine: null,
+    lineControlPoint: null
+  };
   needCache = false;
 
   private tip = '';

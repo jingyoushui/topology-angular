@@ -40,7 +40,7 @@ export class ActiveLayer {
   constructor(public options: Options = {}) {
     Store.set('LT:ActiveLayer', this);
     if (!this.options.activeColor) {
-      this.options.activeColor = '#d4380d';
+      this.options.activeColor = '#1890ffff';
     }
   }
 

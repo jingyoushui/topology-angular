@@ -64,7 +64,6 @@ export class HotComponent implements OnInit, OnDestroy {
     this.router.navigate(['/workspace'], {
       queryParams: {
         id: item.id,
-        hasdata: item.data
       }
     });
   }

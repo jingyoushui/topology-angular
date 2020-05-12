@@ -1,6 +1,6 @@
-import { Node } from '../../../models/node';
-import { Rect } from '../../../models/rect';
-import { getLines, getWords } from '../text';
+import { Node } from 'topology-core/models/node';
+import { Rect } from 'topology-core/models/rect';
+import { getLines, getWords } from 'topology-core/middles/nodes/text';
 import { Store } from 'le5le-store';
 
 const txtMarginTop = 5;

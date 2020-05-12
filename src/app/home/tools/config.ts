@@ -150,7 +150,29 @@ export const Tools = [
           zRotate: 15,
           name: 'cube',
         }
-      }
+      },
+
+      {
+        name: '分线盒模板',
+        img: '/assets/img/tools/FenxianheMuban.png',
+        style: {
+          width: '40px',
+          height: '40px',
+        },
+        data: {
+          text: '模块一',
+          rect: {
+            width: 500,
+            height: 200
+          },
+          name: 'fenxianheMuban',
+          mubanId: 1,
+          paddingLeft: 10,
+          paddingRight: 10,
+          paddingTop: 10,
+          paddingBottom: 10,
+        }
+      },
     ]
   },
   {
@@ -166,8 +188,8 @@ export const Tools = [
         data: {
           text: '',
           rect: {
-            width: 230,
-            height: 50
+            width: 140,
+            height: 30
           },
           image: '/assets/img/tools/fenxianhe_x.png',
           // name: 'fenXianHe'

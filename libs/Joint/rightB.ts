@@ -1,4 +1,4 @@
-import { Point } from '../../models/point';
+import { Point } from 'topology-core/models/point';
 
 export function rightBSolid(ctx: CanvasRenderingContext2D, from: Point, to: Point, size: number, fillStyle?: string) {
   size += ctx.lineWidth * 3;
@@ -21,6 +21,6 @@ export function rightBSolid(ctx: CanvasRenderingContext2D, from: Point, to: Poin
   ctx.fill();
 }
 
-export function image(ctx: CanvasRenderingContext2D, from: Point, to: Point, size: number) {
+export function rightBimage(ctx: CanvasRenderingContext2D, from: Point, to: Point, size: number) {
   rightBSolid(ctx, from, to, size, '#fff');
 }
