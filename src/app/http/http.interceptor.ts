@@ -57,6 +57,15 @@ export class AppHttpInterceptor implements HttpInterceptor {
                 theme: 'error'
               });
             }
+          }if (error.error.message === "401") {
+            Store.set('auth', -1);
+
+              const noticeService: NoticeService = new NoticeService();
+              noticeService.notice({
+                body: '请先登录，让我们知道保存在谁的云存储下面。',
+                theme: 'error'
+              });
+
           } else if (error.status === 403) {
             Store.set('redirect', '/');
           } else if (error.status === 504) {
@@ -66,6 +75,7 @@ export class AppHttpInterceptor implements HttpInterceptor {
               theme: 'error'
             });
           } else {
+            console.log(error);
             const _noticeService: NoticeService = new NoticeService();
             _noticeService.notice({
               body: '未知网络错误，请检测你的网络',

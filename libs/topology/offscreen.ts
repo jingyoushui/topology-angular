@@ -1,11 +1,9 @@
-import {Store} from 'le5le-store';
-import {Options} from './options';
-import {Canvas} from './canvas';
-import {ActiveLayer} from './activeLayer';
-import {HoverLayer} from './hoverLayer';
-import {AnimateLayer} from './animateLayer';
-import {FileTypes} from './models/status';
-
+import { Store } from 'le5le-store';
+import { Options } from './options';
+import { Canvas } from './canvas';
+import { ActiveLayer } from './activeLayer';
+import { HoverLayer } from './hoverLayer';
+import { AnimateLayer } from './animateLayer';
 
 export class Offscreen extends Canvas {
   public activeLayer: ActiveLayer = Store.get('LT:ActiveLayer');
@@ -18,107 +16,45 @@ export class Offscreen extends Canvas {
 
   render() {
     super.render();
+
     const ctx = this.canvas.getContext('2d');
     ctx.strokeStyle = this.options.color;
-    // if (this.data.filetype === FileTypes.Fenxianhe) {
-    //   this.drawFenxianHeFile(ctx, this.width, this.height);
-    // }
-    this.renderNodes();
-    this.renderLines();
+
+    for (const item of this.data.pens) {
+      item.render(ctx);
+    }
+    this.drawFenxianHeFile(ctx,this.canvas.width,this.canvas.height);
+
     this.activeLayer.render(ctx);
     this.animateLayer.render(ctx);
     this.hoverLayer.render(ctx);
   }
   drawFenxianHeFile(ctx: CanvasRenderingContext2D, width: number, height: number) {
     // const w = width / 3;
-    const w = 500;
-    const n = height / 450;
-    const top_y = 30;
-    const h = 450;
-    const h1 = 440;
-    for (let i = 0; i < n; i++) {
+    const n = height / 200;
+    const m = width / 200;
+    const message = 'DERON';
+    const message_zh = '德荣工业';
 
-      ctx.fillStyle = '#E9E9EE';
-      ctx.fillRect(0, top_y + h * i , w, h1);
-
-      ctx.save();
-      const message = '德荣工业';
-      // 绘制空心文字
-      ctx.font = '60px 微软雅黑';
-      ctx.strokeStyle = '#ca9a06ff';
-      ctx.translate(160 , 200 + h * i);
-      ctx.rotate(35 * Math.PI / 180);
-      ctx.strokeText(message, 0, 0);
-      ctx.restore();
-
-
-      ctx.fillStyle = '#F3F3F3';
-      ctx.fillRect(w, top_y + h * i, w , h1);
-
-
-      ctx.save();
-      // 绘制空心文字
-      ctx.font = '60px 微软雅黑';
-      ctx.strokeStyle = '#ca9a06ff';
-      ctx.translate(160 + w , 200 + h * i);
-      ctx.rotate(35 * Math.PI / 180);
-      ctx.strokeText(message, 0, 0);
-      ctx.restore();
-
-
-      ctx.fillStyle = '#E9E9E9';
-      ctx.fillRect(2 * w, top_y + h * i, width - 2 * w, h1);
-
-      ctx.save();
-      // 绘制空心文字
-      ctx.font = '60px 微软雅黑';
-      ctx.strokeStyle = '#ca9a06ff';
-      ctx.translate(160 + 2 * w , 200 + h * i);
-      ctx.rotate(35 * Math.PI / 180);
-      ctx.strokeText(message, 0, 0);
-      ctx.restore();
-
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, top_y + h1 + h * i, width, 10);
-
-      ctx.save();
-      ctx.font = 'bold 15px 宋体';
-      ctx.fillStyle = 'black';
-      ctx.fillText('附件：', w + 10, top_y + h * i + 400);
-      ctx.fillText('号码牌：', w + 60, top_y + h * i + 400);
-      ctx.fillText('板(10个/板)', w + 170, top_y + h * i + 400);
-      ctx.fillText('线标牌：', w + 280, top_y + h * i + 400);
-      ctx.fillText('包(16个/包)', w + 400, top_y + h * i + 400);
-      ctx.restore();
-
-
-    }
-  }
-  renderNodes() {
-    if (!this.data.nodes.length) {
-      return;
-    }
-
-    const ctx = this.canvas.getContext('2d');
-    for (const item of this.data.nodes) {
-      item.render(ctx);
-    }
-  }
-
-  renderLines() {
-    if (!this.data.lines.length) {
-      return;
-    }
-
-    const ctx = this.canvas.getContext('2d');
-    let i = 0;
-    for (const item of this.data.lines) {
-      if (!item.to) {
-        this.data.lines.splice(i++, 1);
-        continue;
+    ctx.strokeStyle = '#ebe9bcff';
+    ctx.fillStyle = '#ebe9bcff';
+    for (let i = 0; i <n; i++) {
+      for (let j=0;j<m;j++){
+        ctx.save();
+        // 绘制空心文字
+        ctx.translate(200 * j + 40 , 200 * i + 50);
+        ctx.rotate(35 * Math.PI / 180);
+        ctx.font = '20px 微软雅黑';
+        ctx.fillText(message, 0, 0);
+        ctx.restore();
+        ctx.save();
+        ctx.translate(200 * j , 200 * i + 60);
+        ctx.rotate(35 * Math.PI / 180);
+        ctx.font = '30px 微软雅黑';
+        ctx.fillText(message_zh, 0, 0);
+        ctx.restore();
       }
-      item.render(ctx);
-      ++i;
     }
   }
+
 }

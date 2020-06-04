@@ -535,6 +535,11 @@ export class CoreService {
     Cookie.set(environment.token, data.token, options);
   }
 
+  getToken(){
+    return Cookie.get(environment.token);
+
+  }
+
   removeToken() {
     Cookie.delete(environment.token, {
       domain: document.domain

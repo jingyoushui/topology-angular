@@ -14,6 +14,8 @@ import { SelectModule } from 'le5le-components/select';
 import { PaginationModule } from 'le5le-components/pagination';
 import { ProgressModule } from 'le5le-components/progress';
 import { SliderModule } from 'le5le-components/slider';
+import {HeaderComponent} from './components/header/header.component';
+import {UserComponent} from './components/user/user.component';
 // import { SwitchModule } from 'le5le-components/switch';
 // import { QrcodeModule } from 'le5le-components/qrcode';
 // import { WizardModule } from 'le5le-components/wizard';
@@ -45,7 +47,7 @@ import { ImageAuthDirective } from './directives/img.directive';
     SliderModule,
     ColorPickerModule
   ],
-  declarations: [HtmlPipe, ImageAuthDirective],
+  declarations: [HtmlPipe, ImageAuthDirective,HeaderComponent,UserComponent],
   exports: [
     CommonModule,
     FormsModule,
@@ -64,7 +66,9 @@ import { ImageAuthDirective } from './directives/img.directive';
     MoveModule,
     ProgressModule,
     SliderModule,
-    ColorPickerModule
+    ColorPickerModule,
+    HeaderComponent,
+    UserComponent
   ],
   providers: []
 })

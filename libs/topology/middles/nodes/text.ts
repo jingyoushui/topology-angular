@@ -5,6 +5,9 @@ import { Line } from '../../models/line';
 export function getWords(txt: string) {
   const words = [];
   let word = '';
+  if (!txt) {
+    txt = '';
+  }
   for (let i = 0; i < txt.length; ++i) {
     const ch = txt.charCodeAt(i);
     if (ch < 33 || ch > 126) {
@@ -134,7 +137,7 @@ export function text(ctx: CanvasRenderingContext2D, node: Node | Line) {
   if (node.font.color) {
     ctx.fillStyle = node.font.color;
   } else {
-    ctx.fillStyle = '#222';
+    ctx.fillStyle = '#242424';
   }
   if (node.font.textAlign) {
     ctx.textAlign = node.font.textAlign as any;

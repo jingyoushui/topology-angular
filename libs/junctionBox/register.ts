@@ -1,4 +1,4 @@
-import { registerNode } from '../topology/middles';
+import { registerNode , registerArrow} from '../topology/middles';
 import {Rect} from '../topology/models/rect';
 import {imageIconRect} from '../topology/middles/nodes/image.rect';
 import {imageTextRect} from '../topology/middles/nodes/image.rect';
@@ -9,6 +9,19 @@ import {OneToTwoAnchor} from './oneTotwo';
 import {flangeCouplingConnectorAnchors} from './flangeCouplingConnector';
 import {plug, plugAnchors} from './plug';
 import {fenxianheMuban, fenxianheMubanIconRect, fenxianheMubanTextRect} from './fenxianheMuban';
+import {
+  interfaceClass,
+  interfaceClassIconRect,
+  interfaceClassTextRect,
+  simpleClass,
+  simpleClassIconRect,
+  simpleClassTextRect
+} from './class';
+import {plugTextRect} from './plug/plug.rect';
+import {fangshuisai, fangshuisaiAnchors, fangshuisaiTextRect, xianbiaopai} from './fangshuisai';
+
+import {danFenxianheSolid} from './fenxianheArrows/danFenxianhe';
+import {danFenxianheFromSolid} from './fenxianheArrows/danFenxianheFrom';
 
 export function register() {
   // 分线盒fenxianhe
@@ -34,10 +47,29 @@ export function register() {
   // 电箱
   registerNode('dianxiang', (ctx: CanvasRenderingContext2D, node: Rect) => { },plugAnchors,  imageIconRect, imageTextRect);
   // 默认的塞子
-  registerNode('plug', plug,plugAnchors);
-  registerNode('leftplug', plug,plugAnchors);
+  registerNode('plug', plug,plugAnchors,null,plugTextRect);
+  registerNode('leftplug', plug,plugAnchors,null,plugTextRect);
+
+  // 底层自定义组件
+  registerNode('zidingyi', (ctx: CanvasRenderingContext2D, node: Rect) => { },jitingButtonAnchors,  jitingButtonRect, jitingButtonTextRect);
+  //预留
+  registerNode('yuliu', (ctx: CanvasRenderingContext2D, node: Rect) => { },jitingButtonAnchors,  jitingButtonRect, jitingButtonTextRect);
+
 
   registerNode('fenxianheMuban', fenxianheMuban, null, fenxianheMubanIconRect, fenxianheMubanTextRect);
 
+  registerNode('simpleClass', simpleClass, null, simpleClassIconRect, simpleClassTextRect);
+  registerNode('interfaceClass', interfaceClass, null, interfaceClassIconRect, interfaceClassTextRect);
+
+  registerNode('fangshuisai',fangshuisai,fangshuisaiAnchors,fangshuisaiTextRect);
+  registerNode('xianbiaopai',xianbiaopai,fangshuisaiAnchors,fangshuisaiTextRect);
+
+  //航线型，左边接头
+  registerNode('hangxian',(ctx: CanvasRenderingContext2D, node: Rect) => { },plugAnchors,imageIconRect,plugTextRect);
+  //散线，左边接头
+  registerNode('sanxian',(ctx: CanvasRenderingContext2D, node: Rect) => { },plugAnchors,imageIconRect,plugTextRect);
+
+  registerArrow('danFenxianheSolid',danFenxianheSolid);
+  registerArrow('danFenxianheFromSolid',danFenxianheFromSolid);
 
 }

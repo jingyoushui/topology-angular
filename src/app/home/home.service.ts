@@ -62,7 +62,7 @@ export class HomeService {
 
   async Save(data: any) {
     data = Object.assign({}, data);
-    for (const item of data.data.nodes) {
+    for (const item of data.data.pens) {
       delete item.elementLoaded;
       delete item.elementRendered;
     }

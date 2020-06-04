@@ -1,37 +1,47 @@
-import {Node} from './node';
-import {Line} from './line';
+import { Pen } from './pen';
+import { Node } from './node';
+import { Line } from './line';
 import {FileTypes, Lock} from './status';
 
 export class TopologyData {
-  nodes: Node[] = [];
-  lines: Line[] = [];
+  pens: Pen[] = [];
   lineName = 'curve';
   fromArrowType = '';
-  toArrowType = '';
+  toArrowType = 'triangleSolid';
   scale = 1;
-  bkImage: string;
-  bkColor = '#ffffffff';
   locked = Lock.None;
+  bkImage: string;
+  bkColor: string;
+  grid?: boolean;
+  websocket?: string;
+  data?: any;
   // 画布文件的类型
-  filetype = FileTypes.Default;
+  filetype: number;
   constructor(json?: any) {
     if (json) {
-      this.nodes = [];
-      for (const item of json.nodes) {
-        this.nodes.push(new Node(item));
+      this.pens = [];
+      for (const item of json.pens) {
+        if (item.from) {
+          this.pens.push(new Line(item));
+        } else {
+          this.pens.push(new Node(item));
+        }
       }
-      this.lines = [];
-      for (const item of json.lines) {
-        this.lines.push(new Line(item));
-      }
+      this.filetype = json.filetype || FileTypes.Default;
       this.lineName = json.lineName || 'curve';
       this.fromArrowType = json.fromArrowType || '';
-      this.toArrowType = json.toArrowType || '';
+      this.toArrowType = json.toArrowType || 'triangleSolid';
       this.scale = json.scale || 1;
       this.locked = json.locked || Lock.None;
       this.bkImage = json.bkImage;
-      this.bkColor = json.bkColor || '';
+      this.bkColor = json.bkColor;
+      this.grid = json.grid;
       this.filetype = json.filetype || FileTypes.Default;
+      if (typeof json.data === 'object') {
+        this.data = JSON.parse(JSON.stringify(json.data));
+      } else {
+        this.data = json.data || '';
+      }
     }
   }
 }

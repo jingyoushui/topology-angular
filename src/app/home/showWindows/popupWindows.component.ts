@@ -1,5 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Tools} from '../tools/config';
+import {M8json} from '../json/M8_json';
 
 @Component({
   selector: 'app-windows',
@@ -9,33 +10,37 @@ import {Tools} from '../tools/config';
 export class PopupWindowsComponent implements OnInit {
   @Input()
   plug_type: string;
-  @Input()
-  jixing: any;
-  @Input()
-  leixing: any;
-  @Input()
-  xianzhi: any;
-  @Input()
-  jiekou: any;
-  @Input()
-  current: any;
-  @Input()
-  name: any;
-  @Input()
-  desc: any;
+
+  // 下面的是弹窗中的属性
+  jixing = '';
+  leixing = '';
+  xianzhi = '';
+  jiekou = '';
+  current = 0;
+  name = '';
+  desc = '';
+
+  leftType = '';
 
   @Output()
   changeShow = new EventEmitter<any>();
 
   @Output()
   setNodeData = new EventEmitter<any>();
+  @Output()
+  setNodeLeftData = new EventEmitter<any>();
 
   tools: any[] = Tools;
   // 根据条件筛选出的底层组件
   zujianList = [];
   selectedZujian = [];
+  //左边连接器
+  LeftTypeList = [];
+  selectedLeftType = [];
 
   selected: any;
+
+  m8_json = (new M8json()).M8_json;
 
   ngOnInit(): void {
     for (const tool of this.tools) {
@@ -45,18 +50,63 @@ export class PopupWindowsComponent implements OnInit {
           this.selectedZujian.push(item);
         }
       }
+      if (tool.group === '法兰连接器产品') {
+        for (const item of tool.children) {
+          this.LeftTypeList.push(item);
+          this.selectedLeftType.push(item);
+        }
+      }
     }
+
   }
 
   closeWindows() {
     this.changeShow.emit(false);
   }
-  closeWindowsAndSetData() {
+  closeWindowsAndSetData(type?:any) {
     this.changeShow.emit(false);
     // 将select中的数据传到home中，然后根据数据创建一个新的节点，并将该节点放到plug中。
     // TODO
-    this.setNodeData.emit(this.selected.data);
+    if(!type){
+      if(this.selected){
+        this.setNodeData.emit(this.selected.data);
+      }
+    }else if(type === 'yuliu'){
+      const data = this.m8_json.yuliu;
+      if(this.desc){
+        data.data.children[0].text = this.desc;
+      }
+      this.setNodeData.emit(data.data);
 
+
+    }else if(type === 'zidingyi'){
+      const data = this.m8_json.zidingyi;
+      if(this.name){
+        data.data.text = this.name;
+      }
+      if(this.desc){
+        data.data.children[0].text = this.desc;
+      }
+      data.data.property = {
+        jixing: this.jixing,
+        leixing: this.leixing,
+        xianzhi: this.xianzhi,
+        jiekou: this.jiekou,
+        current: this.current,
+        name: this.name,
+        desc: this.desc,
+      };
+      this.setNodeData.emit(data.data);
+    }
+
+
+  }
+  closeWindowsAndSetLeftData(){
+    this.changeShow.emit(false);
+    // console.log(this.selected);
+    if(this.selected){
+      this.setNodeLeftData.emit(this.selected.data);
+    }
   }
   selectZujian() {
     // this.selectedZujian = this.zujianList.filter(x => x.data.property.jixing === this.jixing
@@ -81,11 +131,10 @@ export class PopupWindowsComponent implements OnInit {
       }
       return a1 && a2 && a3 && a4;
     });
-    console.log(this.selectedZujian);
   }
   onclick(data: any) {
     this.selected = data;
-    console.log(this.selected);
+    // console.log(this.selected);
   }
 
 

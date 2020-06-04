@@ -5,6 +5,7 @@ import { Store } from 'le5le-store';
 import { NoticeService } from 'le5le-components/notice';
 
 import { HotService } from './hot.service';
+import {environment} from '../../environments/environment';
 
 @Component({
   selector: 'app-hot',
@@ -23,8 +24,7 @@ export class HotComponent implements OnInit, OnDestroy {
     list: [],
     count: 0
   };
-  // url = '/api/blob/'
-  url = '/image/UserImage/';
+  url = environment.image;
   loading = true;
 
   subRoute: any;
@@ -57,7 +57,6 @@ export class HotComponent implements OnInit, OnDestroy {
     if (this.search.pageIndex === 1) {
       Store.set('hots', this.data);
     }
-    console.log(this.data);
   }
 
   onOpen(item: any) {

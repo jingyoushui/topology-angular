@@ -1,30 +1,74 @@
-import { Component, OnInit, OnChanges, Input, Output, EventEmitter, SimpleChange } from '@angular/core';
+import {Component, OnInit, OnChanges, Input, Output, EventEmitter, SimpleChange, SimpleChanges, HostListener} from '@angular/core';
 
 import { NoticeService } from 'le5le-components/notice';
 
 import { Node } from 'topology-core/models/node';
 import { Props } from './props.model';
 import { PropsService } from './props.service';
+import {EventAction, EventType, Pen} from 'topology-core/models';
+import {getRect} from 'topology-core/utils';
+import {Topology} from 'topology-core/topology';
 
 @Component({
   selector: 'app-props',
   templateUrl: './props.component.html',
   styleUrls: ['./props.component.scss'],
   providers: [PropsService],
-  host: {
-    '(document:click)': 'onclickDocument()'
-  }
+
 })
 export class PropsComponent implements OnInit, OnChanges {
-  @Input() props: Props = { type: '' };
+  @Input() canvas: Topology;
+  @Input() selection: {
+    pen?: Pen;
+    pens?: Pen[];
+  };
+
+  @Input() report_list:any;
+  report_list2:any;
+  @Input() zh_en:any;
   @Output() ok = new EventEmitter<any>();
   @Output() animateChange = new EventEmitter<any>();
   @Input() readonly = false;
+  @Input() currentFile :number;
 
+  @Output()
+  changeProps = new EventEmitter<any>();
+
+  tab = 1;
+  pen: any;
   icon: any;
   drowdown = 0;
 
   tag = '';
+  data = '';
+
+  linelength = {
+    id: 'id',
+    name: 'name',
+    list: [
+      {
+        id: '0.5',
+        name: '0.5'
+      },
+      {
+        id: '1.0',
+        name: '1.0'
+      },
+      {
+        id: '2.0',
+        name: '2.0'
+      },
+      {
+        id: '3.0',
+        name: '3.0'
+      },
+      {
+        id: '5.0',
+        name: '5.0'
+      }
+    ],
+    noDefaultOption: true
+  };
 
   fontStyleOptions = {
     id: 'id',
@@ -355,130 +399,39 @@ export class PropsComponent implements OnInit, OnChanges {
   };
 
   nodesAlgin = ['left', 'right', 'top', 'bottom', 'center', 'middle'];
-
-  icons: any[] = [
-    { class: 'topology-upload', unicode: '59295' },
-    { class: 'topology-download', unicode: '59292' },
-    { class: 'topology-analytics', unicode: '59045' },
-    { class: 'topology-stop1', unicode: '58914' },
-    { class: 'topology-stop', unicode: '58905' },
-    { class: 'topology-kefu', unicode: '58968' },
-    { class: 'topology-exit1', unicode: '59051' },
-    { class: 'topology-exit', unicode: '58945' },
-    { class: 'topology-enter', unicode: '58941' },
-    { class: 'topology-share', unicode: '58912' },
-    { class: 'topology-message', unicode: '59177' },
-    { class: 'topology-weibo', unicode: '58942' },
-    { class: 'topology-pay3', unicode: '59025' },
-    { class: 'topology-pay6', unicode: '59023' },
-    { class: 'topology-wechat', unicode: '58950' },
-    { class: 'topology-app', unicode: '58904' },
-    { class: 'topology-shoppingcart', unicode: '58926' },
-    { class: 'topology-people4geren', unicode: '59018' },
-    { class: 'topology-people2geren', unicode: '58995' },
-    { class: 'topology-people', unicode: '58961' },
-    { class: 'topology-jiankong', unicode: '58910' },
-    { class: 'topology-cpu', unicode: '58911' },
-    { class: 'topology-iot2', unicode: '58903' },
-    { class: 'topology-iot1', unicode: '58897' },
-    { class: 'topology-iot', unicode: '58919' },
-    { class: 'topology-success', unicode: '59059' },
-    { class: 'topology-error', unicode: '59057' },
-    { class: 'topology-warning', unicode: '59049' },
-    { class: 'topology-list', unicode: '58896' },
-    { class: 'topology-folder', unicode: '59150' },
-    { class: 'topology-document', unicode: '59143' },
-    { class: 'topology-kaiguan', unicode: '59007' },
-    { class: 'topology-search', unicode: '58895' },
-    { class: 'topology-streamSQL', unicode: '59091' },
-    { class: 'topology-record', unicode: '58893' },
-    { class: 'topology-streaming', unicode: '59641' },
-    { class: 'topology-data-stream', unicode: '60371' },
-    { class: 'topology-sync', unicode: '58967' },
-    { class: 'topology-settings', unicode: '58964' },
-    { class: 'topology-dashboard', unicode: '58963' },
-    { class: 'topology-umbrella', unicode: '58955' },
-    { class: 'topology-link', unicode: '58938' },
-    { class: 'topology-sound', unicode: '58929' },
-    { class: 'topology-map', unicode: '58909' },
-    { class: 'topology-house', unicode: '58908' },
-    { class: 'topology-185055paintingpalletstreamline', unicode: '58907' },
-    { class: 'topology-browser', unicode: '58891' },
-    { class: 'topology-remote-control', unicode: '58887' },
-    { class: 'topology-locked', unicode: '59281' },
-    { class: 'topology-unlocked', unicode: '59515' },
-    { class: 'topology-api2', unicode: '59229' },
-    { class: 'topology-api1', unicode: '58883' },
-    { class: 'topology-apiassembly', unicode: '59005' },
-    { class: 'topology-email', unicode: '59004' },
-    { class: 'topology-api', unicode: '58902' },
-    { class: 'topology-ks', unicode: '59013' },
-    { class: 'topology-golang', unicode: '58901' },
-    { class: 'topology-docker', unicode: '59017' },
-    { class: 'topology-python', unicode: '58894' },
-    { class: 'topology-html', unicode: '58886' },
-    { class: 'topology-safe', unicode: '59175' },
-    { class: 'topology-java', unicode: '59206' },
-    { class: 'topology-nodejs', unicode: '59785' },
-    { class: 'topology-cloud-code', unicode: '59024' },
-    { class: 'topology-rabbitmq', unicode: '58906' },
-    { class: 'topology-fuwuqi', unicode: '58900' },
-    { class: 'topology-kafka', unicode: '58884' },
-    { class: 'topology-rocketmq', unicode: '59050' },
-    { class: 'topology-cassandra', unicode: '58913' },
-    { class: 'topology-pgsql', unicode: '59142' },
-    { class: 'topology-mysql', unicode: '58962' },
-    { class: 'topology-sql', unicode: '59160' },
-    { class: 'topology-redis', unicode: '59010' },
-    { class: 'topology-hbase', unicode: '59003' },
-    { class: 'topology-MongoDB', unicode: '59120' },
-    { class: 'topology-data', unicode: '58953' },
-    { class: 'topology-data2', unicode: '58892' },
-    { class: 'topology-data3', unicode: '58889' },
-    { class: 'topology-data1', unicode: '59233' },
-    { class: 'topology-db', unicode: '58949' },
-    { class: 'topology-parallel', unicode: '59208' },
-    { class: 'topology-bub', unicode: '60531' },
-    { class: 'topology-zuoji', unicode: '59022' },
-    { class: 'topology-earch', unicode: '58888' },
-    { class: 'topology-cloud-server', unicode: '58981' },
-    { class: 'topology-cloud-firewall', unicode: '58923' },
-    { class: 'topology-firewall', unicode: '58928' },
-    { class: 'topology-printer', unicode: '59006' },
-    { class: 'topology-satelite2', unicode: '60743' },
-    { class: 'topology-satelite', unicode: '60744' },
-    { class: 'topology-router2', unicode: '58899' },
-    { class: 'topology-router', unicode: '58898' },
-    { class: 'topology-antenna3', unicode: '59028' },
-    { class: 'topology-antenna2', unicode: '59001' },
-    { class: 'topology-antenna', unicode: '58882' },
-    { class: 'topology-building', unicode: '58881' },
-    { class: 'topology-office', unicode: '58885' },
-    { class: 'topology-ipad', unicode: '58980' },
-    { class: 'topology-wifi', unicode: '58935' },
-    { class: 'topology-network', unicode: '58939' },
-    { class: 'topology-network1', unicode: '58957' },
-    { class: 'topology-home', unicode: '59052' },
-    { class: 'topology-cloud', unicode: '58890' },
-    { class: 'topology-mobile', unicode: '58940' },
-    { class: 'topology-pc', unicode: '58880' },
-    { class: 'topology-up-down', unicode: '58915' },
-    { class: 'topology-website', unicode: '59151' },
-    { class: 'topology-github', unicode: '59645' },
-    { class: 'topology-dashboard1', unicode: '59507' },
-    { class: 'topology-flow', unicode: '59482' },
-    { class: 'topology-camera', unicode: '59274' },
-    { class: 'topology-clock', unicode: '59228' }
-  ];
-
+  icons: any[] = [];
+  layout = {
+    maxWidth: 1000,
+    nodeWidth: 0,
+    nodeHeight: 0,
+    maxCount: 0,
+    spaceWidth: 30,
+    spaceHeight: 30
+  };
+  show: any = {};
+  Node: Node;
   constructor(private service: PropsService) {
     // this.getImages();
   }
 
   ngOnInit() {
-    if (!this.props.data.font) {
-      this.props.data.font = {
-        color: '#222',
+    this.show = {};
+    if (this.selection.pen) {
+      this.pen = this.selection.pen;
+      if (typeof this.pen.data === 'object') {
+        this.data = JSON.stringify(this.pen.data, null, 2);
+      } else {
+        this.data = this.pen.data + '';
+      }
+      this.report_list2 = this.report_list.filter(x => x.id === this.pen.id);
+
+    } else {
+      this.pen = {};
+    }
+
+    if (!this.pen.font) {
+      this.pen.font = {
+        color: '#242424',
         fontFamily: '"Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial',
         fontSize: 12,
         lineHeight: 1.5,
@@ -488,21 +441,19 @@ export class PropsComponent implements OnInit, OnChanges {
         textBaseline: 'middle'
       };
     }
-    // console.log(this.props.data)
-    // this.props.data.lineWidth = 3;
-    if (!this.props.data.font.fontStyle) {
-      this.props.data.font.fontStyle = 'normal';
+    if (!this.pen.font.fontStyle) {
+      this.pen.font.fontStyle = 'normal';
     }
-    if (!this.props.data.font.fontWeight) {
-      this.props.data.font.fontWeight = 'normal';
+    if (!this.pen.font.fontWeight) {
+      this.pen.font.fontWeight = 'normal';
     }
 
-    if (this.props.data.icon) {
+    if (this.pen.icon) {
       if (this.icon) {
         this.icon.checked = false;
       }
       for (const item of this.icons) {
-        if (String.fromCharCode(+item.unicode) === this.props.data.icon) {
+        if (String.fromCharCode(+item.unicode) === this.pen.icon) {
           item.checked = true;
           this.icon = item;
           break;
@@ -512,22 +463,26 @@ export class PropsComponent implements OnInit, OnChanges {
       this.icon = null;
     }
 
-    if (!this.props.data.bkType) {
-      this.props.data.bkType = 0;
+    if (!this.pen.bkType) {
+      this.pen.bkType = 0;
     }
 
-    if (!this.props.data.imageAlign) {
-      this.props.data.imageAlign = 'center';
+    if (!this.pen.imageAlign) {
+      this.pen.imageAlign = 'center';
     }
+
+    this.icons = this.service.GetIcons();
+
+    const rect = getRect(this.canvas.activeLayer.pens);
+    this.layout.maxWidth = rect.width;
   }
 
   async getImages() {
     // this.images = await this.service.GetImages();
   }
 
-  ngOnChanges(changes: { [propertyName: string]: SimpleChange }) {
-    // console.log('prop change');
-    if (changes['props']) {
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.selection) {
       this.ngOnInit();
     }
   }
@@ -537,46 +492,85 @@ export class PropsComponent implements OnInit, OnChanges {
       'background-color': color
     };
   }
+  // 当更改参数的时候，也要更新ReportList中对应的数据
+  changeProp(){
+    if(this.selection.pen){
+      const pen = this.selection.pen;
+      if(pen.name === 'fenxianheMuban'){
+        const data = {
+          id: pen.id,
+          text: pen.text,
+        }
+        this.changeProps.emit(data);
 
-  onChangeProp(invalid?: boolean) {
-    if (invalid) {
-      return;
+      }
+      if((<Node>this.selection.pen).children){
+        const text = (<Node>this.selection.pen).children[0];
+        const data = {
+          id:this.selection.pen.id,
+          text: text.text,
+          mubanid: this.selection.pen.mubanId,
+        }
+        this.changeProps.emit(data);
+      }
+
     }
-    this.ok.emit(this.props);
+
+    // console.log(this.selection.pen);
+  }
+
+  onChangeProp() {
+    if (this.selection.pens) {
+      for (const item of this.selection.pens) {
+        item.dash = this.pen.dash;
+        item.strokeStyle = this.pen.strokeStyle;
+        item.lineWidth = this.pen.lineWidth;
+        item.globalAlpha = this.pen.globalAlpha;
+        item.font = Object.assign({}, this.pen.font);
+        item.textMaxLine = this.pen.textMaxLine;
+        item.textOffsetX = this.pen.textOffsetX;
+        item.textOffsetY = this.pen.textOffsetY;
+      }
+    }
+    if (this.selection.pen && this.data) {
+      let obj: any;
+      try {
+        obj = JSON.parse(this.data);
+      } catch (e) { }
+      if (obj) {
+        this.pen.data = obj;
+      }
+    }
+    this.canvas.updateProps();
   }
 
   onClickName(name: string) {
-    this.props.data.name = name;
+    this.pen.name = name;
     this.drowdown = 0;
     this.onChangeProp();
   }
 
   onClickDash(dash: number) {
-    this.props.data.dash = dash;
+    this.pen.dash = dash;
     this.drowdown = 0;
     this.onChangeProp();
   }
 
   onClickFromArrow(arrow: string) {
-    this.props.data.fromArrow = arrow;
+    this.pen.fromArrow = arrow;
     this.drowdown = 0;
     this.onChangeProp();
   }
 
   onClickToArrow(arrow: string) {
-    this.props.data.toArrow = arrow;
+    this.pen.toArrow = arrow;
     this.drowdown = 0;
     this.onChangeProp();
   }
 
-  onclickDocument() {
+  @HostListener('document:click', ['$event'])
+  onClickDocument() {
     this.drowdown = 0;
-  }
-
-  onClickImage(item: any) {
-    this.props.data.image = item.image;
-    this.onChangeProp();
-    this.showDialog = 0;
   }
 
   onClickIcon(item?: any) {
@@ -586,117 +580,69 @@ export class PropsComponent implements OnInit, OnChanges {
 
     if (item) {
       item.checked = true;
-      this.props.data.iconFamily = 'topology';
-      this.props.data.icon = String.fromCharCode(+item.unicode);
+      this.pen.iconFamily = 'topology';
+      this.pen.icon = String.fromCharCode(+item.unicode);
     } else {
-      this.props.data.icon = '';
+      this.pen.icon = '';
     }
 
     this.icon = item;
     this.onChangeProp();
-    this.showDialog = 0;
   }
 
-  onChangeImgWidth(invalid: boolean) {
-    if (this.props.data.imageRatio && this.props.data.imageWidth > 0) {
-      this.props.data.imageHeight =
-        (this.props.data.imgNaturalHeight / this.props.data.imgNaturalWidth) * this.props.data.imageWidth;
+  onChangeImgWidth() {
+    if (this.pen.imageRatio && this.pen.imageWidth > 0) {
+      this.pen.imageHeight =
+        (this.pen.imgNaturalHeight / this.pen.imgNaturalWidth) * this.pen.imageWidth;
     }
 
-    this.onChangeProp(invalid);
+    this.onChangeProp();
   }
 
-  onChangeImgHeight(invalid: boolean) {
-    if (this.props.data.imageRatio && this.props.data.imageHeight > 0) {
-      this.props.data.imageWidth =
-        (this.props.data.imgNaturalWidth / this.props.data.imgNaturalHeight) * this.props.data.imageHeight;
+  onChangeImgHeight() {
+    if (this.pen.imageRatio && this.pen.imageHeight > 0) {
+      this.pen.imageWidth =
+        (this.pen.imgNaturalWidth / this.pen.imgNaturalHeight) * this.pen.imageHeight;
     }
 
-    this.onChangeProp(invalid);
+    this.onChangeProp();
   }
 
-  onChangeImgRatio(invalid: boolean) {
-    if (this.props.data.imageRatio && (this.props.data.imageWidth || this.props.data.imageHeight)) {
-      if (this.props.data.imageWidth) {
-        this.props.data.imageHeight =
-          (this.props.data.imgNaturalHeight / this.props.data.imgNaturalWidth) * this.props.data.imageWidth;
+  onChangeImgRatio() {
+    if (this.pen.imageRatio && (this.pen.imageWidth || this.pen.imageHeight)) {
+      if (this.pen.imageWidth) {
+        this.pen.imageHeight =
+          (this.pen.imgNaturalHeight / this.pen.imgNaturalWidth) * this.pen.imageWidth;
       } else {
-        this.props.data.imageWidth =
-          (this.props.data.imgNaturalWidth / this.props.data.imgNaturalHeight) * this.props.data.imageHeight;
+        this.pen.imageWidth =
+          (this.pen.imgNaturalWidth / this.pen.imgNaturalHeight) * this.pen.imageHeight;
       }
     }
 
-    this.onChangeProp(invalid);
-  }
-
-  onImageUpload() {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.onchange = async event => {
-      const elem: any = event.srcElement || event.target;
-      if (elem.files && elem.files[0]) {
-        const file = await this.service.Upload(elem.files[0], elem.files[0].name);
-        if (!file) {
-          return;
-        }
-        this.props.data.image = file.url;
-        this.onChangeProp();
-        const id = await this.service.AddImage(file.url);
-        this.images.unshift({ id, image: file.url });
-      }
-    };
-    input.click();
-  }
-
-  onImageUrl() {
-    const _noticeService: NoticeService = new NoticeService();
-    _noticeService.input({
-      title: '图片URL',
-      theme: 'default',
-      text: '',
-      label: '图片URL',
-      type: 'text',
-      callback: async (ret: string) => {
-        if (!ret) {
-          return;
-        }
-
-        this.props.data.image = ret;
-        this.onChangeProp();
-        const id = await this.service.AddImage(ret);
-        this.images.unshift({ id, image: ret });
-      }
-    });
-  }
-
-  async onRemoveImage(event: MouseEvent, item: any, i: number) {
-    event.stopPropagation();
-    if (await this.service.RemoveImage(item.id)) {
-      this.images.splice(i, 1);
-    }
+    this.onChangeProp();
   }
 
   onAnimate() {
-    this.props.data.animateStart = this.props.data.animateStart ? Date.now() : 0;
-    this.animateChange.emit(this.props);
+    this.pen.animateStart = this.pen.animateStart ? Date.now() : 0;
+    this.canvas.animate();
   }
 
   onAddFrame() {
-    if (!this.props.data.animateFrames) {
-      this.props.data.animateFrames = [];
+    if (!this.pen.animateFrames) {
+      this.pen.animateFrames = [];
     }
 
-    this.props.data.animateFrames.push({
+    this.pen.animateFrames.push({
       duration: 200,
       linear: true,
-      state: Node.cloneState(this.props.data)
+      state: Node.cloneState(this.pen)
     });
 
     this.onAnimateDuration();
   }
 
   onRemoveFrame(i: number) {
-    this.props.data.animateFrames.splice(i, 1);
+    this.pen.animateFrames.splice(i, 1);
     this.onAnimateDuration();
   }
 
@@ -704,16 +650,16 @@ export class PropsComponent implements OnInit, OnChanges {
     if (i < 1) {
       return;
     }
-    const item = this.props.data.animateFrames.splice(i, 1);
-    this.props.data.animateFrames.splice(i - 1, 0, item[0]);
+    const item = this.pen.animateFrames.splice(i, 1);
+    this.pen.animateFrames.splice(i - 1, 0, item[0]);
   }
 
   onFrameDown(i: number) {
-    if (i > this.props.data.animateFrames.length - 2) {
+    if (i > this.pen.animateFrames.length - 2) {
       return;
     }
-    const item = this.props.data.animateFrames.splice(i, 1);
-    this.props.data.animateFrames.splice(i + 1, 0, item[0]);
+    const item = this.pen.animateFrames.splice(i, 1);
+    this.pen.animateFrames.splice(i + 1, 0, item[0]);
   }
 
   onClickAnimateDash(node: Node, dash: number) {
@@ -723,46 +669,46 @@ export class PropsComponent implements OnInit, OnChanges {
   }
 
   onAnimateDuration() {
-    this.props.data.animateDuration = 0;
-    for (const item of this.props.data.animateFrames) {
-      this.props.data.animateDuration += item.duration;
+    this.pen.animateDuration = 0;
+    for (const item of this.pen.animateFrames) {
+      this.pen.animateDuration += item.duration;
     }
   }
 
   onChangeLineAnimate() {
-    const animateStart = this.props.data.animateStart;
-    this.props.data.animateStart = 0;
-    this.animateChange.emit(this.props);
+    const animateStart = this.pen.animateStart;
+    this.pen.animateStart = 0;
+    this.canvas.animate();
     setTimeout(() => {
       if (animateStart) {
-        this.props.data.animateStart = animateStart;
-        this.animateChange.emit(this.props);
+        this.pen.animateStart = animateStart;
+        this.canvas.animate();
       }
     }, 0);
   }
 
   onChangeAnimate() {
-    if (this.props.data.animateType === 'custom') {
+    if (this.pen.animateType === 'custom') {
       return;
     }
 
-    this.props.data.animateFrames = [];
-    const state = Node.cloneState(this.props.data);
-    switch (this.props.data.animateType) {
+    this.pen.animateFrames = [];
+    const state = Node.cloneState(this.pen);
+    switch (this.pen.animateType) {
       case 'upDown':
         state.rect.y -= 10;
         state.rect.ey -= 10;
-        this.props.data.animateFrames.push({
+        this.pen.animateFrames.push({
           duration: 100,
           linear: true,
           state
         });
-        this.props.data.animateFrames.push({
+        this.pen.animateFrames.push({
           duration: 100,
           linear: true,
-          state: Node.cloneState(this.props.data)
+          state: Node.cloneState(this.pen)
         });
-        this.props.data.animateFrames.push({
+        this.pen.animateFrames.push({
           duration: 200,
           linear: true,
           state: Node.cloneState(state)
@@ -771,36 +717,36 @@ export class PropsComponent implements OnInit, OnChanges {
       case 'leftRight':
         state.rect.x -= 10;
         state.rect.ex -= 10;
-        this.props.data.animateFrames.push({
+        this.pen.animateFrames.push({
           duration: 100,
           linear: true,
           state: Node.cloneState(state)
         });
         state.rect.x += 20;
         state.rect.ex += 20;
-        this.props.data.animateFrames.push({
+        this.pen.animateFrames.push({
           duration: 80,
           linear: true,
           state: Node.cloneState(state)
         });
         state.rect.x -= 20;
         state.rect.ex -= 20;
-        this.props.data.animateFrames.push({
+        this.pen.animateFrames.push({
           duration: 50,
           linear: true,
           state: Node.cloneState(state)
         });
         state.rect.x += 20;
         state.rect.ex += 20;
-        this.props.data.animateFrames.push({
+        this.pen.animateFrames.push({
           duration: 30,
           linear: true,
           state: Node.cloneState(state)
         });
-        this.props.data.animateFrames.push({
+        this.pen.animateFrames.push({
           duration: 300,
           linear: true,
-          state: Node.cloneState(this.props.data)
+          state: Node.cloneState(this.pen)
         });
         break;
       case 'heart':
@@ -810,43 +756,43 @@ export class PropsComponent implements OnInit, OnChanges {
         state.rect.ey += 5;
         state.rect.width += 5;
         state.rect.height += 10;
-        this.props.data.animateFrames.push({
+        this.pen.animateFrames.push({
           duration: 100,
           linear: true,
           state
         });
-        this.props.data.animateFrames.push({
+        this.pen.animateFrames.push({
           duration: 400,
           linear: true,
-          state: Node.cloneState(this.props.data)
+          state: Node.cloneState(this.pen)
         });
         break;
       case 'success':
         state.strokeStyle = '#237804';
-        this.props.data.animateFrames.push({
+        this.pen.animateFrames.push({
           duration: 100,
           linear: true,
           state
         });
-        this.props.data.animateFrames.push({
+        this.pen.animateFrames.push({
           duration: 100,
           linear: true,
-          state: Node.cloneState(this.props.data)
+          state: Node.cloneState(this.pen)
         });
         state.strokeStyle = '#237804';
-        this.props.data.animateFrames.push({
+        this.pen.animateFrames.push({
           duration: 100,
           linear: true,
           state
         });
-        this.props.data.animateFrames.push({
+        this.pen.animateFrames.push({
           duration: 100,
           linear: true,
-          state: Node.cloneState(this.props.data)
+          state: Node.cloneState(this.pen)
         });
         state.strokeStyle = '#237804';
         state.fillStyle = '#389e0d22';
-        this.props.data.animateFrames.push({
+        this.pen.animateFrames.push({
           duration: 3000,
           linear: true,
           state
@@ -855,21 +801,21 @@ export class PropsComponent implements OnInit, OnChanges {
       case 'warning':
         state.strokeStyle = '#fa8c16';
         state.dash = 2;
-        this.props.data.animateFrames.push({
+        this.pen.animateFrames.push({
           duration: 300,
           linear: true,
           state
         });
         state.strokeStyle = '#fa8c16';
         state.dash = 0;
-        this.props.data.animateFrames.push({
+        this.pen.animateFrames.push({
           duration: 500,
           linear: true,
           state: Node.cloneState(state)
         });
         state.strokeStyle = '#fa8c16';
         state.dash = 2;
-        this.props.data.animateFrames.push({
+        this.pen.animateFrames.push({
           duration: 300,
           linear: true,
           state: Node.cloneState(state)
@@ -878,7 +824,7 @@ export class PropsComponent implements OnInit, OnChanges {
       case 'error':
         state.strokeStyle = '#cf1322';
         state.fillStyle = '#cf132222';
-        this.props.data.animateFrames.push({
+        this.pen.animateFrames.push({
           duration: 100,
           linear: true,
           state
@@ -887,19 +833,19 @@ export class PropsComponent implements OnInit, OnChanges {
       case 'show':
         state.strokeStyle = '#fa541c';
         state.rotate = -10;
-        this.props.data.animateFrames.push({
+        this.pen.animateFrames.push({
           duration: 100,
           linear: true,
           state: Node.cloneState(state)
         });
         state.rotate = 10;
-        this.props.data.animateFrames.push({
+        this.pen.animateFrames.push({
           duration: 100,
           linear: true,
           state: Node.cloneState(state)
         });
         state.rotate = 0;
-        this.props.data.animateFrames.push({
+        this.pen.animateFrames.push({
           duration: 100,
           linear: true,
           state: Node.cloneState(state)
@@ -911,25 +857,37 @@ export class PropsComponent implements OnInit, OnChanges {
   }
 
   onChangeBkType() {
-    if (this.props.data.bkType === 1) {
-      this.props.data.strokeStyle = '#52c41aff';
-      this.props.data.gradientFromColor = this.props.data.gradientFromColor || '#c6ebb463';
-      this.props.data.gradientToColor = this.props.data.gradientToColor || '#bae7ff0f';
-      this.props.data.gradientAngle = this.props.data.gradientAngle || 0;
-    } else if (this.props.data.bkType === 2) {
-      this.props.data.strokeStyle = '#52c41aff';
-      this.props.data.gradientFromColor = this.props.data.gradientFromColor || '#ffffff00';
-      this.props.data.gradientToColor = this.props.data.gradientToColor || '#c6ebb463';
-      this.props.data.gradientRadius = this.props.data.gradientRadius || 0.01;
+    if (this.pen.bkType === 1) {
+      this.pen.strokeStyle = '#52c41aff';
+      this.pen.gradientFromColor = this.pen.gradientFromColor || '#c6ebb463';
+      this.pen.gradientToColor = this.pen.gradientToColor || '#bae7ff0f';
+      this.pen.gradientAngle = this.pen.gradientAngle || 0;
+    } else if (this.pen.bkType === 2) {
+      this.pen.strokeStyle = '#52c41aff';
+      this.pen.gradientFromColor = this.pen.gradientFromColor || '#ffffff00';
+      this.pen.gradientToColor = this.pen.gradientToColor || '#c6ebb463';
+      this.pen.gradientRadius = this.pen.gradientRadius || 0.01;
     }
 
     this.onChangeProp();
   }
 
-  onNodesAlign(align: string) {
-    this.ok.emit({
-      type: 'multi',
-      align
+  // onNodesAlign(align: string) {
+  //   alignNodes(this.canvas.activeLayer.pens, this.canvas.activeLayer.rect, align);
+  //   this.canvas.updateProps();
+  // }
+  //
+
+  onAddEvent() {
+    this.pen.events.push({
+      type: EventType.Click,
+      action: EventAction.Link,
+      value: ''
     });
+  }
+
+  onSelect(pen: Pen) {
+    this.canvas.activeLayer.pens = [pen];
+    this.canvas.render();
   }
 }

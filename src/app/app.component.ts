@@ -30,37 +30,11 @@ export class AppComponent implements OnInit, OnDestroy {
   fromArrowType = '';
   toArrowType = '';
 
-  lineNames = [{
-    name: '曲线',
-    value: 'curve'
-  }, {
-    name: '线段',
-    value: 'polyline'
-  }, {
-    name: '直线',
-    value: 'line'
-  }];
-  from_arrowTypes = [
-    '',
-    'line',
-    'leftASolid'
-  ];
-  to_arrowTypes = [
-    '',
-    'line',
-    'rightASolid',
-    'rightBSolid'
-  ];
-
-  menuClicked = false;
-  showFigure = false;
-  showNew = false;
   editMode = false;
   locked = 0;
   scale = 100;
 
   showLicense = false;
-  showHelp = false;
   showAbout = false;
   constructor(private router: Router, private activateRoute: ActivatedRoute) { }
 
@@ -131,12 +105,7 @@ export class AppComponent implements OnInit, OnDestroy {
     });
   }
 
-  onRemoveRecently(event: MouseEvent, i: number) {
-    event.stopPropagation();
-    event.preventDefault();
-    this.list.recently.splice(i, 1);
-    localStorage.setItem('recently_' + this.user.id, JSON.stringify(this.list.recently));
-  }
+
 
   getRecently() {
     if (!this.user) {
@@ -152,116 +121,7 @@ export class AppComponent implements OnInit, OnDestroy {
     }
   }
 
-  onMenu(menu: string, data?: any) {
-    const isOpen = menu.indexOf('open') === 0;
-    if (!this.editMode && menu !== 'newF' && !isOpen && menu !== 'newK') {
-      return;
-    }
 
-    if (menu === 'newF' || isOpen || menu === 'newK') {
-      const queryParams: any = {};
-      if (data) {
-        queryParams.id = this.activateRoute.snapshot.queryParamMap.get('id');
-        queryParams.version = this.activateRoute.snapshot.queryParamMap.get('version');
-      }
-      this.router.navigate(['/workspace'], {
-        queryParams
-      });
-    }
-
-    setTimeout(
-      () => {
-        Store.set('clickMenu', {
-          event: menu,
-          data
-        });
-      },
-      this.editMode ? 0 : 300
-    );
-  }
-
-  onClickMenu(event: MouseEvent) {
-    if ((event.target as HTMLElement).nodeName === 'A') {
-      let node = (event.target as HTMLElement).parentElement;
-      let isDropdown = false;
-      let disabled = false;
-      while (node) {
-        if (node.className.indexOf('dropdown') > -1) {
-          isDropdown = true;
-        }
-        if (node.className.indexOf('disabled') > -1) {
-          disabled = true;
-          break;
-        }
-        node = node.parentElement;
-      }
-
-      if (disabled) {
-        return;
-      }
-
-      if (isDropdown) {
-        this.menuClicked = true;
-        setTimeout(() => {
-          this.menuClicked = false;
-        }, 500);
-      }
-    }
-  }
-
-  onLeaveFigure() {
-    setTimeout(() => {
-      this.showFigure = false;
-    }, 800);
-  }
-  onLeaveNew() {
-    setTimeout(() => {
-      this.showNew = false;
-    }, 800);
-  }
-
-  onHome() {
-    this.router.navigateByUrl('/');
-  }
-
-  onSelLine(line: string) {
-    this.lineName = line;
-    this.menuClicked = true;
-    setTimeout(() => {
-      this.menuClicked = false;
-    }, 500);
-
-    Store.set('clickMenu', {
-      event: 'lineName',
-      data: this.lineName
-    });
-  }
-
-  onSelFromArrow(arrow: string) {
-    this.fromArrowType = arrow;
-    this.menuClicked = true;
-    setTimeout(() => {
-      this.menuClicked = false;
-    }, 500);
-
-    Store.set('clickMenu', {
-      event: 'fromArrowType',
-      data: this.fromArrowType
-    });
-  }
-
-  onSelToArrow(arrow: string) {
-    this.toArrowType = arrow;
-    this.menuClicked = true;
-    setTimeout(() => {
-      this.menuClicked = false;
-    }, 500);
-
-    Store.set('clickMenu', {
-      event: 'toArrowType',
-      data: this.toArrowType
-    });
-  }
 
   onSignup() {
     location.href = `${environment.urls.account}?signup=true`;

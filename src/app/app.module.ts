@@ -12,9 +12,12 @@ import { AppRoutingModule } from './app-routing.module';
 
 import { AppComponent } from './app.component';
 import { HotComponent } from './hot/hot.component';
+import {LoginComponent} from './login/login.component';
+import {NzButtonModule, NzCardModule, NzFormModule, NzGridModule, NzInputModule} from 'ng-zorro-antd';
+
 
 @NgModule({
-  declarations: [AppComponent, HotComponent],
+  declarations: [AppComponent, HotComponent,LoginComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -22,6 +25,11 @@ import { HotComponent } from './hot/hot.component';
     SharedModule,
     CoreModule.forRoot(),
     AppRoutingModule,
+    NzCardModule,
+    NzFormModule,
+    NzInputModule,
+    NzGridModule,
+    NzButtonModule,
   ],
   providers: [
     {

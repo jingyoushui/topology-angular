@@ -45,6 +45,7 @@ export function fenxianheMuban(ctx: CanvasRenderingContext2D, node: Node) {
   ctx.fillText(' 备注', node.rect.x + leftarea + offsetX * 5/2, node.rect.y + toparea - 5);
   ctx.restore();
 
+
   ctx.fill();
   ctx.stroke();
 }

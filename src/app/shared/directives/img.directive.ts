@@ -15,7 +15,8 @@ export class ImageAuthDirective implements OnInit {
       this.el.nativeElement,
       'src',
       // `/api/blob/${this.appImgAuthSrc}?Authorization=${Cookie.get(environment.token)}`
-        `/image/UserImage/${this.appImgAuthSrc}`
+        environment.image+`${this.appImgAuthSrc}`
+      // `/UserImage/${this.appImgAuthSrc}`
     );
   }
 }

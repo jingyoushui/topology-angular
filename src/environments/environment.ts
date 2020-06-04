@@ -7,8 +7,12 @@ export const environment = {
   token: 'token',
   localhost: true,
   urls: {
-    account: 'http:127.0.0.1:8210'
-  }
+    account: '/login'
+  },
+  // 本地
+  // image:'/image/UserImage/',
+  // 服务器
+  image:'/UserImage/',
 };
 
 /*

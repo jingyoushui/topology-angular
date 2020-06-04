@@ -1,8 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Topology } from 'topology-core';
+
 import { Clipboard } from 'ts-clipboard';
-import { Props } from '../props/props.model';
 import { NoticeService } from 'le5le-components/notice';
+
+import { Topology } from 'topology-core';
+import { Pen } from 'topology-core';
 
 @Component({
   selector: 'app-context-menu',
@@ -10,17 +12,13 @@ import { NoticeService } from 'le5le-components/notice';
   styleUrls: ['./context-menu.component.scss']
 })
 export class ContextMenuComponent implements OnInit {
-
-  @Input()
-  canvas: Topology;
-  @Input()
-  selected: Props;
-  @Input()
-  selNodes: any;
-  @Input()
-  locked = false;
-  @Input()
-  contextmenu: any;
+  @Input() canvas: Topology;
+  @Input() selection: {
+    pen?: any;
+    pens?: Pen[];
+  };
+  @Input() locked = false;
+  @Input() contextmenu: any;
 
   constructor() { }
 
@@ -28,57 +26,61 @@ export class ContextMenuComponent implements OnInit {
   }
 
   onTop() {
-    if (!this.selNodes) {
+    if (!this.selection) {
       return;
     }
-    for (const item of this.selNodes) {
-      this.canvas.top(item);
+    if (this.selection.pen) {
+      this.canvas.top(this.selection.pen);
     }
+    if (this.selection.pens) {
+      for (const item of this.selection.pens) {
+        this.canvas.top(item);
+      }
+    }
+
     this.canvas.render();
   }
 
   onBottom() {
-    if (!this.selNodes) {
+    if (!this.selection) {
       return;
     }
-    for (const item of this.selNodes) {
-      this.canvas.bottom(item);
+    if (this.selection.pen) {
+      this.canvas.bottom(this.selection.pen);
+    }
+    if (this.selection.pens) {
+      for (const item of this.selection.pens) {
+        this.canvas.bottom(item);
+      }
     }
     this.canvas.render();
   }
 
   onCombine(stand: boolean) {
-    if (!this.selNodes || this.selNodes.length < 2) {
+    if (!this.selection || !this.selection.pens || this.selection.pens.length < 2) {
       return;
     }
 
-    this.canvas.combine(this.selNodes, stand);
+    this.canvas.combine(this.selection.pens, stand);
   }
 
   onUncombine() {
-    if (!this.selNodes || this.selNodes.length > 1) {
+    if (!this.selection || !this.selection.pen || this.selection.pen.type) {
       return;
     }
-    this.canvas.uncombine(this.selNodes[0]);
+    this.canvas.uncombine(this.selection.pen);
     this.canvas.render();
   }
 
   onLock() {
     this.locked = !this.locked;
-    if (this.selected.type === 'multi') {
-      if (this.selected.data.nodes) {
-        for (const item of this.selected.data.nodes) {
-          item.locked = this.locked;
-        }
+    if (this.selection.pen) {
+      this.selection.pen.locked = this.locked;
+    }
+    if (this.selection.pens) {
+      for (const item of this.selection.pens) {
+        item.locked = this.locked;
       }
-      if (this.selected.data.lines) {
-        for (const item of this.selected.data.lines) {
-          item.locked = this.locked;
-        }
-      }
-    } else {
-      this.selected.data.locked = this.locked;
-      // this.readonly = this.locked;
     }
     this.canvas.render(true);
   }
@@ -88,14 +90,14 @@ export class ContextMenuComponent implements OnInit {
   }
 
   onCopyImage() {
-    if (!this.selNodes || this.selNodes.length > 1 || !this.selNodes[0].image) {
+    if (!this.selection.pen || !this.selection.pen.image) {
       return;
     }
 
-    Clipboard.copy(this.selNodes[0].image);
+    Clipboard.copy(this.selection.pen.image);
     const _noticeService: NoticeService = new NoticeService();
     _noticeService.notice({
-      body: `图片地址已复制：${this.selNodes[0].image}`,
+      body: `图片地址已复制：${this.selection.pen.image}`,
       theme: 'success'
     });
   }

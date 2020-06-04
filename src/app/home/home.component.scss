@@ -62,7 +62,7 @@ $props-width: 2.4rem;
     width: 100%;
     height: 100%;
     overflow: auto;
-    background: 	#CFCFCF;
+    background: 	#ffffff;
   }
 
   & > .flex {
@@ -174,6 +174,15 @@ $props-width: 2.4rem;
     border-bottom: 1px solid #ccc;
     display: flex;
   }
+}
+.showright {
+  flex-shrink: 0;
+  width: 40px;
+  height: 20px;
+  background-color: #f8f8f8;
+  border: 1px solid $color-border;
+  position: relative;
+
 }
 .input.color {
   position: relative;

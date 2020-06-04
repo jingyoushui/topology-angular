@@ -47,18 +47,20 @@ export function jitingButtonTextRect(node: Node) {
   const imgWidth = getImgWidth(node);
 
   // if (l.length)
-  const nodeW = (l.length + 1) * node.font.fontSize + imgWidth;
-  if (nodeW < 70) {
-    node.rect.width = 70;
-  } else if (nodeW > 400) {
-    node.rect.width = 400;
-  } else {
-    node.rect.width = nodeW;
-  }
-
-  node.textRect = new Rect(node.rect.x + imgWidth + 3, node.rect.y, node.rect.width - imgWidth, imgHeight);
+  // const nodeW = (l.length + 1) * node.font.fontSize + imgWidth;
+  const nodeW = 100 + imgWidth;
+  // if (nodeW < 70) {
+  //   node.rect.width = 70;
+  // } else if (nodeW > 400) {
+  //   node.rect.width = 400;
+  // } else {
+  //   node.rect.width = nodeW;
+  // }
+  node.textRect = new Rect(node.rect.x + imgWidth + 3, node.rect.y, 100, imgHeight);
   node.fullTextRect = node.rect;
 }
+
+
 
 function getImgHeight(node: Node) {
   let imgHeight = minSize;

@@ -33,7 +33,7 @@ export class HttpService {
           }
         })
         .join('&');
-    console.log('this.queryParams:' + this.queryParams);
+    // console.log('this.queryParams:' + this.queryParams);
     return this;
   }
 
@@ -106,22 +106,22 @@ export class HttpService {
     }
   }
 
-  Download(url: string, fileName: string, options?: any) {
-    url += this.queryParams;
-    this.queryParams = '';
-    if (!options) {
-      options = {};
-    }
-    options.responseType = 'blob';
-
-    const sub = this.http.get(url, options).subscribe(
-      res => {
-        FileSaver.saveAs(res, fileName);
-      },
-      err => console.error(err),
-      () => {
-        sub.unsubscribe();
-      }
-    );
-  }
+  // Download(url: string, fileName: string, options?: any) {
+  //   url += this.queryParams;
+  //   this.queryParams = '';
+  //   if (!options) {
+  //     options = {};
+  //   }
+  //   options.responseType = 'blob';
+  //
+  //   const sub = this.http.get(url, options).subscribe(
+  //     res => {
+  //       FileSaver.saveAs(res, fileName);
+  //     },
+  //     err => console.error(err),
+  //     () => {
+  //       sub.unsubscribe();
+  //     }
+  //   );
+  // }
 }

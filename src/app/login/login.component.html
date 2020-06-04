@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div class="login">
+  <div class="login-item">
+    <nz-card nzHoverable style="width:380px">
+      <div style="padding-left: 15px;">
+        <div style="height: 50px;padding-left: 15px;">
+          <img style="width: 30px;height: 30px;" src="../../assets/img/favicon.ico">
+          <span style="font-size: 26px;padding-top: 0px;padding-left: 20px;">工业现场布线系统</span>
+        </div>
+        <form nz-form [formGroup]="validateForm" class="login-form" (ngSubmit)="submitForm()">
+          <nz-form-item style="padding-top: 10px;">
+            <nz-form-control nzErrorTip="Please input your username!">
+              <nz-input-group nzPrefixIcon="user">
+                <input type="text" nz-input formControlName="userName" nzSize="large" placeholder="Username" />
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item style="padding-top: 10px;">
+            <nz-form-control nzErrorTip="Please input your Password!">
+              <nz-input-group nzPrefixIcon="lock">
+                <input type="password" nz-input formControlName="password" placeholder="Password" />
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+
+          <div style="padding-top: 20px;"><button nz-button class="login-form-button login-form-margin" [nzType]="'primary'">登录</button></div>
+        </form>
+      </div>
+    </nz-card>
+  </div>
+
+</div>
+</body>
+</html>

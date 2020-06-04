@@ -18,12 +18,13 @@ export const Tools = [
             width: 100,
             height: 100
           },
-          mubanId: 1,
+          mubanId: '',
           paddingLeft: 10,
           paddingRight: 10,
           paddingTop: 10,
           paddingBottom: 10,
           name: 'rectangle',
+
         }
       },
       {
@@ -130,7 +131,7 @@ export const Tools = [
             height: 100
           },
           name: 'image',
-          image: '/assets/img/logo.png'
+          image: '/assets/img/favicon.ico'
         }
       },
       {
@@ -166,13 +167,13 @@ export const Tools = [
             height: 200
           },
           name: 'fenxianheMuban',
-          mubanId: 1,
+          mubanId: '',
           paddingLeft: 10,
           paddingRight: 10,
           paddingTop: 10,
           paddingBottom: 10,
         }
-      },
+      }
     ]
   },
   {
@@ -191,10 +192,11 @@ export const Tools = [
             width: 140,
             height: 30
           },
+          paddingLeft: 200,
           image: '/assets/img/tools/fenxianhe_x.png',
           // name: 'fenXianHe'
           name: 'fenxianhe',
-          mubanId: 1,
+          mubanId: '',
           attribute: {
             productName: '出线式分线盒',
             channelType: 0,
@@ -223,7 +225,7 @@ export const Tools = [
         data: {
           text: '急停按钮',
           rect: {
-            width: 100,
+            width: 280,
             height: 25
           },
           imageWidth: 25,
@@ -232,7 +234,31 @@ export const Tools = [
           },
           image: '/assets/img/tools/jitingButton.png',
           name: 'jitingButton',
-          mubanId: 1,
+          paddingLeft: 150,
+          children: [
+            {
+              text: '备注',
+              name: 'text',
+              paddingBottom: 5,
+              rectInParent: {
+                x: 0,
+                y: 0,
+                width: '100%',
+                height: '100%',
+                rotate: 0
+              },
+              font: {
+                fontFamily: 'Arial',
+                color: '#242424',
+                textAlign: 'left',
+                textBaseline: 'middle'
+              },
+              hideSizeCP: true,
+              hideAnchor: true,
+              hideRotateCP: true,
+            }
+          ],
+          mubanId: '',
           // 底层组件的属性
           property: {
             jixing: 'NPN',
@@ -256,7 +282,7 @@ export const Tools = [
         data: {
           text: '急停按钮',
           rect: {
-            width: 100,
+            width: 280,
             height: 25
           },
           imageWidth: 25,
@@ -265,7 +291,30 @@ export const Tools = [
           },
           image: '/assets/img/tools/jitingButton2.png',
           name: 'jitingButton2',
-          mubanId: 1,
+          paddingLeft: 150,
+          children: [
+            {
+              text: '备注',
+              name: 'text',
+              rectInParent: {
+                x: 0,
+                y: 0,
+                width: '100%',
+                height: '100%',
+                rotate: 0
+              },
+              font: {
+                fontFamily: 'Arial',
+                color: '#242424',
+                textAlign: 'left',
+                textBaseline: 'middle'
+              },
+              hideSizeCP: true,
+              hideAnchor: true,
+              hideRotateCP: true,
+            }
+          ],
+          mubanId: '',
           property: {
             jixing: 'PNP',
             leixing: 'in',
@@ -288,7 +337,7 @@ export const Tools = [
         data: {
           text: 'OK、NG显示',
           rect: {
-            width: 100,
+            width: 280,
             height: 25
           },
           imageWidth: 25,
@@ -297,7 +346,30 @@ export const Tools = [
           },
           image: '/assets/img/tools/OKNG.png',
           name: 'OKNG',
-          mubanId: 1,
+          paddingLeft: 150,
+          children: [
+            {
+              text: '备注',
+              name: 'text',
+              rectInParent: {
+                x: 0,
+                y: 0,
+                width: '100%',
+                height: '100%',
+                rotate: 0
+              },
+              font: {
+                fontFamily: 'Arial',
+                color: '#242424',
+                textAlign: 'left',
+                textBaseline: 'middle'
+              },
+              hideSizeCP: true,
+              hideAnchor: true,
+              hideRotateCP: true,
+            }
+          ],
+          mubanId: '',
           property: {
             jixing: 'PNP',
             leixing: 'out',
@@ -320,7 +392,7 @@ export const Tools = [
         data: {
           text: '吹气中继',
           rect: {
-            width: 100,
+            width: 280,
             height: 25
           },
           imageWidth: 25,
@@ -329,7 +401,30 @@ export const Tools = [
           },
           image: '/assets/img/tools/zhongji.png',
           name: 'zhongji',
-          mubanId: 1,
+          paddingLeft: 150,
+          children: [
+            {
+              text: '备注',
+              name: 'text',
+              rectInParent: {
+                x: 0,
+                y: 0,
+                width: '100%',
+                height: '100%',
+                rotate: 0
+              },
+              font: {
+                fontFamily: 'Arial',
+                color: '#242424',
+                textAlign: 'left',
+                textBaseline: 'middle'
+              },
+              hideSizeCP: true,
+              hideAnchor: true,
+              hideRotateCP: true,
+            }
+          ],
+          mubanId: '',
           property: {
             jixing: 'NPN',
             leixing: 'out',
@@ -351,7 +446,7 @@ export const Tools = [
         data: {
           text: '转换头',
           rect: {
-            width: 100,
+            width: 280,
             height: 25
           },
           imageWidth: 40,
@@ -360,7 +455,30 @@ export const Tools = [
           },
           image: '/assets/img/tools/1to2.png',
           name: 'OneToTwo',
-          mubanId: 1,
+          paddingLeft: 150,
+          children: [
+            {
+              text: '备注',
+              name: 'text',
+              rectInParent: {
+                x: 0,
+                y: 0,
+                width: '100%',
+                height: '100%',
+                rotate: 0
+              },
+              font: {
+                fontFamily: 'Arial',
+                color: '#242424',
+                textAlign: 'left',
+                textBaseline: 'middle'
+              },
+              hideSizeCP: true,
+              hideAnchor: true,
+              hideRotateCP: true,
+            }
+          ],
+          mubanId: '',
           // 底层组件的属性
           property: {
             jixing: 'NPN',
@@ -383,7 +501,7 @@ export const Tools = [
         data: {
           text: '开关',
           rect: {
-            width: 150,
+            width: 280,
             height: 25
           },
           imageWidth: 80,
@@ -392,14 +510,37 @@ export const Tools = [
           },
           image: '/assets/img/tools/switch.png',
           name: 'switch',
-          mubanId: 1,
+          paddingLeft: 150,
+          children: [
+            {
+              text: '备注',
+              name: 'text',
+              rectInParent: {
+                x: 0,
+                y: 0,
+                width: '100%',
+                height: '100%',
+                rotate: 0
+              },
+              font: {
+                fontFamily: 'Arial',
+                color: '#242424',
+                textAlign: 'left',
+                textBaseline: 'middle'
+              },
+              hideSizeCP: true,
+              hideAnchor: true,
+              hideRotateCP: true,
+            }
+          ],
+          mubanId: '',
           // 底层组件的属性
           property: {
             jixing: 'NPN',
             leixing: 'in',
             xianzhi: '2',
             jiekou: 'M8',
-            current: 2,
+            current: 1,
             name: '开关',
             desc: ''
           }
@@ -416,7 +557,7 @@ export const Tools = [
         data: {
           text: '电压上升电磁阀',
           rect: {
-            width: 150,
+            width: 280,
             height: 25
           },
           imageWidth: 60,
@@ -425,7 +566,30 @@ export const Tools = [
           },
           image: '/assets/img/tools/diancifaUp.png',
           name: 'diancifaUp',
-          mubanId: 1,
+          paddingLeft: 150,
+          children: [
+            {
+              text: '备注',
+              name: 'text',
+              rectInParent: {
+                x: 0,
+                y: 0,
+                width: '100%',
+                height: '100%',
+                rotate: 0
+              },
+              font: {
+                fontFamily: 'Arial',
+                color: '#242424',
+                textAlign: 'left',
+                textBaseline: 'middle'
+              },
+              hideSizeCP: true,
+              hideAnchor: true,
+              hideRotateCP: true,
+            }
+          ],
+          mubanId: '',
           property: {
             jixing: 'PNP',
             leixing: 'out',
@@ -437,7 +601,6 @@ export const Tools = [
           }
         }
       },
-
       {
         name: '电压下降电磁阀',
         img: '/assets/img/tools/diancifaDown_y.png',
@@ -449,7 +612,7 @@ export const Tools = [
         data: {
           text: '电压下降电磁阀',
           rect: {
-            width: 150,
+            width: 280,
             height: 25
           },
           imageWidth: 60,
@@ -458,7 +621,30 @@ export const Tools = [
           },
           image: '/assets/img/tools/diancifaDown.png',
           name: 'diancifaDown',
-          mubanId: 1,
+          paddingLeft: 150,
+          children: [
+            {
+              text: '备注',
+              name: 'text',
+              rectInParent: {
+                x: 0,
+                y: 0,
+                width: '100%',
+                height: '100%',
+                rotate: 0
+              },
+              font: {
+                fontFamily: 'Arial',
+                color: '#242424',
+                textAlign: 'left',
+                textBaseline: 'middle'
+              },
+              hideSizeCP: true,
+              hideAnchor: true,
+              hideRotateCP: true,
+            }
+          ],
+          mubanId: '',
           property: {
             jixing: 'NPN',
             leixing: 'out',
@@ -470,62 +656,62 @@ export const Tools = [
           }
         }
       },
-      // {
-      //   name: '默认电阻',
-      //   icon: 'icon-rect',
-      //   style: {
-      //     width: '40px',
-      //     height: '40px',
-      //   },
-      //   data: {
-      //     text: '',
-      //     rect: {
-      //       width: 30,
-      //       height: 20
-      //     },
-      //     mubanId: 1,
-      //     name: 'plug',
-      //   }
-      // },
     ]
   },
   {
     group: '法兰连接器产品',
     children: [
+
+      // {
+      //   name: '电箱',
+      //   img: '/assets/img/tools/dianxiang.png',
+      //   style: {
+      //     width: '40px',
+      //     height: '60px',
+      //   },
+      //   data: {
+      //     text: '电箱',
+      //     rect: {
+      //       width: 90,
+      //       height: 130
+      //     },
+      //     image: '/assets/img/tools/dianxiang.png',
+      //     name: 'dianxiang',
+      //   }
+      // },
+
       {
-        name: '法兰式连接器',
-        // img: '/assets/img/tools/flangeCouplingConnector.png',
-        img: '/assets/img/tools/leftNode.png',
+        name: '散线型',
+        img: '/assets/img/tools/sanxian_y.png',
         style: {
-          width: '40px',
+          width: '30px',
           height: '60px',
         },
         data: {
-          text: '法兰式连接器',
+          text: '',
           rect: {
             width: 90,
-            height: 110
+            height: 25
           },
-          // image: '/assets/img/tools/flangeCouplingConnector.png',
-          image: '/assets/img/tools/leftNode.png',
-          name: 'flangeCouplingConnector',
+          image: '/assets/img/tools/sanxian.png',
+          name: 'sanxian',
         }
       },
       {
-        name: '电箱',
-        img: '/assets/img/tools/dianxiang.png',
+        name: '航线型',
+        img: '/assets/img/tools/hangxian_y.png',
         style: {
-          width: '40px',
+          width: '30px',
           height: '60px',
         },
         data: {
-          text: '电箱',
+          text: '',
           rect: {
-            width: 110,
-            height: 150
+            width: 90,
+            height: 25
           },
-          image: '/assets/img/tools/dianxiang.png',
-          name: 'dianxiang',
+          image: '/assets/img/tools/hangxian.png',
+          name: 'hangxian',
         }
       },
     ]

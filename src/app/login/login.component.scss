@@ -1,0 +1,31 @@
+
+@import "~le5le-ui/variables";
+@import "../../styles";
+.login{
+  height: 100vh;
+  overflow: hidden;
+  width:100%;
+  background-image: url("../../assets/img/background1.jpg");
+  background-repeat:no-repeat;
+  background-size:cover;
+}
+.login-item{
+  padding-top: 15%;
+  padding-left: 40%;
+}
+.login-form {
+  max-width: 300px;
+}
+
+.login-form-margin {
+  margin-bottom: 16px;
+  padding-top: 5px;
+}
+
+.login-form-forgot {
+  float: right;
+}
+
+.login-form-button {
+  width: 100%;
+}

@@ -1,12 +1,14 @@
-import { Pen } from './pen';
+import { Pen, PenType } from './pen';
 import { Rect } from './rect';
 import { Point } from './point';
+import { Line } from './line';
 import { anchorsFns, iconRectFns, textRectFns, drawNodeFns } from '../middles';
 import { defaultAnchors } from '../middles/default.anchor';
 import { defaultIconRect, defaultTextRect } from '../middles/default.rect';
 import { text, iconfont } from '../middles/nodes/text';
 import { Store } from 'le5le-store';
-import { abs } from '../utils';
+import { abs } from '../utils/math';
+import { s8 } from '../utils/uuid';
 
 export const images: { [key: string]: { img: HTMLImageElement; cnt: number; }; } = {};
 
@@ -14,7 +16,6 @@ export class Node extends Pen {
   is3D = false;
   z: number;
   zRotate = 0;
-
   // 产品的硬件属性
   attribute: {
     productName: string;
@@ -35,9 +36,6 @@ export class Node extends Pen {
     name: string;
     desc: string;
   }
-  // 节点的模板id
-  mubanId: number;
-  label_type: string;
   // 0 -1 之间的小数
   borderRadius: number;
 
@@ -69,34 +67,13 @@ export class Node extends Pen {
   paddingLeft: number | string;
   paddingRight: number | string;
 
-  paddingTopNum: number;
-  paddingBottomNum: number;
-  paddingLeftNum: number;
-  paddingRightNum: number;
-
   iconRect: Rect;
   fullIconRect: Rect;
 
   anchors: Point[] = [];
   rotatedAnchors: Point[] = [];
-  parentId: string;
-  rectInParent: {
-    x: number | string;
-    y: number | string;
-    width: number | string;
-    height: number | string;
-    marginTop?: number | string;
-    marginRight?: number | string;
-    marginBottom?: number | string;
-    marginLeft?: number | string;
-    rotate: number;
-    rect?: Rect;
-  };
-  // Can selected as child.
-  stand: boolean;
-  children: Node[];
-  // Has stand children
-  childStand: boolean;
+
+  children: Pen[];
 
   // nodes移动时，停靠点的参考位置
   dockWatchers: Point[];
@@ -110,6 +87,7 @@ export class Node extends Pen {
     linear: boolean;
     state: Node;
   }[] = [];
+  animateAlone: boolean;
 
   gif: boolean;
   video: string;
@@ -130,24 +108,16 @@ export class Node extends Pen {
   constructor(json: any, noChild = false) {
     super(json);
 
+    this.type = PenType.Node;
     this.is3D = json.is3D;
     this.z = json.z;
     this.zRotate = json.zRotate || 0;
-
     if (json.attribute) {
       this.attribute = json.attribute;
     }
     if (json.property) {
       this.property =  json.property;
     }
-    if (json.mubanId) {
-      this.mubanId = json.mubanId;
-    }
-
-    if (json.label_type) {
-      this.label_type = json.label_type;
-    }
-
     this.borderRadius = +json.borderRadius || 0;
     if (this.borderRadius > 1) {
       this.borderRadius = 1;
@@ -185,7 +155,7 @@ export class Node extends Pen {
     this.paddingLeft = json.paddingLeft || 0;
     this.paddingRight = json.paddingRight || 0;
 
-
+    // 兼容老数据
     if (json.children && json.children[0] && json.children[0].parentRect) {
       this.paddingLeft = json.children[0].parentRect.offsetX;
       this.paddingRight = 0;
@@ -210,11 +180,8 @@ export class Node extends Pen {
       this.paddingLeft = json.parentRect.marginX;
       this.paddingRight = json.parentRect.marginX;
     }
-    this.childStand = json.childStand;
-    this.stand = json.stand;
-    if (json.rectInParent) {
-      this.rectInParent = json.rectInParent;
-    }
+    // 兼容老数据 end
+
     if (json.animateFrames) {
       this.animateFrames = json.animateFrames;
       for (const item of this.animateFrames) {
@@ -227,6 +194,7 @@ export class Node extends Pen {
       this.animateDuration = json.animateDuration;
     }
     this.animateType = json.animateType ? json.animateType : json.animateDuration ? 'custom' : '';
+    this.animateAlone = json.animateAlone;
 
     this.iframe = json.iframe;
     this.elementId = json.elementId;
@@ -234,6 +202,11 @@ export class Node extends Pen {
     this.video = json.video;
     this.play = json.play;
     this.nextPlay = json.nextPlay;
+
+    if (json.elementLoaded !== undefined) {
+      this.elementId = null;
+      this.elementLoaded = false;
+    }
 
     this.init();
 
@@ -268,7 +241,7 @@ export class Node extends Pen {
     }
 
     this.calcAnchors();
-
+    this.elementRendered = false;
     this.addToDiv();
   }
 
@@ -285,7 +258,7 @@ export class Node extends Pen {
 
     if (this.children) {
       for (const item of this.children) {
-        if (item.hasGif()) {
+        if (item.type === PenType.Node && (item as Node).hasGif()) {
           return true;
         }
       }
@@ -307,58 +280,26 @@ export class Node extends Pen {
     }
 
     this.children = [];
-    for (let i = 0; i < children.length; ++i) {
-      const child = new Node(children[i]);
-      child.parentId = this.id;
-      child.calcChildRect(this);
-      child.init();
-      child.setChild(children[i].children);
+    for (const item of children) {
+      let child: Pen;
+      switch (item.type) {
+        case PenType.Line:
+          child = new Line(item);
+          child.calcRectByParent(this);
+          break;
+        default:
+          child = new Node(item);
+          child.parentId = this.id;
+          child.calcRectByParent(this);
+          (child as Node).init();
+          (child as Node).setChild(item.children);
+          break;
+      }
+      child.id = s8();
       this.children.push(child);
     }
   }
 
-  // 根据父节点rect计算自己（子节点）的rect
-  calcChildRect(parent: Node) {
-    if (!this.rectInParent) {
-      return;
-    }
-    const parentW = parent.rect.width - parent.paddingLeftNum - parent.paddingRightNum;
-    const parentH = parent.rect.height - parent.paddingTopNum - parent.paddingBottomNum;
-    let x =
-      parent.rect.x +
-      parent.paddingLeftNum +
-      abs(parentW, this.rectInParent.x) +
-      abs(parentW, this.rectInParent.marginLeft);
-    let y =
-      parent.rect.y +
-      parent.paddingTopNum +
-      abs(parentH, this.rectInParent.y) +
-      abs(parentW, this.rectInParent.marginTop);
-    const w = abs(parentW, this.rectInParent.width);
-    const h = abs(parentH, this.rectInParent.height);
-    if (this.rectInParent.marginLeft === undefined && this.rectInParent.marginRight) {
-      x -= abs(parentW, this.rectInParent.marginRight);
-    }
-    if (this.rectInParent.marginTop === undefined && this.rectInParent.marginBottom) {
-      y -= abs(parentW, this.rectInParent.marginBottom);
-    }
-    this.rect = new Rect(x, y, w, h);
-
-    if (!this.rectInParent.rotate) {
-      this.rectInParent.rotate = 0;
-    }
-
-    const offsetR = parent.rotate + parent.offsetRotate;
-    this.rotate = this.rectInParent.rotate + offsetR;
-
-    if (!this.rectInParent.rect) {
-      this.rectInParent.rect = this.rect.clone();
-    }
-
-    // const oldCenter = this.rectInParent.rect.center.clone();
-    // const newCenter = this.rectInParent.rect.center.clone().rotate(offsetR, parent.rect.center);
-    // this.rect.translate(newCenter.x - oldCenter.x, newCenter.y - oldCenter.y);
-  }
 
   draw(ctx: CanvasRenderingContext2D) {
     if (!drawNodeFns[this.name]) {
@@ -402,7 +343,19 @@ export class Node extends Pen {
   drawBkLinearGradient(ctx: CanvasRenderingContext2D) {
     const from = new Point(this.rect.x, this.rect.center.y);
     const to = new Point(this.rect.ex, this.rect.center.y);
-    if (this.gradientAngle) {
+    if (this.gradientAngle % 90 === 0 && this.gradientAngle % 180) {
+      if (this.gradientAngle % 270) {
+        from.x = this.rect.center.x;
+        from.y = this.rect.y;
+        to.x = this.rect.center.x;
+        to.y = this.rect.ey;
+      } else {
+        from.x = this.rect.center.x;
+        from.y = this.rect.ey;
+        to.x = this.rect.center.x;
+        to.y = this.rect.y;
+      }
+    } else if (this.gradientAngle) {
       from.rotate(this.gradientAngle, this.rect.center);
       to.rotate(this.gradientAngle, this.rect.center);
     }
@@ -501,8 +454,10 @@ export class Node extends Pen {
       return;
     }
 
+    const gif = this.image.indexOf('.gif') > 0;
+
     // Load image and draw it.
-    if (images[this.image]) {
+    if (!gif && images[this.image]) {
       this.img = images[this.image].img;
       ++images[this.image].cnt;
 
@@ -513,24 +468,23 @@ export class Node extends Pen {
       return;
     }
 
-    this.img = new Image();
-    images[this.image] = {
-      img: this.img,
-      cnt: 1
-    };
-    this.img.crossOrigin = 'anonymous';
-    this.img.src = this.image;
-    if (!this.gif && this.image.indexOf('.gif') > 0) {
-      this.gif = true;
-      Store.set('LT:addDiv', this);
-    }
-    this.img.onload = () => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.src = this.image;
+    img.onload = () => {
       this.lastImage = this.image;
-      this.imgNaturalWidth = this.img.naturalWidth;
-      this.imgNaturalHeight = this.img.naturalHeight;
-      // this.drawImg(ctx);
-
+      this.imgNaturalWidth = img.naturalWidth;
+      this.imgNaturalHeight = img.naturalHeight;
+      this.img = img;
+      images[this.image] = {
+        img,
+        cnt: 1
+      };
       Store.set('LT:imageLoaded', true);
+      if (!this.gif && gif) {
+        this.gif = true;
+        Store.set('LT:addDiv', this);
+      }
     };
   }
 
@@ -573,12 +527,72 @@ export class Node extends Pen {
     return rect;
   }
 
-  calcRectInParent(parent: Node) {
+
+  // 根据父节点rect计算自己（子节点）的rect
+  calcRectByParent(parent: Pen) {
+    if (!this.rectInParent) {
+      return;
+    }
+    const parentW = parent.rect.width - parent.paddingLeftNum - parent.paddingRightNum;
+    const parentH = parent.rect.height - parent.paddingTopNum - parent.paddingBottomNum;
+    let x =
+      parent.rect.x +
+      parent.paddingLeftNum +
+      abs(parentW, this.rectInParent.x) +
+      abs(parentW, this.rectInParent.marginLeft);
+    let y =
+      parent.rect.y +
+      parent.paddingTopNum +
+      abs(parentH, this.rectInParent.y) +
+      abs(parentW, this.rectInParent.marginTop);
+    const w = abs(parentW, this.rectInParent.width);
+    const h = abs(parentH, this.rectInParent.height);
+    if (this.rectInParent.marginLeft === undefined && this.rectInParent.marginRight) {
+      x -= abs(parentW, this.rectInParent.marginRight);
+    }
+    if (this.rectInParent.marginTop === undefined && this.rectInParent.marginBottom) {
+      y -= abs(parentW, this.rectInParent.marginBottom);
+    }
+    this.rect = new Rect(x, y, w, h);
+
+    if (!this.rectInParent.rotate) {
+      this.rectInParent.rotate = 0;
+    }
+
+    const offsetR = parent.rotate + parent.offsetRotate;
+    this.rotate = this.rectInParent.rotate + offsetR;
+
+    if (!this.rectInParent.rect) {
+      this.rectInParent.rect = this.rect.clone();
+    }
+  }
+
+  calcChildrenRect() {
+    if (!this.children) {
+      return;
+    }
+    for (const item of this.children) {
+      switch (item.type) {
+        case PenType.Line:
+          item.calcRectByParent(this);
+          break;
+        default:
+          item.calcRectByParent(this);
+          (item as Node).init();
+          (item as Node).calcChildrenRect();
+          break;
+      }
+    }
+  }
+
+  calcRectInParent(parent: Pen) {
+    const parentW = parent.rect.width - parent.paddingLeftNum - parent.paddingRightNum;
+    const parentH = parent.rect.height - parent.paddingTopNum - parent.paddingBottomNum;
     this.rectInParent = {
-      x: ((this.rect.x - parent.rect.x) / parent.rect.width) * 100 + '%',
-      y: ((this.rect.y - parent.rect.y) / parent.rect.height) * 100 + '%',
-      width: (this.rect.width / parent.rect.width) * 100 + '%',
-      height: (this.rect.height / parent.rect.height) * 100 + '%',
+      x: ((this.rect.x - parent.rect.x - parent.paddingLeftNum) * 100 / parentW) + '%',
+      y: ((this.rect.y - parent.rect.y - parent.paddingTopNum) * 100 / parentH) + '%',
+      width: (this.rect.width * 100 / parentW) + '%',
+      height: (this.rect.height * 100 / parentH) + '%',
       rotate: this.rotate,
       rect: this.rect.clone()
     };
@@ -589,7 +603,7 @@ export class Node extends Pen {
     this.dockWatchers.unshift(this.rect.center);
   }
 
-  updateAnimateProps() {
+  initAnimateProps() {
     let passed = 0;
     for (let i = 0; i < this.animateFrames.length; ++i) {
       this.animateFrames[i].start = passed;
@@ -627,7 +641,6 @@ export class Node extends Pen {
       }
       this.animateStart = now;
       timeline = 0;
-      this.animateFrames[0].initState = Node.cloneState(this);
     }
 
     let rectChanged = false;
@@ -661,7 +674,7 @@ export class Node extends Pen {
           }
           this.rect.ex = this.rect.x + this.rect.width;
           this.rect.ey = this.rect.y + this.rect.height;
-          this.rect.calceCenter();
+          this.rect.calcCenter();
 
           if (item.initState.z !== undefined && item.state.z !== item.initState.z) {
             this.z = item.initState.z + (item.state.z - item.initState.z) * rate;
@@ -702,10 +715,14 @@ export class Node extends Pen {
         }
       }
     }
+
     if (rectChanged) {
       this.init();
-      Store.set('nodeRectChanged', this);
+      if (!this.animateAlone) {
+        Store.set('LT:rectChanged', this);
+      }
     }
+    return '';
   }
 
   scale(scale: number, center?: Point) {
@@ -727,7 +744,46 @@ export class Node extends Pen {
     }
     this.font.fontSize *= scale;
     this.iconSize *= scale;
-    this.rect.calceCenter();
+    this.rect.calcCenter();
+
+    if (this.animateFrames) {
+      for (const item of this.animateFrames) {
+        if (item.state) {
+          item.state = new Node(item.state);
+          item.state.scale(scale, center);
+        }
+      }
+    }
+
+    this.elementRendered = false;
+    this.init();
+
+    if (this.children) {
+      for (const item of this.children) {
+        item.scale(scale, center);
+      }
+    }
+  }
+
+  scale2(scale: number, center?: Point) {
+    // if (!center) {
+    //   center.x = this.rect.x;
+    //   center.y = this.rect.y;
+    // }
+    this.z *= scale;
+    this.rect.width *= scale;
+    this.rect.height *= scale;
+    this.rect.ex = this.rect.x + this.rect.width;
+    this.rect.ey = this.rect.y + this.rect.height;
+    if (this.imageWidth) {
+      this.imageWidth *= scale;
+    }
+    if (this.imageHeight) {
+      this.imageHeight *= scale;
+    }
+    this.font.fontSize *= scale;
+    this.iconSize *= scale;
+    this.rect.calcCenter();
 
     if (this.animateFrames) {
       for (const item of this.animateFrames) {
@@ -753,7 +809,7 @@ export class Node extends Pen {
     this.rect.y += y;
     this.rect.ex = this.rect.x + this.rect.width;
     this.rect.ey = this.rect.y + this.rect.height;
-    this.rect.calceCenter();
+    this.rect.calcCenter();
 
     if (this.animateFrames) {
       for (const frame of this.animateFrames) {
@@ -775,6 +831,18 @@ export class Node extends Pen {
     }
   }
 
+  initRect() {
+    this.rect.init();
+    if (this.children) {
+      this.calcChildrenRect();
+      for (const item of this.children) {
+        if (item instanceof Node) {
+          item.initRect();
+        }
+      }
+    }
+  }
+
   round() {
     this.rect.round();
     if (this.children) {
@@ -782,5 +850,9 @@ export class Node extends Pen {
         item.rect.round();
       }
     }
+  }
+
+  clone() {
+    return new Node(this);
   }
 }
