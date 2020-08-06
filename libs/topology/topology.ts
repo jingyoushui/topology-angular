@@ -371,6 +371,7 @@ export class Topology {
 
     return node;
   }
+  //这个是双击出弹窗，然后选择添加组件时候使用的。
   addNode2(node: Node | any, focus = false) {
     if (this.data.locked || !drawNodeFns[node.name]) {
       return null;
@@ -386,7 +387,7 @@ export class Topology {
       }
     }
     if (this.data.scale !== 1) {
-      node.scale2(this.data.scale);
+      node.scaleFromStart(this.data.scale);
     }
     this.data.pens.push(node);
 
@@ -1943,8 +1944,12 @@ export class Topology {
     this.data.scale *= scale;
     const center = this.getRect().center;
 
+    const start = this.getRect().start;
+
+
     for (const item of this.data.pens) {
-      item.scale(scale, center);
+      // item.scale(scale, center);
+      item.scaleFromStart(scale,start);
     }
     Store.set('LT:scale', this.data.scale);
 

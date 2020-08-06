@@ -9,6 +9,7 @@ import { Rect } from './rect';
 import { abs } from '../utils/math';
 
 export class Line extends Pen {
+
   from: Point;
   to: Point;
   controlPoints: Point[] = [];
@@ -430,6 +431,23 @@ export class Line extends Pen {
     for (const pt of this.controlPoints) {
       pt.x = center.x - (center.x - pt.x) * scale;
       pt.y = center.y - (center.y - pt.y) * scale;
+    }
+
+    Store.set('pts-' + this.id, null);
+  }
+  scaleFromStart(scale: number, start: Point) {
+    this.from.x = start.x - (start.x - this.from.x) * scale;
+    this.from.y = start.y - (start.y - this.from.y) * scale;
+    this.to.x = start.x - (start.x - this.to.x) * scale;
+    this.to.y = start.y - (start.y - this.to.y) * scale;
+    if (this.text && this.font && this.font.fontSize) {
+      this.font.fontSize *= scale;
+      this.textRect = null;
+    }
+
+    for (const pt of this.controlPoints) {
+      pt.x = start.x - (start.x - pt.x) * scale;
+      pt.y = start.y - (start.y - pt.y) * scale;
     }
 
     Store.set('pts-' + this.id, null);

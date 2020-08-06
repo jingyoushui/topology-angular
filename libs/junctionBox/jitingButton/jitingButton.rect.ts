@@ -37,7 +37,8 @@ export function jitingButtonTextRect(node: Node) {
     height = lineHeight * lines.length;
   }
 
-  let top = node.rect.ey - height;
+  // let top = node.rect.ey - height;
+  let top = 0;
   const imgHeight = getImgHeight(node);
   if (top - imgHeight - txtMarginTop < node.rect.y) {
     top = node.rect.y + imgHeight + txtMarginTop;
@@ -56,7 +57,7 @@ export function jitingButtonTextRect(node: Node) {
   // } else {
   //   node.rect.width = nodeW;
   // }
-  node.textRect = new Rect(node.rect.x + imgWidth + 3, node.rect.y, 100, imgHeight);
+  node.textRect = new Rect(node.rect.x + imgWidth + 3, node.rect.y, 100, 20);
   node.fullTextRect = node.rect;
 }
 

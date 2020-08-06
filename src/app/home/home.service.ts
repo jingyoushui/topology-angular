@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { register as registerArrow} from '../../../libs/Joint';
 import {register as registerJunctionBox} from '../../../libs/junctionBox';
+import {registerMy} from '../../../libs/junctionBox';
 import { HttpService } from 'src/app/http/http.service';
 
 @Injectable()
@@ -11,6 +12,30 @@ export class HomeService {
     registerArrow();
     registerJunctionBox();
   }
+
+  // 用来注册终端组件的
+  async canvasRegisterMy() {
+    const ret = await this.getProduct();
+    if (ret.code === 200) {
+      const list = ret.data.value;
+      for(const p of list){
+        if(p.anchorsId === 0){
+          registerMy(p.name);
+        }
+      }
+    }
+  }
+
+  //获取到有哪些组件需要注册
+  async getProduct(){
+    let ret :any;
+    ret = await this.http.Get('/api/productAnchors/get');
+    console.log(ret)
+    return ret;
+
+  }
+
+
   async Get(data: any) {
     const ret = await this.http.QueryString({ version: data.version }).Get('/api/topology/get/' + data.id);
     if (ret.error) {
@@ -114,5 +139,26 @@ export class HomeService {
     }
 
     return true;
+  }
+
+  async SaveGroup(data: any) {
+    data = Object.assign({}, data);
+    let ret: any;
+    ret = await this.http.Post('/api/tools/save', data);
+    if (ret.error) {
+      return null;
+    }
+
+    return ret;
+  }
+  async SaveProduct(data: any,id:string) {
+    data = Object.assign({}, data);
+    let ret: any;
+    ret = await this.http.Post('/api/tools/saveProductbygroup/'+id, data);
+    if (ret.error) {
+      return null;
+    }
+
+    return ret;
   }
 }

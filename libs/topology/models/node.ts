@@ -35,6 +35,7 @@ export class Node extends Pen {
     current: number;
     name: string;
     desc: string;
+    tongdao?:number;
   }
   // 0 -1 之间的小数
   borderRadius: number;
@@ -765,11 +766,12 @@ export class Node extends Pen {
     }
   }
 
-  scale2(scale: number, center?: Point) {
-    // if (!center) {
-    //   center.x = this.rect.x;
-    //   center.y = this.rect.y;
-    // }
+  scaleFromStart(scale: number, start?: Point) {
+    if (!start) {
+      start = this.rect.start;
+    }
+    this.rect.x = start.x - (start.x - this.rect.x) * scale;
+    this.rect.y = start.y - (start.y - this.rect.y) * scale;
     this.z *= scale;
     this.rect.width *= scale;
     this.rect.height *= scale;
@@ -783,13 +785,13 @@ export class Node extends Pen {
     }
     this.font.fontSize *= scale;
     this.iconSize *= scale;
-    this.rect.calcCenter();
+    this.rect.calcStart();
 
     if (this.animateFrames) {
       for (const item of this.animateFrames) {
         if (item.state) {
           item.state = new Node(item.state);
-          item.state.scale(scale, center);
+          item.state.scaleFromStart(scale, start);
         }
       }
     }
@@ -799,7 +801,7 @@ export class Node extends Pen {
 
     if (this.children) {
       for (const item of this.children) {
-        item.scale(scale, center);
+        item.scaleFromStart(scale, start);
       }
     }
   }

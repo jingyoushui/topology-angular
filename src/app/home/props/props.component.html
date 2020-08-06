@@ -1,4 +1,4 @@
-<div class="nav nav-tab">
+<div class="nav nav-tab" style="background-color: #181818">
   <div class="item" [class.active]="tab===1" (click)="tab=1">外观</div>
 <!--  <div class="item" [class.active]="tab===3" (click)="tab=3" *ngIf="selection.pen">动效</div>-->
   <div class="item" [class.active]="tab===4" (click)="tab=4" *ngIf="selection.pen">数据</div>
@@ -148,7 +148,7 @@
                  [readonly]="readonly" (change)="onChangeProp()" />
         </div>
       </div>
-      <div *ngIf="pen.type">
+      <div *ngIf="pen.type &&currentFile!=1">
         <div class="flex grid mt5">
           <div>连线边框</div>
           <div>边框宽度（px）</div>
@@ -232,14 +232,17 @@
           </div>
         </div>
       </div>
-      <div class="mt5">
-        透明度（0 - 1）
+      <div *ngIf="currentFile!=1">
+        <div class="mt5" >
+          透明度（0 - 1）
+        </div>
+        <div>
+          <input type="number" name="globalAlpha" class="input full" [(ngModel)]="pen.globalAlpha" [uiMin]="0" [uiMax]="1"
+                 [readonly]="readonly" (change)="onChangeProp()" />
+        </div>
       </div>
-      <div>
-        <input type="number" name="globalAlpha" class="input full" [(ngModel)]="pen.globalAlpha" [uiMin]="0" [uiMax]="1"
-               [readonly]="readonly" (change)="onChangeProp()" />
       </div>
-    </div>
+
   </div>
   <div class="group" *ngIf="selection.pen && selection.pen.type">
     <div class="title">
@@ -290,7 +293,8 @@
                   </g>
                 </svg>
               </div>
-              <div class="icon-item" [class.hidden]="pen.fromArrow !== 'leftASolid'">
+              <!--   连接分线盒的直接头           -->
+              <div class="icon-item" [class.hidden]="pen.fromArrow !== 'danFenxianheFromSolid'">
                 <a>
                   <i class="from-leftASolid"></i>
                 </a>
@@ -329,7 +333,7 @@
                   </g>
                 </svg>
               </div>
-              <div class="icon-item ph10 pv5" (click)="onClickFromArrow('leftASolid')">
+              <div class="icon-item ph10 pv5" (click)="onClickFromArrow('danFenxianheFromSolid')">
                 <a>
                   <i class="from-leftASolid"></i>
                 </a>
@@ -373,13 +377,13 @@
                   </g>
                 </svg>
               </div>
-
-              <div class="icon-item" [class.hidden]="pen.toArrow !== 'rightASolid'">
+              <!--   连接终端设备的直接头           -->
+              <div class="icon-item" [class.hidden]="pen.toArrow !== 'danFenxianheSolid'">
                 <a>
                   <i class="to-rightASolid"></i>
                 </a>
               </div>
-              <div class="icon-item" [class.hidden]="pen.toArrow !== 'rightBSolid'">
+              <div class="icon-item" [class.hidden]="pen.toArrow !== 'danFenxianheWanSolid'">
                 <a>
                   <i class="to-rightBSolid"></i>
                 </a>
@@ -419,12 +423,12 @@
                 </svg>
               </div>
 
-              <div class="icon-item ph10 pv5" (click)="onClickToArrow('rightASolid')">
+              <div class="icon-item ph10 pv5" (click)="onClickToArrow('danFenxianheSolid')">
                 <a>
                   <i class="to-rightASolid"></i>
                 </a>
               </div>
-              <div class="icon-item ph10 pv5" (click)="onClickToArrow('rightBSolid')">
+              <div class="icon-item ph10 pv5" (click)="onClickToArrow('danFenxianheWanSolid')">
                 <a>
                   <i class="to-rightBSolid"></i>
                 </a>
@@ -484,20 +488,23 @@
           </div>
         </div>
       </div>
-      <div class="flex grid mt5">
-        <div>倾斜</div>
-        <div>加粗</div>
-      </div>
-      <div class="flex grid">
-        <div class="mr5">
-          <ui-select name="fontStyle" [(ngModel)]="pen.font.fontStyle" [options]="fontStyleOptions" [multi]="false"
-                     (change)="onChangeProp()" placeholder="正常" [readonly]="readonly"></ui-select>
+      <div *ngIf="currentFile!==1">
+        <div class="flex grid mt5">
+          <div>倾斜</div>
+          <div>加粗</div>
         </div>
-        <div>
-          <ui-select name="fontWeight" [(ngModel)]="pen.font.fontWeight" [options]="fontWeightOptions" [multi]="false"
-                     (change)="onChangeProp()" placeholder="正常" [readonly]="readonly"></ui-select>
+        <div class="flex grid">
+          <div class="mr5">
+            <ui-select name="fontStyle" [(ngModel)]="pen.font.fontStyle" [options]="fontStyleOptions" [multi]="false"
+                       (change)="onChangeProp()" placeholder="正常" [readonly]="readonly"></ui-select>
+          </div>
+          <div>
+            <ui-select name="fontWeight" [(ngModel)]="pen.font.fontWeight" [options]="fontWeightOptions" [multi]="false"
+                       (change)="onChangeProp()" placeholder="正常" [readonly]="readonly"></ui-select>
+          </div>
         </div>
       </div>
+
       <div *ngIf="selection.pen  && selection.pen.type === 0">
         <div class="mt5" *ngIf="selection.pen.name !='fangshuisai'&& selection.pen.name!='xianbiaopai'">
           名称
@@ -527,8 +534,8 @@
         </div>
         <div class="flex grid">
         <div class="mr5">
-          <ui-select  [options]="linelength" [multi]="false"
-                     (change)="onChangeProp()" placeholder="1.0" ></ui-select>
+          <ui-select  [options]="linelength" [multi]="false" [(ngModel)]="lineLength"
+                      (change)="onClickLine(lineLength)" ></ui-select>
         </div>
         </div>
       </div>
@@ -542,7 +549,7 @@
                     (change)="onChangeProp()"></textarea>
         </div>
       </div>
-      <div *ngIf="selection.pen.children">
+      <div *ngIf="selection.pen  && selection.pen.type === 1 && selection.pen.children">
         <div class="mt5">
           备注
         </div>
@@ -1001,7 +1008,7 @@
       </div>
       <div class="flex grid mt5">
         <div class="mr5">
-          <input  name="productName" class="input" [(ngModel)]="selection.pen.attribute.productName" [readonly]="readonly" required (change)="onChangeProp()" />
+          <input  name="productName" class="input" [(ngModel)]="selection.pen.attribute.productName" [readonly]="true" required (change)="onChangeProp()" />
         </div>
       </div>
       <div class="flex grid mt5">
@@ -1010,7 +1017,7 @@
       <div class="flex grid">
         <div class="mr5">
           <ui-select class="full" name="channelType" [(ngModel)]="selection.pen.attribute.channelType" [options]="channelTypeOptions"
-                     [multi]="false" (change)="onChangeProp()" placeholder="单通道单信号" [readonly]="readonly"></ui-select>
+                     [multi]="false" (change)="onChangeProp()" placeholder="单通道单信号" [readonly]="true"></ui-select>
         </div>
       </div>
       <div class="flex grid mt5">
@@ -1024,33 +1031,20 @@
         </div>
         <div>
           <ui-select  name="portType" [(ngModel)]="selection.pen.attribute.portType" [options]="portTypeOptions"
-                      [multi]="false" (change)="onChangeProp()" placeholder="NPN" [readonly]="readonly"></ui-select>
-        </div>
-      </div>
-      <div class="flex grid mt5">
-        <div>特征</div>
-        <div>配置</div>
-      </div>
-      <div class="flex grid">
-        <div class="mr5">
-          <ui-select  name="feature" [(ngModel)]="selection.pen.attribute.feature" [options]="featureOptions"
-                      [multi]="false" (change)="onChangeProp()" placeholder="散线型" [readonly]="readonly"></ui-select>
-        </div>
-        <div>
-          <ui-select  name="configuration" [(ngModel)]="selection.pen.attribute.configuration" [options]="configurationOptions"
-                      [multi]="false" (change)="onChangeProp()" placeholder="3M" [readonly]="readonly"></ui-select>
+                      [multi]="false" (change)="onChangeProp()" placeholder="NPN" [readonly]="true"></ui-select>
         </div>
       </div>
 
-      <div class="flex grid mt5">
-        <div>型号</div>
-      </div>
-      <div class="flex grid">
-        <div>
-          <input name="modelsType" class="input" [(ngModel)]="selection.pen.attribute.modelsType" [readonly]="readonly"
-                 required (change)="onChangeProp()" />
-        </div>
-      </div>
+
+<!--      <div class="flex grid mt5">-->
+<!--        <div>型号</div>-->
+<!--      </div>-->
+<!--      <div class="flex grid">-->
+<!--        <div>-->
+<!--          <input name="modelsType" class="input" [(ngModel)]="selection.pen.attribute.modelsType" [readonly]="readonly"-->
+<!--                 required (change)="onChangeProp()" />-->
+<!--        </div>-->
+<!--      </div>-->
     </div>
 
 

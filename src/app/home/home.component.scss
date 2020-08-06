@@ -6,6 +6,7 @@
 $color-border: #ddd;
 $tools-width: 1.75rem;
 $props-width: 2.4rem;
+$propsNotshow-width: 0.2rem;
 
 :host {
   display: block;
@@ -159,6 +160,14 @@ $props-width: 2.4rem;
   }
 
 }
+.propsNotshow{
+  flex-shrink: 0;
+  width: $propsNotshow-width;
+  background-color: #f8f8f8;
+  border-left: 1px solid $color-border;
+  overflow-y: auto;
+  position: relative;
+}
 
 .props {
   flex-shrink: 0;
@@ -301,8 +310,72 @@ $props-width: 2.4rem;
     }
   }
 
-
-
 }
 
 
+
+.flex2 {
+  display: flex;
+
+  &.column {
+    flex-direction: column;
+  }
+
+  &.reverse {
+    flex-direction: row-reverse;
+    &.column {
+      flex-direction: column-reverse;
+    }
+  }
+
+  &.inline {
+    display: inline-flex;
+  }
+
+  &.wrap {
+    flex-wrap: wrap;
+  }
+
+  &.nowrap {
+    flex-wrap: nowrap;
+  }
+
+  &.center {
+    justify-content: center;
+  }
+
+  &.middle {
+    align-items: center;
+  }
+
+  & > .full {
+    flex-grow: 1;
+    min-width: auto !important;
+    width: auto !important;
+  }
+
+  &.grid > div {
+    flex: 1;
+  }
+
+  label {
+    flex-shrink: 0;
+  }
+}
+.nav-tab > .item.active {
+  color: #F3CF07;
+  border-bottom: 2px solid #F3CF07;
+  font-weight: 700;
+}
+.nav-tab > .item {
+  color: #e7e7e7;
+}
+
+.btn {
+  height: 30px;
+  width: 80px;
+  background-color: #F1D206;
+  color:black;
+
+  border-radius: 2px;
+}

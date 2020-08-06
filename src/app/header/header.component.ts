@@ -51,6 +51,21 @@ export class WorkspaceHeaderComponent implements OnInit, OnDestroy {
     // 'lineUp',
     // 'lineDown'
   ];
+  arrowTypesFrom = [
+    '',
+    'triangleSolid',
+    'triangle',
+    'line',
+    'danFenxianheFromSolid',
+  ];
+  arrowTypesTo = [
+    '',
+    'triangleSolid',
+    'triangle',
+    'line',
+    'danFenxianheSolid',
+    'danFenxianheWanSolid',
+  ];
 
   menus: any[] = [{
     name: '查看',

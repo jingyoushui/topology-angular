@@ -8,7 +8,7 @@ import {jitingButtonAnchors, jitingButtonRect, jitingButtonTextRect} from './jit
 import {OneToTwoAnchor} from './oneTotwo';
 import {flangeCouplingConnectorAnchors} from './flangeCouplingConnector';
 import {plug, plugAnchors} from './plug';
-import {fenxianheMuban, fenxianheMubanIconRect, fenxianheMubanTextRect} from './fenxianheMuban';
+import {fenxianheMuban, fenxianheMubanIconRect, fenxianheMubanTextRect, fenxianheMubanTwo} from './fenxianheMuban';
 import {
   interfaceClass,
   interfaceClassIconRect,
@@ -22,14 +22,47 @@ import {fangshuisai, fangshuisaiAnchors, fangshuisaiTextRect, xianbiaopai} from 
 
 import {danFenxianheSolid} from './fenxianheArrows/danFenxianhe';
 import {danFenxianheFromSolid} from './fenxianheArrows/danFenxianheFrom';
+import {danFenxianheWanSolid} from './fenxianheArrows/danFenxianheWan';
 
 export function register() {
   // 分线盒fenxianhe
   registerNode('fenxianhe', (ctx: CanvasRenderingContext2D, node: Rect) => { },fenXianHeAnchors,  imageIconRect, imageTextRect);
   // 急停按钮
   registerNode('jitingButton', (ctx: CanvasRenderingContext2D, node: Rect) => { },jitingButtonAnchors,  jitingButtonRect, jitingButtonTextRect);
-  // 急停按钮2
-  registerNode('jitingButton2', (ctx: CanvasRenderingContext2D, node: Rect) => { },jitingButtonAnchors,  jitingButtonRect, jitingButtonTextRect);
+  //复位按钮
+  registerNode('fuweiButton', (ctx: CanvasRenderingContext2D, node: Rect) => { },jitingButtonAnchors,  jitingButtonRect, jitingButtonTextRect);
+
+  //启动按钮
+  registerNode('qidongButton', (ctx: CanvasRenderingContext2D, node: Rect) => { },jitingButtonAnchors,  jitingButtonRect, jitingButtonTextRect);
+  //启停按钮
+  registerNode('qitingButton', (ctx: CanvasRenderingContext2D, node: Rect) => { },jitingButtonAnchors,  jitingButtonRect, jitingButtonTextRect);
+  //停止按钮
+  registerNode('tingzhiButton', (ctx: CanvasRenderingContext2D, node: Rect) => { },jitingButtonAnchors,  jitingButtonRect, jitingButtonTextRect);
+
+  //16启停按钮
+  registerNode('16qitingButton', (ctx: CanvasRenderingContext2D, node: Rect) => { },jitingButtonAnchors,  jitingButtonRect, jitingButtonTextRect);
+
+  //16双位指示灯
+  registerNode('16shuangweiButton', (ctx: CanvasRenderingContext2D, node: Rect) => { },jitingButtonAnchors,  jitingButtonRect, jitingButtonTextRect);
+  // 22急停按钮
+  registerNode('22jitingButton', (ctx: CanvasRenderingContext2D, node: Rect) => { },jitingButtonAnchors,  jitingButtonRect, jitingButtonTextRect);
+// M8圆柱形接近传感器
+  registerNode('M8yuanzhu', (ctx: CanvasRenderingContext2D, node: Rect) => { },jitingButtonAnchors,  jitingButtonRect, jitingButtonTextRect);
+
+  // M8方形接近传感器
+  registerNode('M8fangxing', (ctx: CanvasRenderingContext2D, node: Rect) => { },jitingButtonAnchors,  jitingButtonRect, jitingButtonTextRect);
+  // M8对射式光电传感器传感器
+  registerNode('M8duishe', (ctx: CanvasRenderingContext2D, node: Rect) => { },jitingButtonAnchors,  jitingButtonRect, jitingButtonTextRect);
+  // M8自反式光电传感器
+  registerNode('M8zifan', (ctx: CanvasRenderingContext2D, node: Rect) => { },jitingButtonAnchors,  jitingButtonRect, jitingButtonTextRect);
+  // 活接头
+  registerNode('huojietou', (ctx: CanvasRenderingContext2D, node: Rect) => { },jitingButtonAnchors,  jitingButtonRect, jitingButtonTextRect);
+  // 猪尾式接近传感器
+  registerNode('zhuwei', (ctx: CanvasRenderingContext2D, node: Rect) => { },jitingButtonAnchors,  jitingButtonRect, jitingButtonTextRect);
+
+
+
+
   // 吹气中继
   registerNode('zhongji', (ctx: CanvasRenderingContext2D, node: Rect) => { },jitingButtonAnchors,  jitingButtonRect, jitingButtonTextRect);
   // OK/NG显示
@@ -42,6 +75,8 @@ export function register() {
   registerNode('diancifaUp', (ctx: CanvasRenderingContext2D, node: Rect) => { },jitingButtonAnchors,  jitingButtonRect, jitingButtonTextRect);
   // 电压下降电磁阀
   registerNode('diancifaDown', (ctx: CanvasRenderingContext2D, node: Rect) => { },jitingButtonAnchors,  jitingButtonRect, jitingButtonTextRect);
+
+
   // 法兰式连接器
   registerNode('flangeCouplingConnector', (ctx: CanvasRenderingContext2D, node: Rect) => { },flangeCouplingConnectorAnchors,  imageIconRect, imageTextRect);
   // 电箱
@@ -57,6 +92,7 @@ export function register() {
 
 
   registerNode('fenxianheMuban', fenxianheMuban, null, fenxianheMubanIconRect, fenxianheMubanTextRect);
+  registerNode('fenxianheMubanTwo', fenxianheMubanTwo, null, fenxianheMubanIconRect, fenxianheMubanTextRect);
 
   registerNode('simpleClass', simpleClass, null, simpleClassIconRect, simpleClassTextRect);
   registerNode('interfaceClass', interfaceClass, null, interfaceClassIconRect, interfaceClassTextRect);
@@ -71,5 +107,6 @@ export function register() {
 
   registerArrow('danFenxianheSolid',danFenxianheSolid);
   registerArrow('danFenxianheFromSolid',danFenxianheFromSolid);
+  registerArrow('danFenxianheWanSolid',danFenxianheWanSolid);
 
 }

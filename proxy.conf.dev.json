@@ -24,5 +24,15 @@
       "^/image": ""
 
     }
+  },
+  "/Product": {
+    "target": "http://127.0.0.1:3202",
+    "secure": false,
+    "logLevel": "debug",
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/Product": ""
+
+    }
   }
 }

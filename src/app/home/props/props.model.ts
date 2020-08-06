@@ -75,6 +75,7 @@ export interface Props {
       current: number;
       name: string;
       desc: string;
+      tongdao?:number;
     }
     // 节点的模板id
     mubanId?: number;

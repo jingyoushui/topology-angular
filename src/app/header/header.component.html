@@ -1,6 +1,6 @@
 <div class="menus" [class.clicked]="menuClicked" (click)="onClickMenu($event)">
   <a class="item" routerLink="/" style="padding: 0">
-    <img src="/assets/img/favicon.ico" />
+    <img src="/assets/img/logo.png" />
   </a>
   <div class="item">
     <a>
@@ -40,25 +40,25 @@
           <span class="ml50">Ctrl + I</span>
         </a>
       </div>
-      <div class="item" (mouseenter)="showFigure = true" (mouseleave)="onLeaveFigure()">
-        <a>
-          打开最近的文件
-          <i class="iconfont icon-angle-right"></i>
-        </a>
-        <div class="dropdown pt15" [class.block]="showFigure" style="top:-.85rem;min-width:7rem;min-height:7rem">
-          <figure>
-            <div *ngIf="recently.length" class="mb20">
-              <div class="flex wrap">
-                <a class="topo" *ngFor="let item of recently;let i=index" [title]="item.name" routerLink="/workspace"
-                  [queryParams]="{ id: item.id, version: item.version }" (click)="showFigure=false">
-                  <img [appImgAuthSrc]="item.image" />
-                  <i class="iconfont icon-delete" (click)="onRemoveRecently($event, i)"></i>
-                </a>
-              </div>
-            </div>
-          </figure>
-        </div>
-      </div>
+<!--      <div class="item" (mouseenter)="showFigure = true" (mouseleave)="onLeaveFigure()">-->
+<!--        <a>-->
+<!--          打开最近的文件-->
+<!--          <i class="iconfont icon-angle-right"></i>-->
+<!--        </a>-->
+<!--        <div class="dropdown pt15" [class.block]="showFigure" style="top:-.85rem;min-width:7rem;min-height:7rem">-->
+<!--          <figure>-->
+<!--            <div *ngIf="recently.length" class="mb20">-->
+<!--              <div class="flex wrap">-->
+<!--                <a class="topo" *ngFor="let item of recently;let i=index" [title]="item.name" routerLink="/workspace"-->
+<!--                  [queryParams]="{ id: item.id, version: item.version }" (click)="showFigure=false">-->
+<!--                  <img [appImgAuthSrc]="item.image" />-->
+<!--                  <i class="iconfont icon-delete" (click)="onRemoveRecently($event, i)"></i>-->
+<!--                </a>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </figure>-->
+<!--        </div>-->
+<!--      </div>-->
       <div class="item line"></div>
       <div>
         <div class="item">
@@ -197,7 +197,7 @@
         <div class="item">
           默认起点箭头：
         </div>
-        <div class="item" *ngFor="let item of arrowTypes">
+        <div class="item" *ngFor="let item of arrowTypesFrom">
           <a (click)="data.fromArrowType=item">
             <i class="iconfont icon-from-{{ item }}"></i>
           </a>
@@ -212,7 +212,7 @@
         <div class="item">
           默认终点箭头：
         </div>
-        <div class="item" *ngFor="let item of arrowTypes">
+        <div class="item" *ngFor="let item of arrowTypesTo">
           <a (click)="data.toArrowType=item">
             <i class="iconfont icon-to-{{ item }}"></i>
           </a>
@@ -238,17 +238,17 @@
       <div class="item">
 <!--        <a (click)="onLogin()">登录</a>-->
         <a routerLink="/login">
-          <span class="btn">登录</span>
+          <span class="button" style="background-color: #F3CF07">登录</span>
         </a>
       </div>
       <div class="item">
-        <a class="button" (click)="onSignup()">免费使用</a>
+<!--        <a class="button" (click)="onSignup()">免费使用</a>-->
       </div>
     </div>
     <div class="flex" *ngIf="user">
       <div class="item">
         <a class="flex middle" style="display: flex">
-          <ui-avatar class="mr10" [letters]="user.usernamePinyin" [img]="user.avatarUrl" [colors]="['#1890ff']">
+          <ui-avatar class="mr10" [letters]="user.usernamePinyin" [img]="user.avatarUrl" [colors]="['#F3CF07']">
           </ui-avatar>
           {{ user.username }}
           <i class="iconfont icon-angle-down ml5"></i>

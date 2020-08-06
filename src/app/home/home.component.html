@@ -8,31 +8,18 @@
   <div class="full">
     <div class="canvas" #workspace (contextmenu)="onContextMenu($event)"></div>
 
-    <div class="flex  pt2" style="background-color: #242424;color: yellow;width: 100%;">
-      <div style="width: 20%;" >
-        文件名：
-        <label *ngIf="!editFilename" (dblclick)="onEditFile(filenameInput)" title="双击编辑，点击空白保存">{{data.name}}</label>
-        <form class="inline" [class.hidden]="!editFilename" #myForm="ngForm" [uiTouchForm]="myForm" title="双击编辑，点击空白保存">
-          <input name="filename" #filenameInput class="input" [(ngModel)]="data.name" (blur)="onSaveFilename()"
-                 required/>
-        </form>
-        <i class="iconfont icon-edit" *ngIf="!editFilename" (click)="onEditFile(filenameInput)" title="双击编辑，点击空白保存"></i>
-      </div>
-      <div style="width: 20%">
-        文件描述：
-        <label *ngIf="!editFiledesc" (dblclick)="onEditFileDesc(filedescInput)" title="双击编辑，点击空白保存">{{data.desc}}</label>
-        <form class="inline" [class.hidden]="!editFiledesc" #myForm="ngForm" [uiTouchForm]="myForm" title="双击编辑，点击空白保存">
-          <input name="filedesc" #filedescInput class="input" [(ngModel)]="data.desc" (blur)="onSaveFiledesc()"
-                 required/>
-        </form>
-        <i class="iconfont icon-edit" *ngIf="!editFiledesc" (click)="onEditFileDesc(filedescInput)" title="双击编辑，点击空白保存"></i>
-      </div>
-      <div *ngIf="currentFile === 1" class="item  flex" style="width: 100px;">
+    <div  *ngIf="currentFile === 1" class="flex pt2" style="background-color: #181818;color: yellow;width: 100%;height: 25px;">
+      <div  class="item  flex" style="width: 100px;">
         <a style="color:yellow;">增加模板</a>
         <div class="dropdown">
           <div class="item">
             <a (click)="newM8()">
               单通道M8
+            </a>
+          </div>
+          <div class="item">
+            <a (click)="newTwoM8()">
+              双通道M8
             </a>
           </div>
           <div class="item line"></div>
@@ -44,7 +31,7 @@
         </div>
       </div>
 
-      <div *ngIf="currentFile === 1" class="item  flex" style="width: 100px;">
+      <div  class="item  flex" style="width: 100px;">
         <a style="color:yellow;">删除模板</a>
         <div class="dropdown">
           <div class="item" *ngFor="let muban of report_list">
@@ -55,7 +42,7 @@
         </div>
       </div>
 
-      <div *ngIf="currentFile === 1" class="item  flex" style="width: 100px;">
+      <div  class="item  flex" style="width: 100px;">
         <a style="color:yellow;">校验电流</a>
         <div class="dropdown">
           <div class="item" *ngFor="let muban of report_list">
@@ -71,23 +58,53 @@
           </div>
         </div>
       </div>
-      <div *ngIf="showRight">
-        <a style="color:yellow;" (click)="changeShowRight()" >隐藏右边栏</a>
-      </div>
-      <div  *ngIf="!showRight">
-        <a style="color:yellow;" (click)="changeShowRight()" >显示右边栏</a>
-      </div>
     </div>
   </div>
-
+  <div  *ngIf="!showRight" class="propsNotshow" style="font-size: 12px;margin-top: -1px;border-top: #ccc 1px solid">
+    <a nz-icon nzType="double-left" nzTheme="outline"  (click)="ShowRight()" > </a>
+  </div>
   <div  *ngIf="showRight" class="props" style="font-size: 12px;margin-top: -1px;border-top: #ccc 1px solid">
-    <div class="nav nav-tab"  *ngIf="!selection">
+    <div style="float:right;padding-right: 10px;background-color: #181818;height: 42px;" >
+      <a nz-icon nzType="double-right" nzTheme="outline" style="color: white" (click)="NotShowRight()" >
+      </a></div>
+    <div class="nav nav-tab" *ngIf="!selection" style="background-color: #181818">
       <div class="item" [class.active]="tabb===1" (click)="tabb=1">项目设置</div>
       <div class="item" [class.active]="tabb===2" (click)="tabb=2">产品清单</div>
+
     </div>
     <div *ngIf="tabb===1&&!selection">
       <div class="pv5">
         <div >
+          <div class="group">
+            <div style="font-weight: 600">文件设置</div>
+            <div class="flex grid">
+              <div>文件类型</div>
+            </div>
+            <div class="flex grid mt5">
+              <div>
+                <input *ngIf="currentFile === 1"  class="input" [ngModel]="'分线盒系列文件'" [readonly]="true" />
+                <input *ngIf="currentFile === 0 || !currentFile  "  class="input" [ngModel]="'自定义文件'" [readonly]="true" />
+              </div>
+            </div>
+            <div class="flex grid">
+              <div>文件名称</div>
+            </div>
+            <div class="flex grid mt5">
+              <div>
+                <input name="filename"  class="input" [(ngModel)]="data.name" (blur)="onSaveFilename()"
+                       required/>
+              </div>
+            </div>
+            <div class="flex grid">
+              <div>文件描述</div>
+            </div>
+            <div class="flex grid mt5">
+              <div>
+                <input name="filedesc" class="input" [(ngModel)]="data.desc" (blur)="onSaveFiledesc()"
+                   required/>
+              </div>
+            </div>
+          </div>
           <div class="group">
             <div style="font-weight: 600">画布设置</div>
             <div class="flex grid">
@@ -127,8 +144,6 @@
               <li>方向键：控制节点移动5个像素</li>
               <li>Ctrl + 方向键：控制节点移动1个像素</li>
               <li>Ctrl + 鼠标移动：移动整个画布</li>
-              <li>Ctrl + 鼠标滚轮：缩放</li>
-              <li>添加或选中节点，右侧属性支持上传各种图片哦</li>
             </ul>
           </div>
         </div>
@@ -137,10 +152,10 @@
     <div *ngIf="tabb===2&&!selection">
       <div class="group">
         <div style="font-weight: 600 ;margin-bottom: 5px;">
-          <button type="button" class="button"  (click)="showReport = {}">
+          <button type="button" class="btn"  (click)="showReport = {}">
             预览
           </button>
-          <button type="button" class="button" style="float: right;"  (click)="exportTable()">
+          <button type="button" class="btn" style="float: right;"  (click)="exportTable()">
             下载Excel
           </button>
         </div>
@@ -162,7 +177,7 @@
         </table>
       </div>
     </div>
-    <div class="pv5">
+    <div>
       <div *ngIf="selection">
         <app-props *ngIf="selection" [selection]="selection" [canvas]="canvas" [readonly]="false" [currentFile]="currentFile"
                    [report_list]="report_list" [zh_en]="zh_en"  (changeProps)="updateReport($event)">
@@ -173,10 +188,10 @@
 </div>
 
 <div class="modal" [ngStyle]="showReport">
-  <div class="modal-content">
-    <div class="modal-header pointer" uiDivMove [isHead]="true">
-      <div class="caption">报目表</div>
-      <i class="fr iconfont icon-close" (click)="showReport = {'display':'none'}"></i>
+  <div class="modal-content" >
+    <div class="modal-header pointer" style="background-color: #181818"  uiDivMove [isHead]="true">
+      <div class="caption" style="color:#F3CF07 ">报目表</div>
+      <i class="fr iconfont icon-close" style="color:#F3CF07" (click)="showReport = {'display':'none'}"></i>
     </div>
     <div class="modal-body" id="exportableTable">
 
@@ -205,10 +220,10 @@
       </table>
     </div>
     <div class="modal-footer">
-      <button type="button" class="button" style="margin-right: 10px;" (click)="exportTable()">
+      <button type="button" class="btn" style="margin-right: 10px;" (click)="exportTable()">
         下载
       </button>
-      <button type="button" class="button" (click)="showReport = {'display':'none'}">
+      <button type="button" class="btn" (click)="showReport = {'display':'none'}">
         确定
       </button>
     </div>

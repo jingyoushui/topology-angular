@@ -1,5 +1,6 @@
 export * from './plug';
 export * from './register';
+export * from './registerMy'
 export * from './jitingButton';
 export * from './fenxianhe';
 export * from './flangeCouplingConnector';

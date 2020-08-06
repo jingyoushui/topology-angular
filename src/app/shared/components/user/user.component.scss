@@ -12,9 +12,8 @@
   }
 
   .button {
-    background-color: $color-primary;
-    border-color: $color-primary;
-    color: #fff !important;
+    background-color: #F1D206;
+    color: black !important;
     &:hover {
       background-color: rgba($color: #fff, $alpha: 0.05);
     }

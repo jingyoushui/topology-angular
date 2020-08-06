@@ -36,6 +36,7 @@ export class PropsComponent implements OnInit, OnChanges {
 
   tab = 1;
   pen: any;
+  lineLength = "010";
   icon: any;
   drowdown = 0;
 
@@ -47,24 +48,20 @@ export class PropsComponent implements OnInit, OnChanges {
     name: 'name',
     list: [
       {
-        id: '0.5',
-        name: '0.5'
+        id: '010',
+        name: '1m'
       },
       {
-        id: '1.0',
-        name: '1.0'
+        id: '020',
+        name: '2m'
       },
       {
-        id: '2.0',
-        name: '2.0'
+        id: '030',
+        name: '3m'
       },
       {
-        id: '3.0',
-        name: '3.0'
-      },
-      {
-        id: '5.0',
-        name: '5.0'
+        id: '050',
+        name: '5m'
       }
     ],
     noDefaultOption: true
@@ -102,56 +99,18 @@ export class PropsComponent implements OnInit, OnChanges {
     noDefaultOption: true
   };
 
-  textAlignOptions = {
-    id: 'id',
-    name: 'name',
-    list: [
-      {
-        id: 'left',
-        name: '左对齐'
-      },
-      {
-        id: 'center',
-        name: '居中'
-      },
-      {
-        id: 'right',
-        name: '右对齐'
-      }
-    ],
-    noDefaultOption: true
-  };
 
-  textBaselineOptions = {
-    id: 'id',
-    name: 'name',
-    list: [
-      {
-        id: 'top',
-        name: '顶部对齐'
-      },
-      {
-        id: 'middle',
-        name: '居中'
-      },
-      {
-        id: 'bottom',
-        name: '底部对齐'
-      }
-    ],
-    noDefaultOption: true
-  };
   channelTypeOptions = {
     id: 'id',
     name: 'name',
     list: [
       {
-        id: 0,
-        name: '单通道单信号'
+        id: 'dan-dan',
+        name: '单信号'
       },
       {
-        id: 1,
-        name: '单通道多信号'
+        id: 'dan-duo',
+        name: '双信号'
       }
 
     ],
@@ -162,11 +121,11 @@ export class PropsComponent implements OnInit, OnChanges {
     name: 'name',
     list: [
       {
-        id: 0,
+        id: 'NPN',
         name: 'NPN'
       },
       {
-        id: 1,
+        id: 'PNP',
         name: 'PNP'
       }
 
@@ -178,65 +137,17 @@ export class PropsComponent implements OnInit, OnChanges {
     name: 'name',
     list: [
       {
-        id: 0,
+        id: 'M8',
         name: 'M8系列'
       },
       {
-        id: 1,
+        id: 'M12',
         name: 'M12系列'
       }
 
     ],
     noDefaultOption: true
   };
-  featureOptions = {
-    id: 'id',
-    name: 'name',
-    list: [
-      {
-        id: 0,
-        name: '散线型'
-      },
-      {
-        id: 1,
-        name: 'U型端子型'
-      },
-      {
-        id: 2,
-        name: '欧式端子型',
-      },
-      {
-        id: 3,
-        name: '航插型针端'
-      }
-
-    ],
-    noDefaultOption: true
-  };
-  configurationOptions = {
-    id: 'id',
-    name: 'name',
-    list: [
-      {
-        id: 0,
-        name: '3M'
-      },
-      {
-        id: 1,
-        name: '5M'
-      },
-      {
-        id: 2,
-        name: '7M',
-      },
-      {
-        id: 3,
-        name: '定制'
-      }
-
-    ],
-    noDefaultOption: true
-  }
 
   bkTypeOptions = {
     id: 'id',
@@ -513,6 +424,16 @@ export class PropsComponent implements OnInit, OnChanges {
         }
         this.changeProps.emit(data);
       }
+      //选中了线
+      if(this.selection.pen.type===1){
+        const data = {
+          type:1,
+          id:this.selection.pen.id,
+          text: this.selection.pen.text,
+          mubanid: this.selection.pen.mubanId,
+        }
+        this.changeProps.emit(data);
+      }
 
     }
 
@@ -541,7 +462,27 @@ export class PropsComponent implements OnInit, OnChanges {
         this.pen.data = obj;
       }
     }
+    // //如果选中了连线
+    // if(this.selection.pen&&this.selection.pen.type===1){
+    //   // console.log(this.selection.pen,this.lineLength);
+    //   if(this.selection.pen.text){
+    //     this.selection.pen.text = this.selection.pen.text.slice(0,-3) + this.lineLength;
+    //     this.changeProp();
+    //   }
+    //
+    // }
+
     this.canvas.updateProps();
+  }
+  onClickLine(lineLength){
+
+    console.log(this.lineLength);
+    if(this.selection.pen.text){
+      this.selection.pen.text = this.selection.pen.text.slice(0,-3) + lineLength;
+      this.changeProp();
+    }
+
+    this.onChangeProp();
   }
 
   onClickName(name: string) {

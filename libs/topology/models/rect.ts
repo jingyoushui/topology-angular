@@ -4,7 +4,10 @@ import { pointInRect } from '../utils/canvas';
 export class Rect {
   ex: number;
   ey: number;
+  //中心点
   center: Point = new Point(0, 0);
+  //左上角起点
+  start:Point = new Point(0,0);
   constructor(public x: number, public y: number, public width: number, public height: number) {
     if (width < 0) {
       width = 0;
@@ -19,6 +22,7 @@ export class Rect {
     this.ex = this.x + this.width;
     this.ey = this.y + this.height;
     this.calcCenter();
+    this.calcStart();
   }
 
   floor() {
@@ -66,6 +70,10 @@ export class Rect {
   calcCenter() {
     this.center.x = this.x + this.width / 2;
     this.center.y = this.y + this.height / 2;
+  }
+  calcStart() {
+    this.start.x = this.x ;
+    this.start.y = this.y;
   }
 
   toPoints() {

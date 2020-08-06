@@ -252,3 +252,21 @@
 .icon-help-circle {
   font-size: 0.14rem;
 }
+
+.nav-tab > .item.active {
+  color: #F3CF07;
+  border-bottom: 2px solid #F3CF07;
+  font-weight: 700;
+}
+.nav-tab > .item {
+  color: #e7e7e7;
+}
+
+.btn {
+  height: 30px;
+  width: 80px;
+  background-color: #F1D206;
+  color:black;
+
+  border-radius: 2px;
+}

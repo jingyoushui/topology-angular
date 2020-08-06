@@ -9,7 +9,6 @@
 
   .logo {
     a {
-      font-size: 0.15rem;
       padding-left: 0;
       width: initial;
       display: flex;
@@ -48,6 +47,8 @@
     }
 
     .btn {
+      background-color: #F1D206;
+      color:black;
       border: 1px solid;
       padding: 0.05rem 0.2rem;
       border-radius: 2px;

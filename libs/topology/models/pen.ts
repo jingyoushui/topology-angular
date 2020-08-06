@@ -141,6 +141,7 @@ export abstract class Pen {
       }
       this.textOffsetX = json.textOffsetX || 0;
       this.textOffsetY = json.textOffsetY || 0;
+      // this.textOffsetY = -5;
 
       this.shadowColor = json.shadowColor;
       this.shadowBlur = json.shadowBlur;
@@ -324,5 +325,6 @@ export abstract class Pen {
   abstract animate(now: number): string;
   abstract translate(x: number, y: number): void;
   abstract scale(scale: number, center?: Point): void;
+  abstract scaleFromStart(scale: number, start?: Point): void;
   abstract clone(): Pen;
 }

@@ -15,7 +15,6 @@ import {HomeService} from './home.service';
 import {environment} from 'src/environments/environment';
 import {CoreService} from '../core/core.service';
 import {TopologyService} from './topology.service';
-import {Tools} from './tools/config';
 // 树型插件
 import {ReportList} from './report-list/reportList';
 import {ReportListNode} from './report-list/reportListNode';
@@ -28,6 +27,8 @@ import {M8json} from './json/M8_json';
 
 import * as FileSaver from 'file-saver';
 import * as XLSX from 'xlsx';
+import {HomeHelper} from './home.helper';
+import {M82json} from './json/M82_json';
 
 declare var C2S: any;
 declare var JSZip: any;
@@ -36,7 +37,7 @@ declare var JSZip: any;
   selector: 'app-home',
   templateUrl: 'home.component.html',
   styleUrls: ['./home.component.scss'],
-  providers: [HomeService],
+  providers: [HomeService,HomeHelper],
   // tslint:disable-next-line:use-host-property-decorator
   host: {
     '(document:keydown)': 'onkeyDocument($event)',
@@ -45,7 +46,6 @@ declare var JSZip: any;
 })
 export class HomeComponent implements OnInit, OnDestroy {
   @ViewChild('workspace', {static: true}) workspace: ElementRef;
-  tools: any[] = Tools;
   canvas: Topology;
   cavasbkColor = '#ffffffff';
   canvasOptions: Options = {};
@@ -90,25 +90,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   showReport = {'display':'none'} ;
   showWindows = false;
   // 中英对应表
-  zh_en = new Map([
-    [ 'fenxianhe', '分线盒'],
-    [ 'circle', '圆形' ],
-    [ 'triangle', '三角形' ],
-    [ 'jitingButton', '急停按钮' ],
-    [ 'jitingButton2', '急停按钮' ],
-    [ 'OKNG', 'OK/NG显示' ],
-    [ 'zhongji', '中继器' ],
-    [ 'polyline', '电缆'],
-    [ 'line', '电缆'],
-    ['flangeCouplingConnector', '法兰连接器'],
-    ['switch', '开关'],
-    ['OneToTwo', '转换头'],
-    ['diancifaUp', '电压上升电磁阀'],
-    ['diancifaDown', '电压下降电磁阀'],
-    ['zidingyi', '自定义组件'],
-    ['hangxian', '航线插头'],
-    ['sanxian', '散线插头']
-  ]);
+  zh_en = this.helper.zh_en;
+
   remove_id = [];
 
   // 选中的待更换的plug节点
@@ -136,42 +119,27 @@ export class HomeComponent implements OnInit, OnDestroy {
     fangshuisai:any;
     xianbiaopai:any;
   };
-  // 分线盒模板中的附件,号码牌和线标牌
-  fujian: {
-    mid: number,
-    haomapai: number,
-    xianbiaopai: number,
-  }[] = [
-    {
-      mid: 1,
-      haomapai: 0,
-      xianbiaopai: 0,
-    }
-  ];
-  divNode: any;
-  ignoreNode = ['plug', 'rectangle', 'label', 'leftplug', 'dianxiang','fangshuisai','xianbiaopai'];
+  // m8模板初始化
+  m82_json: {
+    line1: any;
+    line2: any;
+    rightline1:any;
+    rightline2:any;
+    rightline1_1:any;
+    rightline2_1:any;
+    fenxianhe: any;
+    fenxianheMuban: any;
+    plug1: any;
+    plug2: any;
+    leftLine: any;
+    fangshuisai:any;
+    xianbiaopai:any;
+    OneToTwo:any;
+  };
+  ignoreNode = ['plug','plug1','plug2','OneToTwo', 'rectangle', 'label', 'leftplug', 'dianxiang','fangshuisai','xianbiaopai'];
 
   subRoute: any;
-  cpPresetColors = [
-    '#1890ff',
-    '#096dd9',
-    '#bae7ff',
-    '#52c41a',
-    '#3fad09',
-    '#c6ebb4',
-    '#faad14',
-    '#d9a116',
-    '#fff6dd',
-    '#f50000',
-    '#ff0000',
-    '#ffc2c5',
-    '#fa541c',
-    '#531dab',
-    '#314659',
-    '#777777',
-    '#E7E27A',
-    '#FFFFFF',
-  ];
+  cpPresetColors = this.helper.cpPresetColors;
 
   constructor(
     private service: HomeService,
@@ -180,6 +148,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     private router: Router,
     private activateRoute: ActivatedRoute,
     private http: HttpClient,
+    private  helper: HomeHelper,
   ) {
   }
 
@@ -229,7 +198,10 @@ export class HomeComponent implements OnInit, OnDestroy {
       // End
     });
 
+    // 注册节点信息
     this.service.canvasRegister();
+    // 注册自己添加的终端组件信息
+    this.service.canvasRegisterMy();
   }
   onMenu(event: { name: string; data: any; }) {
     if (!this.canvas) {
@@ -372,6 +344,9 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   //初始化分线盒文件
   onNewFenxianhe() {
+
+    this.workspace.nativeElement.scrollLeft = 0;
+    this.workspace.nativeElement.scrollTop = 0;
     this.cavasbkColor = '#ffffffff';
     this.data = {
       id: '',
@@ -393,12 +368,15 @@ export class HomeComponent implements OnInit, OnDestroy {
     // this.canvas.resize(this.size);
     this.report_list = [];
 
-    this.initNewM8();
+    // this.initNewM8();
     this.router.navigate(['/workspace']);
 
   }
   //
   onNew() {
+
+    this.workspace.nativeElement.scrollLeft = 0;
+    this.workspace.nativeElement.scrollTop = 0;
     this.cavasbkColor = '#ffffffff';
     this.data = {
       id: '',
@@ -423,57 +401,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.router.navigateByUrl('/workspace');
 
 
-  }
-  // 初始化和新建分线盒文件时, 提前将分线盒和八根线绘制好
-   initNewM8() {
-    this.m8_json = (new M8json()).M8_json;
-    this.m8_json.fenxianheMuban.id = s8();
-    this.initAddNode(this.m8_json.fenxianheMuban);
-    this.m8_json.fenxianhe.id = s8();
-    this.initAddNode(this.m8_json.fenxianhe);
-    this.m8_json.fangshuisai.id = s8();
-    this.initAddNode(this.m8_json.fangshuisai);
-    this.m8_json.xianbiaopai.id = s8();
-    this.initAddNode(this.m8_json.xianbiaopai);
-    for (const line of this.m8_json.lines) {
-      line.from.id = line.controlPoints[0].id = this.m8_json.fenxianhe.id;
-      this.m8_json.plugs.rect.y = line.to.y - 10;
-      this.m8_json.plugs.id = s8();
-      this.initAddNode(this.m8_json.plugs);
-      line.to.direction = 4;
-      line.to.anchorIndex = 0;
-      line.to.id = this.m8_json.plugs.id;
-      line.locked = true;
-      this.initAddLine(line);
-    }
-    const left_line = this.m8_json.leftLine;
-    left_line.from.id = this.m8_json.fenxianhe.id;
-    this.m8_json.plugs.name = 'leftplug';
-    this.m8_json.plugs.rect.y = left_line.to.y - 10;
-    this.m8_json.plugs.rect.x = left_line.to.x - 33;
-    this.m8_json.plugs.id = s8();
-    this.initAddNode(this.m8_json.plugs);
-    left_line.to.direction = 2;
-    left_line.to.anchorIndex = 1;
-    left_line.to.id = this.m8_json.plugs.id;
-    this.initAddLine(left_line);
-    // //为pulg设置动画
-    // for (const node of this.canvas.data.pens) {
-    //   if (node.name === 'plug') {
-    //     node.animateType = 'warning';
-    //     this.setPlugAnimate(node);
-    //     node.animatePlay = true;
-    //     this.canvas.animate();
-    //   }
-    // }
-     //为pulg设置样式
-
-     for (const node of this.canvas.data.pens) {
-       if (node.name === 'plug' || node.name === 'leftplug') {
-         node.strokeStyle = '#f50000ff';
-         node.dash = 1;
-       }
-     }
   }
 
   async onOpen(data: { id: string; version?: string; }) {
@@ -656,7 +583,6 @@ export class HomeComponent implements OnInit, OnDestroy {
           return;
         }
       }
-
       const file = await this.service.Upload(blob, this.data.shared);
       if (!file) {
         return;
@@ -699,20 +625,6 @@ export class HomeComponent implements OnInit, OnDestroy {
       }
     });
   }
-
-  onEditFile(input: HTMLElement) {
-    this.editFilename = true;
-    setTimeout(() => {
-      input.focus();
-    });
-  }
-
-  onEditFileDesc(input: HTMLElement) {
-    this.editFiledesc = true;
-    setTimeout(() => {
-      input.focus();
-    });
-  }
   async onSaveFilename() {
     if (!this.data.name) {
       return;
@@ -748,13 +660,10 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.editFiledesc = false;
     }
   }
-// 增加m8模板模块
+// 增加单通道m8模板模块
   newM8() {
     const scale = this.canvas.data.scale;
-    // this.canvas.data.scale = 1;
-    // this.canvas.scale(1 / scale);
-    // this.canvas.render();
-    //TODO 增加模块之前需要判断当前画布的scale
+    const start = this.canvas.getRect().start;
 
     // 增加分线盒和线
     // 首先需要找到当前画布中最下面的位置，然后在其下面再添加
@@ -764,8 +673,6 @@ export class HomeComponent implements OnInit, OnDestroy {
         maxh = Math.max(maxh,pen.rect.ey);
       }
     }
-    // console.log(maxh);
-    // console.log(scale);
 
     this.m8_json = (new M8json()).M8_json;
     this.m8_json.fenxianheMuban.id = s8();
@@ -821,7 +728,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     left_line.from.y += inith;
     left_line.to.y += inith;
     this.m8_json.plugs.name = 'leftplug';
-    this.m8_json.plugs.rect.y = left_line.to.y - 10;
+    this.m8_json.plugs.rect.y = left_line.to.y - 8;
     this.m8_json.plugs.rect.x = left_line.to.x - 33;
     this.m8_json.plugs.id = s8();
     this.initAddNode(this.m8_json.plugs);
@@ -865,7 +772,189 @@ export class HomeComponent implements OnInit, OnDestroy {
     // end
     // console.log(this.report_list);
 
+    //画布自动变大
+    const width = this.canvas.parentElem.clientWidth;
+    const height = this.canvas.parentElem.clientHeight;
+    if(height<maxh+400){
+      this.autoresize(maxh+400,width);
+    }
+
+    // 将滚动条定位到新增的组件区域
+    this.workspace.nativeElement.scrollLeft = 0;
+    this.workspace.nativeElement.scrollTop = maxh;
+
+
   }
+
+  //增加m8双通道模板
+  newTwoM8(){
+    const scale = this.canvas.data.scale;
+    const start = this.canvas.getRect().start;
+
+    // 增加分线盒和线
+    // 首先需要找到当前画布中最下面的位置，然后在其下面再添加
+    let maxh = 0;
+    for(const pen of this.canvas.data.pens) {
+      if(pen.type === PenType.Node){
+        maxh = Math.max(maxh,pen.rect.ey);
+      }
+    }
+
+
+    this.m82_json = (new M82json()).M82_json;
+    this.m82_json.fenxianheMuban.id = s8();
+    const inith = (maxh)*scale;
+    console.log(inith);
+    // const  inith = this.m8_json.fenxianheMuban.rect.height * scale + maxh - 120;
+    const id = this.m82_json.fenxianheMuban.id;
+    this.m82_json.fenxianheMuban.rect.y += inith;
+    this.m82_json.fenxianheMuban.rect.center.y +=inith;
+    this.initAddNode(this.m82_json.fenxianheMuban);
+
+    //初始化分线盒 start
+    this.m82_json.fenxianhe.id  = s8();
+
+    this.m82_json.fenxianhe.rect.y += inith;
+    this.m82_json.fenxianhe.rect.center.y += inith;
+    this.initAddNode(this.m82_json.fenxianhe);
+    //end
+    //初始化转接头 start
+    for(let i=0;i<4;i++){
+      this.m82_json.OneToTwo.id  = s8();
+      this.m82_json.OneToTwo.rect.y += (i==0?inith:60);
+      this.m82_json.OneToTwo.rect.center.y += (i==0?inith:60);
+      this.initAddNode(this.m82_json.OneToTwo);
+
+      //添加转接头左边连线
+      this.m82_json.line1.from.y += (i==0?inith:0);
+      this.m82_json.line1.from.x += (i==0?0:18);
+      this.m82_json.line1.to.y += (i==0?inith:60);
+      this.m82_json.line1.from.id  =this.m82_json.fenxianhe.id;
+      this.m82_json.line1.to.id = this.m82_json.OneToTwo.id;
+
+      this.m82_json.line1.controlPoints[0].x += (i==0?0:18);
+      this.m82_json.line1.controlPoints[0].y += (i==0?inith+18:18)
+      this.m82_json.line1.controlPoints[0].id = this.m82_json.fenxianhe.id;
+      this.m82_json.line1.controlPoints[1].x += (i==0?0:18);
+      this.m82_json.line1.controlPoints[1].y += (i==0?inith:60);
+
+      this.m82_json.line1.controlPoints[2].x += (i==0?0:20);
+      this.m82_json.line1.controlPoints[2].y = this.m82_json.line1.controlPoints[1].y;
+      this.m82_json.line1.controlPoints[2].id =  this.m82_json.OneToTwo.id;
+      this.initAddLine(this.m82_json.line1);
+
+      //上面的节点
+      this.m82_json.plug1.id = s8();
+      this.m82_json.plug1.rect.y+=(i==0?inith:60);
+      this.m82_json.plug1.rect.center.y+=(i==0?inith:60);
+      this.initAddNode(this.m82_json.plug1);
+      //添加转接头右边连线,上升的线
+      this.m82_json.rightline1.to.id = this.m82_json.plug1.id;
+      this.m82_json.rightline1.from.y += (i==0?inith:60);
+      this.m82_json.rightline1.to.y += (i==0?inith:60);
+      this.m82_json.rightline1.from.id  =this.m82_json.OneToTwo.id;
+      this.initAddLine(this.m82_json.rightline1);
+
+      this.m82_json.plug2.id = s8();
+      this.m82_json.plug2.rect.y+=(i==0?inith:60);
+      this.m82_json.plug2.rect.center.y+=(i==0?inith:60);
+      this.initAddNode(this.m82_json.plug2);
+
+      this.m82_json.rightline1_1.to.id = this.m82_json.plug2.id;
+      this.m82_json.rightline1_1.from.y += (i==0?inith:60);
+      this.m82_json.rightline1_1.to.y += (i==0?inith:60);
+      this.m82_json.rightline1_1.from.id  =this.m82_json.OneToTwo.id;
+      this.initAddLine(this.m82_json.rightline1_1);
+
+
+    }
+
+
+    for(let i=0;i<4;i++){
+      this.m82_json.OneToTwo.id  = s8();
+      this.m82_json.OneToTwo.rect.y += ((i==0?150:60));
+      this.m82_json.OneToTwo.rect.center.y += ((i==0?150:60));
+      this.initAddNode(this.m82_json.OneToTwo);
+      this.m82_json.line2.from.y += (i==0?inith:0);
+      this.m82_json.line2.from.x += (i==0?0:-18);
+      this.m82_json.line2.to.y += (i==0?inith:60);
+      this.m82_json.line2.from.id  =this.m82_json.fenxianhe.id;
+      this.m82_json.line2.to.id = this.m82_json.OneToTwo.id;
+
+      this.m82_json.line2.controlPoints[0].x += (i==0?0:-18);
+      this.m82_json.line2.controlPoints[0].y += (i==0?inith:18)
+      this.m82_json.line2.controlPoints[0].id = this.m82_json.fenxianhe.id;
+      this.m82_json.line2.controlPoints[1].x += (i==0?0:-18);
+      this.m82_json.line2.controlPoints[1].y += (i==0?inith:60);
+
+      this.m82_json.line2.controlPoints[2].x += (i==0?0:-20);
+      this.m82_json.line2.controlPoints[2].y = this.m82_json.line2.controlPoints[1].y;
+      this.m82_json.line2.controlPoints[2].id =  this.m82_json.OneToTwo.id;
+
+      this.initAddLine(this.m82_json.line2);
+
+      //上面的节点
+      this.m82_json.plug1.id = s8();
+      this.m82_json.plug1.rect.y+=(i==0?150:60);
+      this.m82_json.plug1.rect.center.y+=(i==0?150:60);
+      this.initAddNode(this.m82_json.plug1);
+      //添加转接头右边连线
+      this.m82_json.rightline1.to.id = this.m82_json.plug1.id;
+      this.m82_json.rightline1.from.y += (i==0?150:60);
+      this.m82_json.rightline1.to.y += (i==0?150:60);
+      this.m82_json.rightline1.from.id  =this.m82_json.OneToTwo.id;
+      this.initAddLine(this.m82_json.rightline1);
+
+      this.m82_json.plug2.id = s8();
+      this.m82_json.plug2.rect.y+=(i==0?150:60);
+      this.m82_json.plug2.rect.center.y+=(i==0?150:60);
+      this.initAddNode(this.m82_json.plug2);
+
+      this.m82_json.rightline1_1.to.id = this.m82_json.plug2.id;
+      this.m82_json.rightline1_1.from.y += (i==0?150:60);
+      this.m82_json.rightline1_1.to.y += (i==0?150:60);
+      this.m82_json.rightline1_1.from.id  =this.m82_json.OneToTwo.id;
+      this.initAddLine(this.m82_json.rightline1_1);
+
+
+    }
+
+    // 增加分线板左边的线和组件
+    const left_line = this.m82_json.leftLine;
+    left_line.from.id = this.m82_json.fenxianhe.id;
+    left_line.from.y += inith;
+    left_line.to.y += inith;
+    this.m82_json.plug2.name = 'leftplug';
+    this.m82_json.plug2.rect.y = left_line.to.y - 8;
+    this.m82_json.plug2.rect.x = left_line.to.x - 33;
+    this.m82_json.plug2.id = s8();
+    this.initAddNode(this.m82_json.plug2);
+    left_line.to.direction = 2;
+    left_line.to.anchorIndex = 1;
+    left_line.to.id = this.m82_json.plug2.id;
+    this.initAddLine(left_line);
+
+    //画布自动变大
+    const width = this.canvas.parentElem.clientWidth;
+    const height = this.canvas.parentElem.clientHeight;
+    if(height<maxh+700){
+      this.autoresize(maxh+700,width);
+    }
+    //end
+    // 将滚动条定位到新增的组件区域
+    this.workspace.nativeElement.scrollLeft = 0;
+    this.workspace.nativeElement.scrollTop = maxh;
+
+  }
+
+  autoresize(height:number,width:number){
+    const size = {
+      height:height,
+      width: width
+    }
+    this.canvas.resize(size);
+  }
+
   del_muban(id: string) {
 
     //首先记录一下删除节点所占区域大小
@@ -992,12 +1081,6 @@ export class HomeComponent implements OnInit, OnDestroy {
                 }
               }
             }
-
-            // if(VoltageAndCurrent.current.get(toName)){
-            //   cur = VoltageAndCurrent.current.get(toName);
-            // }else {
-            //
-            // }
             current = current + cur;
           }
         }
@@ -1007,13 +1090,13 @@ export class HomeComponent implements OnInit, OnDestroy {
       if (current <= fromCurrent) {
         const _noticeService: NoticeService = new NoticeService();
         _noticeService.notice({
-          body: '模块' + id + '电流校验通过，入：' + fromCurrent + 'A；出：' + current + 'A',
+          body: '模块' + id + '电流校验通过，入：' + fromCurrent + 'mA；出：' + current + 'mA',
           theme: 'success'
         });
       } else {
         const _noticeService: NoticeService = new NoticeService();
         _noticeService.notice({
-          body: '模块' + id + '电流校验不通过，入：' + fromCurrent + 'A；出：' + current + 'A',
+          body: '模块' + id + '电流校验不通过，入：' + fromCurrent + 'mA；出：' + current + 'mA',
           theme: 'error'
         });
       }
@@ -1047,8 +1130,11 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.canvas.data.bkColor = this.cavasbkColor;
 
   }
-  changeShowRight(){
-    this.showRight = !this.showRight;
+  NotShowRight(){
+    this.showRight = false;
+  }
+  ShowRight(){
+    this.showRight = true;
   }
   changesize() {
     this.canvas.resize(this.size);
@@ -1184,10 +1270,10 @@ export class HomeComponent implements OnInit, OnDestroy {
     };
   }
   onMessage = (event: string, data: any) => {
-    if (event !== 'move') {
-      console.log(event);
-      console.log(data);
-    }
+    // if (event !== 'move') {
+    //   console.log(event);
+    //   console.log(data);
+    // }
     switch (event) {
       case 'dblclick' :
         // 这里是双击的时候，如果是双击的plug电阻，就会出现弹窗
@@ -1244,8 +1330,8 @@ export class HomeComponent implements OnInit, OnDestroy {
       case 'resize':
         if (!this.mouseMoving) {
           this.mouseMoving = true;
-          this.workspace.nativeElement.scrollLeft = this.workspace.nativeElement.scrollWidth;
-          this.workspace.nativeElement.scrollTop = this.workspace.nativeElement.scrollHeight;
+          // this.workspace.nativeElement.scrollLeft = this.workspace.nativeElement.scrollWidth;
+          // this.workspace.nativeElement.scrollTop = this.workspace.nativeElement.scrollHeight;
 
           setTimeout(() => {
             this.mouseMoving = false;
@@ -1254,8 +1340,6 @@ export class HomeComponent implements OnInit, OnDestroy {
           this.size.width = this.canvas.canvas.width;
           this.size.height = this.canvas.canvas.height;
         }
-
-
         break;
       case 'scale':
         Store.set('scale', data);
@@ -1267,6 +1351,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       case 'delete':
         this.delPensFromReportList(data);
         this.changeLineByDeleteNode(data);
+        // this.changePlug(data);
         this.canvas.animate();
         break;
 
@@ -1275,7 +1360,6 @@ export class HomeComponent implements OnInit, OnDestroy {
 
       // tslint:disable-next-line:no-switch-case-fall-through
       case 'moveInNode':
-        // this.delete1(data);
         break;
 
       // tslint:disable-next-line:no-switch-case-fall-through
@@ -1305,7 +1389,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   }
   // 当线连接到终端的时候就把线改为实线,并且根据两端终端的类型判断需要的接头类型,并自动生成接头
-  changeLine(data: any) {
+  changeLine(data: any,node:Node) {
 
     if (data.to.id) { // 此时说明两端都连接到了节点上
       // 如果连接的节点是plug，就不需要改变线
@@ -1319,10 +1403,10 @@ export class HomeComponent implements OnInit, OnDestroy {
         }
       }
       data.dash = 0 ; // 首先将虚线变为实线;
-      const to_nodename = this.findTypeById(data.to.id);
+      // const to_nodename = this.findTypeById(data.to.id);
       const from_nodename = this.findTypeById(data.from.id);
-      let text = 'HB-08-08AN-030-26U';
-      if (from_nodename === 'fenxianhe') {
+      let text = this.generateText(data,node);
+      if (from_nodename === 'fenxianhe' && data.from.anchorIndex!=8) {
         data.fromArrow = 'danFenxianheFromSolid';
         // TODO 给text赋值拼接
       }
@@ -1331,7 +1415,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       //   // TODO 给text赋值拼接
       // }
       data.toArrow = 'danFenxianheSolid';
-      if(to_nodename === 'sanxian' || to_nodename ==='hangxian'){
+      if(data.from.anchorIndex==8){
         text = '';
         data.toArrow = '';
       }
@@ -1348,10 +1432,21 @@ export class HomeComponent implements OnInit, OnDestroy {
       }
     }
   }
-  delReportLine(data: any) {
-    const id = data.mubanId - 1;
-    this.report_list[id].report_nodes = this.report_list[id].report_nodes.filter(x => x.node_id !== data.id);
+  generateText(line:Line,toNode:Node){
+    let text = '';
+    if(toNode.property.jiekou&&toNode.property.jiekou=='M8'){
+      if(toNode.property.xianzhi&&toNode.property.xianzhi=='4'){
+        text = 'CN-0803-S4M-V-XXX';
+      }
+      if(toNode.property.xianzhi&&toNode.property.xianzhi=='3'){
+       text  ='CN-0803-SM-V-XXX';
+      }
+
+    }
+    return text;
+
   }
+
   // 根据id查找出节点的类型
   findTypeById(id: string) {
     for (const node of this.canvas.data.pens) {
@@ -1372,14 +1467,14 @@ export class HomeComponent implements OnInit, OnDestroy {
       // }
 
       //新增一个分线盒模板就是增加了一个模块
-      if(data.name ==='fenxianheMuban'){
+      if(data.name ==='fenxianheMuban'||data.name==='fenxianheMubanTwo'){
         data.contain = [];
         this.report_list.push(new ReportList(data.id, data.text));
         return;
       }
       //这里面要有fenxianheMuban
       for(const pen of this.canvas.data.pens) {
-        if(pen.name === 'fenxianheMuban') {
+        if(pen.name === 'fenxianheMuban'||pen.name === 'fenxianheMubanTwo') {
           if(data.type === PenType.Node &&this.isNodeAddMuban(pen.rect,data.rect)){
             pen.contain.push(data.id);
             data.mubanId = pen.id;
@@ -1393,7 +1488,7 @@ export class HomeComponent implements OnInit, OnDestroy {
             for(const reportlist of this.report_list){
               if(reportlist.id === pen.id) {
                 let mark = data.children?data.children[0].text:data.text;
-                reportlist.report_nodes.push(new ReportListNode(data.id, data.name, 'type', mark))
+                reportlist.report_nodes.push(new ReportListNode(data.id, data.name, data.text, mark))
               }
             }
           }
@@ -1431,14 +1526,6 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   }
 
-  // 鼠标进入节点的时候将其从报目表中删除，鼠标移出的时候再将其加回来
-  delete1(data: any) {
-    if (this.currentFile === FileTypes.Fenxianhe) {
-      const n = data.mubanId - 1;
-      const id = data.id;
-      this.report_list[n].report_nodes = this.report_list[n].report_nodes.filter(x => x.node_id !== id);
-    }
-  }
   // 删除节点和连线时将报目单中的相应节点和连线删除, 这个函数传进来的是List类型的数据，pen[]
   delPensFromReportList(data: any) {
     if (this.currentFile === FileTypes.Fenxianhe) {
@@ -1462,6 +1549,24 @@ export class HomeComponent implements OnInit, OnDestroy {
         // this.report_list[n].report_nodes = this.report_list[n].report_nodes.filter(x => x.node_id !== id);
       }
       // console.log(this.report_list);
+    }
+  }
+  changePlug(data:any){
+    for(const node of data){
+      if(node.type === PenType.Node){
+        for (const n of this.canvas.data.pens) {
+          if (n.name === 'plug') {
+            if (this.calculateDistance(node.rect.x, n.rect.x) && this.calculateDistance(node.rect.y, n.rect.y)) {
+              n.strokeStyle = '#f50000ff';
+            }
+          }
+          if (n.name === 'leftplug') {
+            if (this.calculateDistance(node.rect.ex, n.rect.ex) && this.calculateDistance(node.rect.ey, n.rect.ey)) {
+              n.strokeStyle = '#f50000ff';
+            }
+          }
+        }
+      }
     }
   }
 
@@ -1504,180 +1609,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       }
     }
   }
-// 为plug设置动画
-  setPlugAnimate(data: any) {
-    data.animateFrames = [];
-    const state = Node.cloneState(data);
-    switch (data.animateType) {
-      case 'upDown':
-        state.rect.y -= 10;
-        state.rect.ey -= 10;
-        data.animateFrames.push({
-          duration: 100,
-          linear: true,
-          state
-        });
-        data.animateFrames.push({
-          duration: 100,
-          linear: true,
-          state: Node.cloneState(data)
-        });
-        data.animateFrames.push({
-          duration: 200,
-          linear: true,
-          state: Node.cloneState(state)
-        });
-        break;
-      case 'leftRight':
-        state.rect.x -= 10;
-        state.rect.ex -= 10;
-        data.animateFrames.push({
-          duration: 100,
-          linear: true,
-          state: Node.cloneState(state)
-        });
-        state.rect.x += 20;
-        state.rect.ex += 20;
-        data.animateFrames.push({
-          duration: 80,
-          linear: true,
-          state: Node.cloneState(state)
-        });
-        state.rect.x -= 20;
-        state.rect.ex -= 20;
-        data.animateFrames.push({
-          duration: 50,
-          linear: true,
-          state: Node.cloneState(state)
-        });
-        state.rect.x += 20;
-        state.rect.ex += 20;
-        data.animateFrames.push({
-          duration: 30,
-          linear: true,
-          state: Node.cloneState(state)
-        });
-        data.animateFrames.push({
-          duration: 300,
-          linear: true,
-          state: Node.cloneState(data)
-        });
-        break;
-      case 'heart':
-        state.rect.x -= 5;
-        state.rect.ex += 5;
-        state.rect.y -= 5;
-        state.rect.ey += 5;
-        state.rect.width += 5;
-        state.rect.height += 10;
-        data.animateFrames.push({
-          duration: 100,
-          linear: true,
-          state
-        });
-        data.animateFrames.push({
-          duration: 400,
-          linear: true,
-          state: Node.cloneState(data)
-        });
-        break;
-      case 'success':
-        state.strokeStyle = '#237804';
-        data.animateFrames.push({
-          duration: 100,
-          linear: true,
-          state
-        });
-        data.animateFrames.push({
-          duration: 100,
-          linear: true,
-          state: Node.cloneState(data)
-        });
-        state.strokeStyle = '#237804';
-        data.animateFrames.push({
-          duration: 100,
-          linear: true,
-          state
-        });
-        data.animateFrames.push({
-          duration: 100,
-          linear: true,
-          state: Node.cloneState(data)
-        });
-        state.strokeStyle = '#237804';
-        state.fillStyle = '#389e0d22';
-        data.animateFrames.push({
-          duration: 3000,
-          linear: true,
-          state
-        });
-        break;
-      case 'warning':
-        state.strokeStyle = '#cf1322';
-        // state.fillStyle = '#ffffff';
-        state.dash = 2;
-        data.animateFrames.push({
-          duration: 300,
-          linear: true,
-          state
-        });
-        state.strokeStyle = '#cf1322';
-        // state.fillStyle = '#cf1322';
-        state.dash = 0;
-        data.animateFrames.push({
-          duration: 500,
-          linear: true,
-          state: Node.cloneState(state)
-        });
-        state.strokeStyle = '#cf1322';
-        // state.fillStyle = '#ffffff';
-        state.dash = 2;
-        data.animateFrames.push({
-          duration: 300,
-          linear: true,
-          state: Node.cloneState(state)
-        });
-        break;
-      case 'error':
-        state.strokeStyle = '#cf1322';
-        state.fillStyle = '#cf132222';
-        data.animateFrames.push({
-          duration: 100,
-          linear: true,
-          state
-        });
-        break;
-      case 'show':
-        state.strokeStyle = '#fa541c';
-        state.rotate = -10;
-        data.animateFrames.push({
-          duration: 100,
-          linear: true,
-          state: Node.cloneState(state)
-        });
-        state.rotate = 10;
-        data.animateFrames.push({
-          duration: 100,
-          linear: true,
-          state: Node.cloneState(state)
-        });
-        state.rotate = 0;
-        data.animateFrames.push({
-          duration: 100,
-          linear: true,
-          state: Node.cloneState(state)
-        });
-        break;
-    }
 
-    this.setAnimateDuration(data);
-  }
-  setAnimateDuration(data: any) {
-    data.animateDuration = 0;
-    for (const item of data.animateFrames) {
-      data.animateDuration += item.duration;
-    }
-  }
 
   onChangeProps(props: any) {
     if (this.canvas.data.locked) {
@@ -1775,6 +1707,14 @@ export class HomeComponent implements OnInit, OnDestroy {
     if (data.name === 'plug' || data.name==='leftplug') {
       return;
     }
+    const mubanId = data.mubanId;
+    let flag = true;
+    //双通道模板中不要改变线的状态了
+    // for(const node of this.canvas.data.pens){
+    //   if(node.id === mubanId && node.name ==='fenxianheMubanTwo'){
+    //     flag = false;
+    //   }
+    // }
     for (const node of this.canvas.data.pens) {
       if (node.name === 'plug') {
         if (this.calculateDistance(node.rect.x, data.rect.x) && this.calculateDistance(node.rect.y, data.rect.y)) {
@@ -1785,7 +1725,9 @@ export class HomeComponent implements OnInit, OnDestroy {
           for (const line of this.canvas.data.pens) {
             if (line.type === PenType.Line &&  (<Line>line).to.id === node.id) {
               (<Line>line).to.id = data.id;
-              this.changeLine(line);
+              if(flag){
+                this.changeLine(line,data);
+              }
             }
           }
           // data.id = node.id;
@@ -1800,13 +1742,74 @@ export class HomeComponent implements OnInit, OnDestroy {
           for (const line of this.canvas.data.pens) {
             if (line.type === PenType.Line &&  (<Line>line).to.id === node.id) {
               (<Line>line).to.id = data.id;
-              this.changeLine(line);
+              if(flag){
+                this.changeLine(line,data);
+              }
             }
           }
           // data.locked = true;
         }
       }
     }
+
+  }
+
+  /**
+   * 因为节点选择了双通道的，所以连线要变成一根线了，首先需要确定这个按钮替换了哪一个plug，然后通过plug的id找到line，然后将line删除或者隐藏
+   * 通过line再向前寻找转接头OneToTwo，将转接头删除或者隐藏，通过转接头向前寻找另一条line，将这条line的终点和控制点改变，起点不需要改变。
+   */
+  changeLineByNode(data:any){
+      const nodeId = data.id;
+      let onetotwoId;
+      let toPoint = null;
+      for(let line of this.canvas.data.pens){
+        //找到左边的那条直线
+        if(line.type==1 && line.name==='line' && (<Line>line).to.id === nodeId){
+          onetotwoId = (<Line>line).from.id ;
+          (<Point>toPoint) = (<Line>line).to;
+          //下面是删除连线
+          this.canvas.data.pens = this.canvas.data.pens.filter(x => x.id !== (<Line>line).id)
+          //将线隐藏
+          // (<Line>line).strokeStyle = this.canvas.data.bkColor;
+          break;
+        }
+      }
+      for(let pen of this.canvas.data.pens){
+        //找到转接头
+        if(pen.type===0&&(<Node>pen).id===onetotwoId){
+          this.canvas.data.pens = this.canvas.data.pens.filter(x => x.id !== onetotwoId)
+        }
+      }
+      let plugId = null;//位于同一个转接头上的另一个节点
+      //找到和该线位于同一个转接头上的线，将其隐藏或者删除
+      for(let line of this.canvas.data.pens){
+        if(line.type==1 && (<Line>line).from.id === onetotwoId){
+          // (<Line>line).strokeStyle = this.canvas.data.bkColor;
+          plugId = (<Line>line).to.id;
+          this.canvas.data.pens = this.canvas.data.pens.filter(x => x.id !== (<Line>line).id)
+          break;
+        }
+      }
+      for(let node of this.canvas.data.pens){
+        if(node.id===plugId){
+          this.canvas.data.pens = this.canvas.data.pens.filter(x => x.id !== node.id)
+        }
+      }
+
+      for(let line of this.canvas.data.pens){
+        //找到左边的那条直线
+        if(line.type==1&&(<Line>line).to.id===onetotwoId){
+
+          (<Line>line).to = toPoint;
+          (<Line>line).controlPoints[1].y = toPoint.y;
+          (<Line>line).controlPoints[2].y = toPoint.y;
+          this.changeLine(<Line>line,data);
+          console.log(toPoint)
+          break;
+        }
+      }
+
+
 
   }
   /**
@@ -1817,17 +1820,32 @@ export class HomeComponent implements OnInit, OnDestroy {
     data.rect.x = this.selectedPlug.rect.x;
     data.rect.y = this.selectedPlug.rect.y;
     this.selectedPlug = null;
-    // 把新节点添加上
+    // 把新节点添加上0 0
     const node = this.initAddNode(data);
     // 调用更换节点
     this.exchangeNode(node);
+    //如果新添加的节点是双通道的，并且添加在了双通道模板中
+    if(node.property.tongdao&&node.property.tongdao===2){
+      const mubanId = node.mubanId;
+      let flag = false;
+      for(const pen of this.canvas.data.pens){
+        if(pen.id===mubanId&&pen.name==='fenxianheMubanTwo'){
+          flag = true;
+        }
+      }
+      if(flag){
+        this.changeLineByNode(node);
+      }
+
+    }
+
   }
   setNodeLeftData(data:any){
     console.log(data);
     data.rect.ex = this.selectedPlug.rect.ex;
     data.rect.ey = this.selectedPlug.rect.ey;
-    data.rect.x = data.rect.ex - data.rect.width;
-    data.rect.y = data.rect.ey - data.rect.height;
+    data.rect.x = data.rect.ex - data.rect.width *  this.canvas.data.scale;;
+    data.rect.y = data.rect.ey - data.rect.height *  this.canvas.data.scale;;
     this.selectedPlug = null;
     // 把新节点添加上
     const node = this.initAddNode(data);
@@ -1836,32 +1854,6 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   calculateDistance(from: number, to: number) {
     return Math.abs(from - to) < 5;
-  }
-
-
-
-
-  // 更加json生成excel文件
-  exportFile(){
-    //生成excel表的数据是[{},...{}]形式，每个对象代表一行，key值代表列名
-    let json = this.report_list[0].report_nodes;
-    const worksheet1: XLSX.WorkSheet = XLSX.utils.json_to_sheet(json);
-    const worksheet2:XLSX.WorkSheet = XLSX.utils.json_to_sheet(json)
-    const workbook: XLSX.WorkBook = {
-      Sheets: { '1': worksheet1,"2":worksheet2},
-      SheetNames: ['1','2']
-    };
-    const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-    //这里类型如果不正确，下载出来的可能是类似xml文件的东西或者是类似二进制的东西等
-    this.saveAsExcelFile(excelBuffer, "模板");
-  }
-
-  private saveAsExcelFile(buffer: any, fileName: string) {
-    //转成二进制流 这一步很重要
-    const data: Blob = new Blob([buffer], {
-      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8'
-    });
-    FileSaver.saveAs(data, fileName + '_export_' + new Date().getTime() + '.xls');
   }
 
   // 更加html中数据生成为excel文件
@@ -1876,195 +1868,22 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.showExportWord = true;
   }
 
+  // 计算竖版图片
   exportWordHorizontal(){
-    // const n = this.report_list.length;
-
-    let array_ey:Array<number> = [];
-    let array_y:Array<number> = [];
-    for(let pen of this.canvas.data.pens){
-      if(pen.name==='fenxianheMuban'){
-        array_ey.push(pen.rect.ey);
-        array_y.push(pen.rect.y);
-      }
+    const ret = this.helper.exportWordHorizontal(this.canvas,this.word_name,this.word_company,
+      this.data.name)
+    if(ret){
+      this.showExportWord = false;
     }
-    let t = 0;
-    for (let i = 0; i < array_ey.length - 1; i++){
-      for (let j = 0; j < array_ey.length - 1 - i; j++){
-        if (array_ey[j] > array_ey[j + 1]) {
-          t = array_ey[j];
-          array_ey[j] = array_ey[j + 1];
-          array_ey[j + 1] = t;
-        }
-      }
-    }
-
-    let m = 0;
-    for (let i = 0; i < array_y.length - 1; i++){
-      for (let j = 0; j < array_y.length - 1 - i; j++){
-        if (array_y[j] > array_y[j + 1]) {
-          m = array_y[j];
-          array_y[j] = array_y[j + 1];
-          array_y[j + 1] = m;
-        }
-      }
-    }
-    // array_ey.sort();
-    // array_y.sort();
-
-    const n = array_ey.length;
-    let page = 1;
-    for(let i=0;i<n;i+=4){
-      let img_h = 0;
-      if(n - i <=4){
-        img_h = 300 * (n-i);
-      }else {
-        img_h = 1200;
-      }
-      const image_ey = Math.max(array_ey[i+3]?array_ey[i+3]:0,array_ey[i+2]?array_ey[i+2]:0,
-        array_ey[i+1]?array_ey[i+1]:0,array_ey[i]);
-
-      this.doexportWordHorizontal(page,img_h,array_y[i],image_ey);
-      page++;
-    }
-
-    // this.doexportWordHorizontal(img_h);
-
-
-  }
-  //导出竖版
-  async doexportWordHorizontal(page:number,img_h:number,image_y:number,image_ey:number){
-
-    this.showExportWord = false;
-
-      const canvas: HTMLCanvasElement = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      canvas.width = 970;canvas.height = 1500;
-      const image1 = new Image();
-      image1.src = 'assets/img/blueprint.png';
-      const image2 = new Image();
-      const blob = await this.canvas.toImage('image/png',0.99,null, null,
-        true,image_y,image_ey);
-
-
-      setTimeout(() => {
-        image2.src = blob;
-      }, 2000);
-
-    const formatDate = ( time: any ) => {
-      // 格式化日期，获取今天的日期
-      const Dates = new Date( time );
-      const year: number = Dates.getFullYear();
-      const month: any = ( Dates.getMonth() + 1 ) < 10 ? '0' + ( Dates.getMonth() + 1 ) : ( Dates.getMonth() + 1 );
-      const day: any = Dates.getDate() < 10 ? '0' + Dates.getDate() : Dates.getDate();
-      return year + '-' + month + '-' + day;
-    };
-
-      const that = this;
-      image1.onload = function(){
-        ctx.drawImage(image1,0,0,970,1500);
-        ctx.save();
-        ctx.font = '20px 微软雅黑';
-        ctx.fillText(that.word_name, 515, 1290);
-        ctx.fillText(that.word_company, 730, 1420);
-        ctx.fillText('第'+page+'页', 730, 1380);
-        ctx.fillText(formatDate(new Date().getTime()), 500, 1345);
-        ctx.restore();
-        image2.onload = function(){
-          ctx.drawImage(image2,70,60,810,img_h);
-          const img = canvas.toDataURL('image/png',0.99);
-          that.canvas.saveAsImage2(img,that.data.name);
-        };
-      };
-
   }
   //横版下载
   exportWordViolently(){
-
-    let array_ey:Array<number> = [];
-    let array_y:Array<number> = [];
-    for(let pen of this.canvas.data.pens){
-      if(pen.name==='fenxianheMuban'){
-        array_ey.push(pen.rect.ey);
-        array_y.push(pen.rect.y);
-      }
-    }
-    let t = 0;
-    for (let i = 0; i < array_ey.length - 1; i++){
-      for (let j = 0; j < array_ey.length - 1 - i; j++){
-        if (array_ey[j] > array_ey[j + 1]) {
-          t = array_ey[j];
-          array_ey[j] = array_ey[j + 1];
-          array_ey[j + 1] = t;
-        }
-      }
+    const ret = this.helper.exportWordViolently(this.canvas,this.word_name,this.word_company,
+      this.data.name)
+    if(ret){
+      this.showExportWord = false;
     }
 
-    let m = 0;
-    for (let i = 0; i < array_y.length - 1; i++){
-      for (let j = 0; j < array_y.length - 1 - i; j++){
-        if (array_y[j] > array_y[j + 1]) {
-          m = array_y[j];
-          array_y[j] = array_y[j + 1];
-          array_y[j + 1] = m;
-        }
-      }
-    }
-    const n = array_ey.length;
-    let page = 1;
-    for(let i=0;i<n;i+=2){
-      let img_h = 0;
-      if(n - i <=2){
-        img_h = 340 * (n-i);
-      }else {
-        img_h = 680;
-      }
-      const image_ey = Math.max(
-        array_ey[i+1]?array_ey[i+1]:0,array_ey[i]);
-
-      this.doexportWordViolently(page,img_h,array_y[i],image_ey);
-      page++;
-    }
-  }
-
-  async doexportWordViolently(page:number,img_h:number,image_y:number,image_ey:number){
-    this.showExportWord = false;
-    const canvas: HTMLCanvasElement = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    canvas.width = 1500;canvas.height = 970;
-    const image1 = new Image();
-    image1.src = 'assets/img/blueprint_x.png';
-    const image2 = new Image();
-    const blob = await this.canvas.toImage('image/png',0.99,null, null,
-      true,image_y,image_ey);
-
-    setTimeout(() => {
-      image2.src = blob;
-    }, 2000);
-    const formatDate = ( time: any ) => {
-      // 格式化日期，获取今天的日期
-      const Dates = new Date( time );
-      const year: number = Dates.getFullYear();
-      const month: any = ( Dates.getMonth() + 1 ) < 10 ? '0' + ( Dates.getMonth() + 1 ) : ( Dates.getMonth() + 1 );
-      const day: any = Dates.getDate() < 10 ? '0' + Dates.getDate() : Dates.getDate();
-      return year + '-' + month + '-' + day;
-    };
-
-    const that = this;
-    image1.onload = function(){
-      ctx.drawImage(image1,0,0,1500,970);
-      image2.onload = function(){
-        ctx.drawImage(image2,250,60,1000,img_h);
-        ctx.save();
-        ctx.font = '20px 微软雅黑';
-        ctx.fillText(that.word_name, 1030, 778);
-        ctx.fillText(that.word_company, 1236, 898);
-        ctx.fillText('第'+page+'页', 1236, 858);
-        ctx.fillText(formatDate(new Date().getTime()), 996, 825);
-        ctx.restore();
-        const img = canvas.toDataURL('image/png',0.99);
-        that.canvas.saveAsImage2(img,that.data.name);
-      };
-    };
   }
 
   updateReport(data:any){
@@ -2080,7 +1899,12 @@ export class HomeComponent implements OnInit, OnDestroy {
         if(list.id === data.mubanid){
           for (const node of list.report_nodes){
             if(node.node_id === data.id){
-              node.remarks = data.text;
+              if(data.type===1){
+                node.node_type = data.text;
+              }else{
+                node.remarks = data.text;
+              }
+
             }
 
           }
@@ -2111,4 +1935,5 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.subRoute.unsubscribe();
     this.canvas.destroy();
   }
+
 }

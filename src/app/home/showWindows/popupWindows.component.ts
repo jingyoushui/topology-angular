@@ -1,11 +1,15 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {Tools} from '../tools/config';
+
 import {M8json} from '../json/M8_json';
+import {ToolsService} from '../tools/tools.service';
+
+
 
 @Component({
   selector: 'app-windows',
   templateUrl: './popupWindows.component.html',
   styleUrls: ['./popupWindows.component.scss'],
+  providers: [ToolsService],
 })
 export class PopupWindowsComponent implements OnInit {
   @Input()
@@ -30,7 +34,7 @@ export class PopupWindowsComponent implements OnInit {
   @Output()
   setNodeLeftData = new EventEmitter<any>();
 
-  tools: any[] = Tools;
+  tools: any[];
   // 根据条件筛选出的底层组件
   zujianList = [];
   selectedZujian = [];
@@ -42,7 +46,12 @@ export class PopupWindowsComponent implements OnInit {
 
   m8_json = (new M8json()).M8_json;
 
+  constructor(
+    private service: ToolsService
+  ){}
+
   ngOnInit(): void {
+    this.tools = this.service.getTools();
     for (const tool of this.tools) {
       if (tool.group === '终端产品') {
         for (const item of tool.children) {
