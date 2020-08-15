@@ -25,6 +25,13 @@
         </a>
       </div>
     </div>
+
+    <div class="mr5">选择线长：
+    </div>
+    <div class="mr5">
+      <ui-select  [options]="linelength" [multi]="false" [(ngModel)]="lineLength"
+                  (change)="onClickLine()" ></ui-select>
+    </div>
   </div>
   <div *ngIf="plug_type === 'plug'"  class="modal-header pointer" style="background-color: #181818;color: white" uiDivMove [isHead]="true">
     <div class="caption" style="color: white;">底层部件自定义</div>

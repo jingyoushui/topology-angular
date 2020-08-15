@@ -43,6 +43,31 @@ export class PopupWindowsComponent implements OnInit {
   selectedLeftType = [];
 
   selected: any;
+  //左边选择线长；
+  lineLength = "010";
+  linelength = {
+    id: 'id',
+    name: 'name',
+    list: [
+      {
+        id: '010',
+        name: '1m'
+      },
+      {
+        id: '020',
+        name: '2m'
+      },
+      {
+        id: '030',
+        name: '3m'
+      },
+      {
+        id: '050',
+        name: '5m'
+      }
+    ],
+    noDefaultOption: true
+  };
 
   m8_json = (new M8json()).M8_json;
 
@@ -114,7 +139,11 @@ export class PopupWindowsComponent implements OnInit {
     this.changeShow.emit(false);
     // console.log(this.selected);
     if(this.selected){
-      this.setNodeLeftData.emit(this.selected.data);
+      var data = {
+        node:this.selected.data,
+        linelength:this.lineLength
+      }
+      this.setNodeLeftData.emit(data);
     }
   }
   selectZujian() {
@@ -146,6 +175,11 @@ export class PopupWindowsComponent implements OnInit {
     // console.log(this.selected);
   }
 
+  onClickLine(){
+
+    console.log(this.lineLength);
+
+  }
 
 
 

@@ -62,7 +62,7 @@ export class HomeHelper {
     let array_ey:Array<number> = [];
     let array_y:Array<number> = [];
     for(let pen of canvas.data.pens){
-      if(pen.name==='fenxianheMuban'){
+      if(pen.name==='fenxianheMuban'||pen.name==='fenxianheMubanTwo'){
         array_ey.push(pen.rect.ey);
         array_y.push(pen.rect.y);
       }
@@ -163,7 +163,7 @@ export class HomeHelper {
     let array_ey:Array<number> = [];
     let array_y:Array<number> = [];
     for(let pen of canvas.data.pens){
-      if(pen.name==='fenxianheMuban'){
+      if(pen.name==='fenxianheMuban'||pen.name==='fenxianheMubanTwo'){
         array_ey.push(pen.rect.ey);
         array_y.push(pen.rect.y);
       }

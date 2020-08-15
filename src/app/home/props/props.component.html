@@ -1051,7 +1051,7 @@
   </div>
 
   <div class="group" *ngIf="selection.pen && !selection.pen.type">
-    <div *ngIf="selection.pen.name === 'fenxianheMuban'">
+    <div *ngIf="selection.pen.name === 'fenxianheMuban'||selection.pen.name === 'fenxianheMubanTwo'">
       <div class="title">
         <div class="full">组件</div>
         <i *ngIf="show.zujian !== false" class="hover iconfont icon-angle-down" (click)="show.zujian = false"></i>

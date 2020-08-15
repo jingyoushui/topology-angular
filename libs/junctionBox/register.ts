@@ -23,10 +23,11 @@ import {fangshuisai, fangshuisaiAnchors, fangshuisaiTextRect, xianbiaopai} from 
 import {danFenxianheSolid} from './fenxianheArrows/danFenxianhe';
 import {danFenxianheFromSolid} from './fenxianheArrows/danFenxianheFrom';
 import {danFenxianheWanSolid} from './fenxianheArrows/danFenxianheWan';
+import {fenxianheRect, fenxianheTextRect} from './fenxianhe/fenxianhe.rect';
 
 export function register() {
   // 分线盒fenxianhe
-  registerNode('fenxianhe', (ctx: CanvasRenderingContext2D, node: Rect) => { },fenXianHeAnchors,  imageIconRect, imageTextRect);
+  registerNode('fenxianhe', (ctx: CanvasRenderingContext2D, node: Rect) => { },fenXianHeAnchors,  fenxianheRect, fenxianheTextRect);
   // 急停按钮
   registerNode('jitingButton', (ctx: CanvasRenderingContext2D, node: Rect) => { },jitingButtonAnchors,  jitingButtonRect, jitingButtonTextRect);
   //复位按钮
@@ -42,6 +43,8 @@ export function register() {
   //16启停按钮
   registerNode('16qitingButton', (ctx: CanvasRenderingContext2D, node: Rect) => { },jitingButtonAnchors,  jitingButtonRect, jitingButtonTextRect);
 
+  //16急停按钮
+  registerNode('16jitingButton', (ctx: CanvasRenderingContext2D, node: Rect) => { },jitingButtonAnchors,  jitingButtonRect, jitingButtonTextRect);
   //16双位指示灯
   registerNode('16shuangweiButton', (ctx: CanvasRenderingContext2D, node: Rect) => { },jitingButtonAnchors,  jitingButtonRect, jitingButtonTextRect);
   // 22急停按钮

@@ -1,11 +1,11 @@
-export class  M82json {
-  M82_json: any;
+export class  M12twojson {
+  M12two_json: any;
 
   constructor() {
-    this.M82_json = {
+    this.M12two_json = {
       fenxianheMuban:{
         id: '',
-        text: 'M8双通道模块未命名',
+        text: 'M12双通道模块未命名',
         type: 0,
         name: 'fenxianheMubanTwo',
         hideRotateCP: true,
@@ -21,6 +21,34 @@ export class  M82json {
             y: 356
           }
         }
+      },
+      fenxianhe: {
+        id: '',
+        text: 'HB-12-08BX-XXU-XXX',
+        rect: {
+          x: 214,
+          y: 336,
+          width: 260,
+          height: 40,
+          center: {
+            x: 284,
+            y: 356
+          }
+        },
+        imageWidth: 140,
+        image: '/Product/fenxianheM12_x.png',
+        name: 'fenxianhe',
+        mubanId: '',
+        attribute: {
+          productName: 'M12双信号分线盒',
+          channelType: 'dan-duo',
+          signalType: 'NPN',
+          portType: 'M12',
+          feature: 0,
+          configuration: 0,
+          modelsType: ''
+        },
+        locked: true
       },
       fangshuisai:{
         id: '',
@@ -64,34 +92,6 @@ export class  M82json {
         hideRotateCP: true,
         hideSizeCP: true,
         hideAnchor: true,
-        locked: true
-      },
-      fenxianhe: {
-        id: '',
-        text: 'HB-08-08BX-XXU-XXX',
-        rect: {
-          x: 214,
-          y: 341,
-          width: 260,
-          height: 30,
-          center: {
-            x: 284,
-            y: 356
-          }
-        },
-        imageWidth: 140,
-        image: '/Product/fenxianhe_x.png',
-        name: 'fenxianhe',
-        mubanId: '',
-        attribute: {
-          productName: 'M8双信号分线盒',
-          channelType: 'dan-duo',
-          signalType: 'NPN',
-          portType: 'M8',
-          feature: 0,
-          configuration: 0,
-          modelsType: ''
-        },
         locked: true
       },
       OneToTwo:{
@@ -138,7 +138,7 @@ export class  M82json {
           ],
           from: {
             x: 289,
-            y: 341,
+            y: 336,
             direction: 1,
             anchorIndex: 0,
             id: ''
@@ -174,7 +174,7 @@ export class  M82json {
           ],
           from: {
             x: 343,
-            y: 371,
+            y: 376,
             direction: 3,
             anchorIndex: 4,
             id: ''

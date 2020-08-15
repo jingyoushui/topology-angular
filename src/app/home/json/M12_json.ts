@@ -1,11 +1,11 @@
 
-export class  M8json {
-  M8_json: any;
+export class  M12json {
+  M12_json: any;
   constructor() {
-    this.M8_json = {
+    this.M12_json = {
       fenxianheMuban: {
         id: '',
-        text: 'M8单通道模块未命名',
+        text: 'M12单通道模块未命名',
         rect: {
           width: 860,
           height: 331,
@@ -68,26 +68,26 @@ export class  M8json {
       },
       fenxianhe: {
         id: '',
-        text: 'HB-08-08AX-XXU-XXX',
+        text: 'HB-12-08AX-XXU-XXX',
         rect: {
           width: 260,
-          height: 30,
+          height: 40,
           x: 311,
-          y: 309.5,
+          y: 304.5,
           center:{
             x:381,
             y:324.5
           }
         },
         imageWidth: 140,
-        image: '/Product/fenxianhe_x.png',
+        image: '/Product/fenxianheM12_x.png',
         name: 'fenxianhe',
         mubanId: '',
         attribute: {
-          productName: 'M8单信号集线器',
+          productName: 'M12单信号集线器',
           channelType: 'dan-dan',
           signalType: 'NPN',
-          portType: 'M8',
+          portType: 'M12',
           feature: 0,
           configuration: 0,
           modelsType: 'g',
@@ -102,7 +102,7 @@ export class  M8json {
           controlPoints: [
             {
               x: 386,
-              y: 253.5,
+              y: 248.5,
               direction: 1,
               anchorIndex: 0,
               id: ''
@@ -114,7 +114,7 @@ export class  M8json {
           ],
           from: {
             x: 386,
-            y: 309.5,
+            y: 304.5,
             direction: 1,
             anchorIndex: 0,
             id: ''
@@ -144,7 +144,7 @@ export class  M8json {
           ],
           from: {
             x: 405,
-            y: 309.5,
+            y: 304.5,
             direction: 1,
             anchorIndex: 1,
             id: ''
@@ -174,7 +174,7 @@ export class  M8json {
           ],
           from: {
             x: 423.5,
-            y: 309.5,
+            y: 304.5,
             direction: 1,
             anchorIndex: 2,
             id: ''
@@ -204,7 +204,7 @@ export class  M8json {
           ],
           from: {
             x: 442.5,
-            y: 309.5,
+            y: 304.5,
             direction: 1,
             anchorIndex: 3,
             id: ''
@@ -234,7 +234,7 @@ export class  M8json {
           ],
           from: {
             x: 442.5,
-            y: 339.5,
+            y: 344.5,
             direction: 3,
             anchorIndex: 7,
             id: ''
@@ -264,7 +264,7 @@ export class  M8json {
           ],
           from: {
             x: 423.5,
-            y: 339.5,
+            y: 344.5,
             direction: 3,
             anchorIndex: 6,
             id: ''
@@ -294,7 +294,7 @@ export class  M8json {
           ],
           from: {
             x: 405,
-            y: 339.5,
+            y: 344.5,
             direction: 3,
             anchorIndex: 5,
             id: ''
@@ -324,7 +324,7 @@ export class  M8json {
           ],
           from: {
             x: 386,
-            y: 339.5,
+            y: 344.5,
             direction: 3,
             anchorIndex: 4,
             id: ''

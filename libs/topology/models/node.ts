@@ -37,6 +37,8 @@ export class Node extends Pen {
     desc: string;
     tongdao?:number;
   }
+  //plug是单通道中的还是双通道中的
+  plugType?:number;
   // 0 -1 之间的小数
   borderRadius: number;
 
@@ -118,6 +120,9 @@ export class Node extends Pen {
     }
     if (json.property) {
       this.property =  json.property;
+    }
+    if(json.plugType){
+      this.plugType = json.plugType;
     }
     this.borderRadius = +json.borderRadius || 0;
     if (this.borderRadius > 1) {

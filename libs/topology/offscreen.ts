@@ -31,8 +31,8 @@ export class Offscreen extends Canvas {
   }
   drawFenxianHeFile(ctx: CanvasRenderingContext2D, width: number, height: number) {
     // const w = width / 3;
-    const n = height / 200;
-    const m = width / 200;
+    const n = height / 300;
+    const m = width / 300;
     const message = 'DERON';
     const message_zh = '德荣工业';
 
@@ -42,13 +42,13 @@ export class Offscreen extends Canvas {
       for (let j=0;j<m;j++){
         ctx.save();
         // 绘制空心文字
-        ctx.translate(200 * j + 40 , 200 * i + 50);
+        ctx.translate(300 * j + 40 , 300 * i + 50);
         ctx.rotate(35 * Math.PI / 180);
         ctx.font = '20px 微软雅黑';
         ctx.fillText(message, 0, 0);
         ctx.restore();
         ctx.save();
-        ctx.translate(200 * j , 200 * i + 60);
+        ctx.translate(300 * j , 300 * i + 60);
         ctx.rotate(35 * Math.PI / 180);
         ctx.font = '30px 微软雅黑';
         ctx.fillText(message_zh, 0, 0);
