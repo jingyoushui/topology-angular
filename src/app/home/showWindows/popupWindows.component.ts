@@ -43,6 +43,24 @@ export class PopupWindowsComponent implements OnInit {
   selectedLeftType = [];
 
   selected: any;
+  //左边极性
+  leftjixing = {
+    id: 'id',
+    name: 'name',
+    list: [
+      {
+        id: 'NPN',
+        name: 'NPN'
+      },
+      {
+        id: 'PNP',
+        name: 'PNP'
+      }
+
+    ],
+    noDefaultOption: true
+  }
+  leftJiXing = "NPN";
   //左边选择线长；
   lineLength = "010";
   linelength = {
@@ -78,13 +96,13 @@ export class PopupWindowsComponent implements OnInit {
   ngOnInit(): void {
     this.tools = this.service.getTools();
     for (const tool of this.tools) {
-      if (tool.group === '终端产品') {
+      if (tool.group === '终端部件') {
         for (const item of tool.children) {
           this.zujianList.push(item);
           this.selectedZujian.push(item);
         }
       }
-      if (tool.group === '法兰连接器产品') {
+      if (tool.group === '连接器') {
         for (const item of tool.children) {
           this.LeftTypeList.push(item);
           this.selectedLeftType.push(item);
@@ -141,7 +159,8 @@ export class PopupWindowsComponent implements OnInit {
     if(this.selected){
       var data = {
         node:this.selected.data,
-        linelength:this.lineLength
+        linelength:this.lineLength,
+        leftjixing:this.leftJiXing
       }
       this.setNodeLeftData.emit(data);
     }

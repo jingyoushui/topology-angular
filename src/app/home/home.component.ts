@@ -1829,7 +1829,9 @@ export class HomeComponent implements OnInit, OnDestroy {
             for(const reportlist of this.report_list){
               if(reportlist.id === pen.id) {
                 let mark = data.children?data.children[0].text:data.text;
+
                 reportlist.report_nodes.push(new ReportListNode(data.id, data.name, data.text, mark))
+
               }
             }
           }
@@ -2203,6 +2205,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     const fenxianhe = this.findFenxianheByLeftPlug(this.selectedPlug);
     let length = data.linelength;
     fenxianhe.text = fenxianhe.text.slice(0,-3) + length;
+
     let leftnode = data.node;
     if(leftnode.name==="sanxian"){
       fenxianhe.text = fenxianhe.text.replace("XX","01");
@@ -2210,6 +2213,20 @@ export class HomeComponent implements OnInit, OnDestroy {
     if(leftnode.name=="hangxian"){
       fenxianhe.text = fenxianhe.text.replace("XX","26");
     }
+    let leftjixing = data.leftjixing;
+    if(leftjixing=='NPN'){
+      fenxianhe.text = fenxianhe.text.replace("X","N");
+    }
+    if(leftjixing=='PNP'){
+      fenxianhe.text = fenxianhe.text.replace("X","P");
+    }
+    const updatedata = {
+      mubanid:fenxianhe.mubanId,
+      id:fenxianhe.id,
+      text:fenxianhe.text
+    }
+    console.log(fenxianhe)
+    this.updateReport(updatedata);
 
 
     leftnode.rect.ex = this.selectedPlug.rect.ex;
@@ -2295,6 +2312,7 @@ export class HomeComponent implements OnInit, OnDestroy {
                 node.node_type = data.text;
               }else{
                 node.remarks = data.text;
+                node.node_type = data.text;
               }
 
             }

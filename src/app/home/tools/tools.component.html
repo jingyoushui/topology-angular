@@ -1,5 +1,5 @@
 <div *ngFor="let item of tools">
-  <div class="title" style="font-size: smaller;padding-top: 10px;background-color: #181818;color: white" (click)="item.isshow = !item.isshow">
+  <div class="title" style="font-size: smaller;padding-top: 10px;background-color: #181818;color: white" (click)="item.isshow = !item.isshow" *ngIf="item.group!='连接器'">
     {{ item.group }}
   </div>
   <div *ngIf="item.isshow" class="buttons" style="min-height: 80px;">

@@ -7,10 +7,10 @@ import {s8} from 'topology-core/utils';
 export class HomeHelper {
 
   zh_en = new Map([
-    [ 'fenxianhe', '分线盒'],
+    [ 'fenxianhe', '集线器'],
     [ 'circle', '圆形' ],
     [ 'triangle', '三角形' ],
-    [ 'jitingButton', 'φ16急停按钮盒' ],
+    [ '16jitingButton', 'φ16急停按钮盒' ],
     [ '22jitingButton', 'φ22急停按钮盒' ],
     [ 'fuweiButton', 'φ22复位按钮' ],
     [ 'qidongButton', 'φ22启动按钮' ],

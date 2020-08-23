@@ -1,13 +1,15 @@
 
 <div class="modal-content" style="width: 550px;">
-
-  <div *ngIf="plug_type === 'leftplug'" class="modal-header pointer" uiDivMove [isHead]="true">
-    <div class="caption">连接器选择</div>
-    <i class="fr iconfont icon-close" (click)="closeWindows()"></i>
+  <div *ngIf="plug_type === 'leftplug'"  class="modal-header pointer" style="background-color: #181818;color: white" uiDivMove [isHead]="true">
+    <div class="caption" style="color: white;">连接器选择</div>
+    <i class="fr iconfont icon-close" style="color: white;" (click)="closeWindows()"></i>
   </div>
-  <div *ngIf="plug_type === 'leftplug'">
 
-    <div *ngIf="selected" style=" margin-top: 5px; display: inline-flex;width:100%;border: #8c8c8c solid 1px">
+  <div *ngIf="plug_type === 'leftplug'">
+    <div class="mr5" style="padding-left: 20px;">左边连接器：
+    </div>
+
+    <div *ngIf="selected" style="padding-left: 20px; margin-top: 5px; display: inline-flex;width:100%;border: #8c8c8c solid 1px">
       <div style="width: 150px;">
         <img src="{{selected.img}}" style="height: 100px;">
       </div>
@@ -26,12 +28,17 @@
       </div>
     </div>
 
-    <div class="mr5">选择线长：
-    </div>
-    <div class="mr5">
+    <div  style="padding-left: 20px;">选择线长：
       <ui-select  [options]="linelength" [multi]="false" [(ngModel)]="lineLength"
                   (change)="onClickLine()" ></ui-select>
     </div>
+    <div  style="padding-left: 20px;padding-top: 10px;">集线器极性：
+      <ui-select  [options]="leftjixing" [multi]="false" [(ngModel)]="leftJiXing"
+                  ></ui-select>
+    </div>
+
+
+
   </div>
   <div *ngIf="plug_type === 'plug'"  class="modal-header pointer" style="background-color: #181818;color: white" uiDivMove [isHead]="true">
     <div class="caption" style="color: white;">底层部件自定义</div>
